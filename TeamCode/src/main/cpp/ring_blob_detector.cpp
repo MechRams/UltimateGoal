@@ -69,10 +69,13 @@ Java_org_firstinspires_ftc_teamcode_cv_RingPipeline_nativeDetectBlobs(JNIEnv *en
 }
 
 void vecKeyPointToMat(vector<KeyPoint> v_kp, Mat *mat) {
+
     int count = (int)v_kp.size();
-    mat.create(count, 1, CV_32FC(7));
+    mat->create(count, 1, CV_32FC(7));
+
     for(int i=0; i<count; i++) {
         KeyPoint kp = v_kp[i];
-        mat.at< Vec<float, 7> >(i, 0) = Vec<float, 7>(kp.pt.x, kp.pt.y, kp.size, kp.angle, kp.response, (float)kp.octave, (float)kp.class_id);
+        mat->at< Vec<float, 7> >(i, 0) = Vec<float, 7>(kp.pt.x, kp.pt.y, kp.size, kp.angle, kp.response, (float)kp.octave, (float)kp.class_id);
     }
+
 }

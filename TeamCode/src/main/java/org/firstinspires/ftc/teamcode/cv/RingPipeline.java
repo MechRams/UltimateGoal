@@ -1,14 +1,23 @@
 package org.firstinspires.ftc.teamcode.cv;
 
 import org.opencv.core.Core;
+import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
+import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.features2d.Features2d;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
+import java.util.ArrayList;
+
 public class RingPipeline extends OpenCvPipeline {
+
+    public enum Pattern { A, B, C, ND }
+
+    public volatile Pattern detectedPattern = Pattern.ND;
 
     static {
         System.loadLibrary("TeamCode");
@@ -123,12 +132,105 @@ public class RingPipeline extends OpenCvPipeline {
         dilateMat.release();
 
         //PASO 8: Encontrar los blobs en el mat mascareado para localizar la posicion de la pila de rings
-        MatOfKeyPoint keypoints = new MatOfKeyPoint();
-        nativeDetectBlobs(maskMat.nativeObj, keypoints.nativeObj);
+        MatOfKeyPoint blobs = new MatOfKeyPoint();
+        nativeDetectBlobs(maskMat.nativeObj, blobs.nativeObj);
 
+        KeyPoint[] blobsArray = blobs.toArray();
 
+        // Si no se detecto ningun blob significa que hay 0 rings
+        // Por lo que podemos retornar el resultado en este punto.
+        if (blobsArray.length == 0) {
+            blobs.release();
+            ycbcrThreshMat.release();
+            maskMat.release();
+            detectedPattern = Pattern.A;
+            return resizedMat.clone();
+        }
 
-        return input;
+        //PASO 9: Dibujar los blobs en el mat sin filtros
+        Mat keypointsMat = new Mat();
+        Features2d.drawKeypoints(resizedMat, blobs, keypointsMat, new Scalar(0, 0, 255), Features2d.DrawMatchesFlags_DRAW_RICH_KEYPOINTS);
+
+        //PASO 10: Encontrar los contornos del mat hsv threshold sin difuminar
+        ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        CVGripUtils.cvFindContours(ycbcrThreshMaskMat, false, contours);
+
+        //PASO 11: Encontrar el blob mas grande en la imagen (por si se detectaron varios)
+        KeyPoint biggestKeyPoint = null;
+        for (KeyPoint keyPoint : blobsArray) {
+
+            if (biggestKeyPoint == null) {
+                biggestKeyPoint = keyPoint;
+                continue;
+            }
+
+            if (keyPoint.size > biggestKeyPoint.size) {
+                biggestKeyPoint = keyPoint;
+            }
+
+        }
+
+        blobs.release();
+
+        //PASO 12: Buscar los contours que estan dentro del blob mas grande
+        //y luego encontrar el punto mas bajo y el mas alto del contorno
+        //de los anillos para calcular su altura
+
+        Point highestYPoint = null;
+        Point lowestYPoint = null;
+
+        double circleX = biggestKeyPoint.pt.x;
+        double circleY = biggestKeyPoint.pt.y;
+
+        double circleRadius = biggestKeyPoint.size / 2;
+
+        double circleRadiusPow = Math.pow(circleRadius, 2);
+
+        for (MatOfPoint contour : contours) {
+
+            for (Point point : contour.toArray()) {
+
+                double cx = point.x;
+                double cy = point.y;
+
+                if (Math.pow(cx - circleX, 2) + Math.pow(cy - circleY, 2) < circleRadiusPow) {
+
+                    if (highestYPoint == null && lowestYPoint == null) {
+                        highestYPoint = point;
+                        lowestYPoint = point;
+                        continue;
+                    }
+
+                    if (point.y > highestYPoint.y) {
+                        highestYPoint = point;
+                    }
+
+                    if (point.y < lowestYPoint.y) {
+                        lowestYPoint = point;
+                    }
+
+                }
+
+            }
+
+        }
+
+        // PASO 13: Calcular el delta de el punto mas abajo y el mas arriba
+        // para obtener la altura de los anillos
+        double ringsHeight = highestYPoint.y - lowestYPoint.y;
+
+        if(ringsHeight <= 5) {
+            detectedPattern = Pattern.A;
+        } else if(ringsHeight <= 15) {
+            detectedPattern = Pattern.B;
+        } else {
+            detectedPattern = Pattern.C;
+        }
+
+        //Dibujar los contornos en el mat donde se dibujaron los blobs
+        Imgproc.drawContours(keypointsMat, contours, -1, new Scalar(0, 255, 0), 2);
+
+        return keypointsMat;
 
     }
 

@@ -17,7 +17,7 @@ add_library( # Specifies the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-        src/main/cpp/ring_blob_detector.cpp)
+			 src/main/cpp/ring_blob_detector.cpp)
 
 ############################################################
 # You must clone OpenCv-Repackaged into the same parent    #
@@ -27,13 +27,13 @@ add_library( # Specifies the name of the library.
 
 # Specifies a path to native header files.
 include_directories(src/main/cpp/include/
-                    ${CMAKE_CURRENT_SOURCE_DIR}/../../OpenCV-Repackaged/doc/native_headers/)
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../doc/native_headers/)
 
 # Specify path to prebuilt object
 add_library(openCvNative SHARED IMPORTED)
 set_target_properties(openCvNative PROPERTIES IMPORTED_LOCATION
         #${CMAKE_CURRENT_SOURCE_DIR}/libs/${ANDROID_ABI}/libOpenCvNative.so)
-        ${CMAKE_CURRENT_SOURCE_DIR}/../../OpenCV-Repackaged/doc/libOpenCvNative.so)
+        ${CMAKE_CURRENT_SOURCE_DIR}/../doc/libOpenCvNative.so)
 
 # linking libs
 target_link_libraries(

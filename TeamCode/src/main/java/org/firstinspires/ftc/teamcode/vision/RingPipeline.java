@@ -55,8 +55,8 @@ public class RingPipeline extends OpenCvPipeline {
         Mat hsvMat = new Mat();
         Imgproc.cvtColor(resizedMat, hsvMat, Imgproc.COLOR_BGR2HSV);
 
-        //PASO 4: Clippear los valores ycbcr entre un rango para descartar pixeles
-        // (Dos veces con un mat difuminado y uno normal)
+        // PASO 4: Clippear (hacer un threshold) los valores ycbcr entre un rango
+        // para descartar pixeles (Dos veces con un mat difuminado y uno normal)
 
         Mat ycbcrBlurredThreshMat = new Mat();
         Imgproc.threshold(ycbcrBlurredMat, ycbcrBlurredThreshMat, 100, 105, Imgproc.THRESH_BINARY_INV);
@@ -85,7 +85,7 @@ public class RingPipeline extends OpenCvPipeline {
         Mat ycbcrBlurredThreshMaskMat = new Mat();
         Mat ycbcrThreshMaskMat = new Mat();
 
-        //Hacer una mascara de los valores clippeados hsv a los valores ycbcr
+        //Hacer una mascara de los valores clippeados hsv a los valores ycbcr para eliminar falsos positivos
         CVGripUtils.cvMask(ycbcrBlurredThreshMat, hsvBlurredThreshMat, ycbcrBlurredThreshMaskMat);
         CVGripUtils.cvMask(ycbcrThreshMat, hsvThreshMat, ycbcrThreshMaskMat);
 

@@ -1,14 +1,16 @@
 package org.firstinspires.ftc.teamcode.teleop
 
-import com.github.serivesmejia.deltautils.drive.extendable.linearopmode.holonomic.JoystickHolonomicLinearOpMode;
-import com.github.serivesmejia.deltautils.event.event.gamepad.SuperGamepadEvent
-import com.github.serivesmejia.deltautils.event.gamepad.GamepadDataPacket
-import com.github.serivesmejia.deltautils.event.gamepad.button.Buttons
+import com.github.serivesmejia.deltautils.deltadrive.extendable.linearopmode.holonomic.JoystickHolonomicLinearOpMode;
+import com.github.serivesmejia.deltautils.deltaevent.event.gamepad.SuperGamepadEvent
+import com.github.serivesmejia.deltautils.deltaevent.gamepad.GamepadDataPacket
+import com.github.serivesmejia.deltautils.deltaevent.gamepad.button.Buttons
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 
+@TeleOp(name="TeleOp", group="Final")
 class TeleOp : JoystickHolonomicLinearOpMode() {
 
-    val hdw = Hardware()
+    private val hdw = Hardware()
 
     override fun _runOpMode() {
 

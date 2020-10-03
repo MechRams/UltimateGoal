@@ -25,8 +25,7 @@ void vecKeyPointToMat(vector<KeyPoint> v_kp, Mat mat) {
 }
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(JNIEnv *env,
-                                                                           jobject thiz) {
+Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(JNIEnv *env, jobject thiz) {
 
     SimpleBlobDetector::Params params;
 
@@ -62,10 +61,7 @@ Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(J
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeDetectBlobs(JNIEnv *env,
-                               jobject thiz,
-                               jlong inputPtr,
-                               jlong outputPtr) {
+Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeDetectBlobs(JNIEnv *env, jobject thiz, jlong inputPtr, jlong outputPtr) {
 
     Mat* input = (cv::Mat*) inputPtr;
     Mat* output = (cv::Mat*) outputPtr;

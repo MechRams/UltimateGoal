@@ -88,7 +88,6 @@ public class CVGripUtils {
         cMask.release();
     }
 
-
     /**
      * Filter out an area of an image using a binary mask.
      * @param input The image on which the mask filters.

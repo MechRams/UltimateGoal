@@ -16,7 +16,7 @@ class TeleOp : JoystickHolonomicLinearOpMode() {
 
         //EMPIEZA CODIGO DEL START A
 
-        superGamepad1?.registerEvent(object: SuperGamepadEvent() {
+        superGamepad1.registerEvent(object: SuperGamepadEvent() {
 
             override fun loop(gdp: GamepadDataPacket) {
                 joystick(gdp.gamepad, true, 0.7)
@@ -26,7 +26,7 @@ class TeleOp : JoystickHolonomicLinearOpMode() {
 
         //EMPIEZA CODIGO DEL START B
 
-        superGamepad2?.registerEvent(object: SuperGamepadEvent() {
+        superGamepad2.registerEvent(object: SuperGamepadEvent() {
 
         })
 

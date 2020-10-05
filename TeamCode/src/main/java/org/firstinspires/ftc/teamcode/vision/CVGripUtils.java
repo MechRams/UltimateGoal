@@ -74,7 +74,7 @@ public class CVGripUtils {
     }
 
     /**
-     * Filters in an area of an image using a binary mask.
+     * Filters in an area of an image using an inverse binary mask.
      * @param input The image on which the mask filters.
      * @param mask The binary image that is used to filter.
      * @param output The image in which to store the output.

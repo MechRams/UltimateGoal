@@ -31,6 +31,13 @@ class TeleOp : JoystickHolonomicLinearOpMode() {
         })
 
         waitForStart()
+        
+        while(opModeIsActive()) {
+
+            superGamepad1.update()
+            superGamepad2.update()
+
+        }
 
     }
 

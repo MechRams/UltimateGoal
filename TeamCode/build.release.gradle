@@ -24,3 +24,7 @@ dependencies {
     implementation 'org.openftc:easyopencv:1.4.1'
     implementation ('com.github.serivesmejia:DeltaUtils:master-SNAPSHOT') { changing = true }
 }
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 120, 'seconds'
+}

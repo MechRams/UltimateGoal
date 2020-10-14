@@ -24,7 +24,3 @@ allprojects {
         maven { url 'https://jitpack.io' }
     }
 }
-
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 240, 'seconds'
-}

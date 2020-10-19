@@ -7,7 +7,7 @@ import com.github.serivesmejia.deltautils.deltapid.PIDCoefficients
 
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 
-class BaseAutonomo : IMUPIDEncoderHolonomicLinearOpMode() {
+open class BaseAutonomo : IMUPIDEncoderHolonomicLinearOpMode() {
 
     val hdw = Hardware()
 

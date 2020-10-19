@@ -12,7 +12,7 @@ cv::SimpleBlobDetector* detector;
 
 int imax = std::numeric_limits<int>::max();
 
-void vecKeyPointToMat(vector<KeyPoint> v_kp, Mat mat) {
+void vecKeyPointToMat(vector<KeyPoint>& v_kp, Mat& mat) {
 
     int count = (int)v_kp.size();
     mat.create(count, 1, CV_32FC(7));
@@ -23,6 +23,7 @@ void vecKeyPointToMat(vector<KeyPoint> v_kp, Mat mat) {
     }
 
 }
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(JNIEnv *env, jobject thiz) {

@@ -43,17 +43,17 @@ public class RingPipeline extends OpenCvPipeline {
         // (Dos veces con un mat difuminado y uno normal)
         Mat ycbcrBlurredMat = new Mat();
         Imgproc.cvtColor(blurredMat, ycbcrBlurredMat, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(ycbcrBlurredMat, ycbcrBlurredMat, 1);//takes cb difference and stores
+        Core.extractChannel(ycbcrBlurredMat, ycbcrBlurredMat, 2);//takes cb difference and stores
 
         Mat ycbcrMat = new Mat();
         Imgproc.cvtColor(resizedMat, ycbcrMat, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(ycbcrMat, ycbcrMat, 1);//takes cb difference and stores
+        Core.extractChannel(ycbcrMat, ycbcrMat, 2);//takes cb difference and stores
 
         Mat hsvBlurredMat = new Mat();
-        Imgproc.cvtColor(blurredMat, hsvBlurredMat, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(blurredMat, hsvBlurredMat, Imgproc.COLOR_RGB2HSV);
 
         Mat hsvMat = new Mat();
-        Imgproc.cvtColor(resizedMat, hsvMat, Imgproc.COLOR_BGR2HSV);
+        Imgproc.cvtColor(resizedMat, hsvMat, Imgproc.COLOR_RGB2HSV);
 
         // PASO 4: Clippear (hacer un threshold) los valores ycbcr entre un rango
         // para descartar pixeles (Dos veces con un mat difuminado y uno normal)

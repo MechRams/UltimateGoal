@@ -59,10 +59,10 @@ public class RingPipeline extends OpenCvPipeline {
         // para descartar pixeles (Dos veces con un mat difuminado y uno normal)
 
         Mat ycbcrBlurredThreshMat = new Mat();
-        Imgproc.threshold(ycbcrBlurredMat, ycbcrBlurredThreshMat, 100, 105, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(ycbcrBlurredMat, ycbcrBlurredThreshMat, 90, 105, Imgproc.THRESH_BINARY_INV);
 
         Mat ycbcrThreshMat = new Mat();
-        Imgproc.threshold(ycbcrMat, ycbcrThreshMat, 100, 105, Imgproc.THRESH_BINARY_INV);
+        Imgproc.threshold(ycbcrMat, ycbcrThreshMat, 90, 105, Imgproc.THRESH_BINARY_INV);
 
         blurredMat.release();
         ycbcrMat.release();
@@ -144,7 +144,7 @@ public class RingPipeline extends OpenCvPipeline {
             ycbcrThreshMat.release();
             maskMat.release();
             detectedPattern = Pattern.A;
-            return resizedMat.clone();
+            return maskMat;
         }
 
         //PASO 9: Dibujar los blobs en el mat sin filtros

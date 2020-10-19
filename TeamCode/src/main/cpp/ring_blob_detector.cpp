@@ -8,7 +8,7 @@
 using namespace cv;
 using namespace std;
 
-cv::SimpleBlobDetector* detector;
+Ptr<SimpleBlobDetector> detector;
 
 int imax = std::numeric_limits<int>::max();
 
@@ -56,7 +56,7 @@ Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(J
     params.minConvexity = 0.95;
     params.maxConvexity = imax;
 
-    detector = cv::SimpleBlobDetector::create(params);
+    detector = SimpleBlobDetector::create(params);
 
 }
 

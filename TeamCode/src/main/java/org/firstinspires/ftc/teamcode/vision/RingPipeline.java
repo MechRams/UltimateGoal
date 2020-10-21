@@ -16,8 +16,17 @@ import java.util.ArrayList;
 public class RingPipeline extends OpenCvPipeline {
 
     public enum Pattern { A, B, C, ND }
-
     public volatile Pattern detectedPattern = Pattern.ND;
+
+    //rangos de hsv
+    double[] hue = {8.446981015790435, 43.741098662849254};
+    double[] sat = {181.00395338142792, 253.16016738674898};
+    double[] val = {115.04061714101688, 247.45084150389948};
+
+    public Scalar lowerYCrCb = new Scalar(0.0, 141.0, 0.0);
+    public Scalar upperYCrCb = new Scalar(255.0, 230.0, 150.0);
+
+    private double aspectRatio;
 
     static {
         System.loadLibrary("TeamCode");
@@ -25,11 +34,18 @@ public class RingPipeline extends OpenCvPipeline {
 
     @Override
     public void init(Mat input) {
+
+        aspectRatio = (double)input.height() / (double)input.width();
+
         nativeInitBlobDetector();
+
     }
 
     @Override
     public Mat processFrame(Mat input) {
+
+        aspectRatio = (double)input.height() / (double)input.width();
+        double aspectRatioPercentage = aspectRatio / 0.75;
 
         //PASO 1: Hacer el mat mas pequeño para que quepa en la previsualizacion (podria saltarse este paso en un robot real)
         Mat resizedMat = input;
@@ -37,17 +53,15 @@ public class RingPipeline extends OpenCvPipeline {
 
         //PASO 2: Difuminar la imagen para eliminar puntos de color y/o elementos que podrian hacer ruido en el resultado final
         Mat blurredMat = new Mat();
-        CVGripUtils.cvBoxBlurMat(resizedMat, 2, blurredMat);
+        CVGripUtils.cvBoxBlurMat(resizedMat, 3, blurredMat);
 
         //PASO 3: Convertir el espacio del color del Mat de RGB A YcCrCb
         // (Dos veces con un mat difuminado y uno normal)
         Mat ycbcrBlurredMat = new Mat();
         Imgproc.cvtColor(blurredMat, ycbcrBlurredMat, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(ycbcrBlurredMat, ycbcrBlurredMat, 2);//takes cb difference and stores
 
         Mat ycbcrMat = new Mat();
         Imgproc.cvtColor(resizedMat, ycbcrMat, Imgproc.COLOR_RGB2YCrCb);
-        Core.extractChannel(ycbcrMat, ycbcrMat, 2);//takes cb difference and stores
 
         Mat hsvBlurredMat = new Mat();
         Imgproc.cvtColor(blurredMat, hsvBlurredMat, Imgproc.COLOR_RGB2HSV);
@@ -55,24 +69,17 @@ public class RingPipeline extends OpenCvPipeline {
         Mat hsvMat = new Mat();
         Imgproc.cvtColor(resizedMat, hsvMat, Imgproc.COLOR_RGB2HSV);
 
-        // PASO 4: Clippear (hacer un threshold) los valores ycbcr entre un rango
-        // para descartar pixeles (Dos veces con un mat difuminado y uno normal)
+        //PASO 4: Clippear los valores hsv y YCbCr entre un rango para descartar pixeles
+        // (Dos veces, con un mat difuminado y uno normal)
 
         Mat ycbcrBlurredThreshMat = new Mat();
-        Imgproc.threshold(ycbcrBlurredMat, ycbcrBlurredThreshMat, 90, 105, Imgproc.THRESH_BINARY_INV);
+        Core.inRange(ycbcrBlurredMat, lowerYCrCb, upperYCrCb, ycbcrBlurredThreshMat);
 
         Mat ycbcrThreshMat = new Mat();
-        Imgproc.threshold(ycbcrMat, ycbcrThreshMat, 90, 105, Imgproc.THRESH_BINARY_INV);
+        Core.inRange(ycbcrBlurredMat, lowerYCrCb, upperYCrCb, ycbcrThreshMat);
 
         blurredMat.release();
         ycbcrMat.release();
-
-        //PASO 4.5: Clippear los valores hsv entre un rango para descartar pixeles
-
-        //rangos de hsv
-        double[] hue = {8.446981015790435, 43.741098662849254};
-        double[] sat = {181.00395338142792, 253.16016738674898};
-        double[] val = {115.04061714101688, 247.45084150389948};
 
         Mat hsvBlurredThreshMat = new Mat();
         Core.inRange(hsvBlurredMat, new Scalar(hue[0], sat[0], val[0]),
@@ -85,7 +92,6 @@ public class RingPipeline extends OpenCvPipeline {
         Mat ycbcrBlurredThreshMaskMat = new Mat();
         Mat ycbcrThreshMaskMat = new Mat();
 
-        //Hacer una mascara de los valores clippeados hsv a los valores ycbcr para eliminar falsos positivos
         CVGripUtils.cvMask(ycbcrBlurredThreshMat, hsvBlurredThreshMat, ycbcrBlurredThreshMaskMat);
         CVGripUtils.cvMask(ycbcrThreshMat, hsvThreshMat, ycbcrThreshMaskMat);
 
@@ -101,7 +107,7 @@ public class RingPipeline extends OpenCvPipeline {
         Mat erodeMat = new Mat();
         Mat erodeKernel = new Mat();
         Point erodeAnchor = new Point(-1, -1);
-        double erodeIterations = 2.0;
+        double erodeIterations = 1.0;
         int erodeBordertype = Core.BORDER_CONSTANT;
         Scalar erodeBordervalue = new Scalar(-1);
 
@@ -115,7 +121,7 @@ public class RingPipeline extends OpenCvPipeline {
         Mat dilateMat = new Mat();
         Mat dilateKernel = new Mat();
         Point dilateAnchor = new Point(-1, -1);
-        double dilateIterations = 20.0;
+        double dilateIterations = 35.0 * aspectRatioPercentage;
         int dilateBordertype = Core.BORDER_CONSTANT;
         Scalar dilateBordervalue = new Scalar(-1);
 
@@ -140,19 +146,25 @@ public class RingPipeline extends OpenCvPipeline {
         // Si no se detecto ningun blob significa que hay 0 rings
         // Por lo que podemos retornar el resultado en este punto.
         if (blobsArray.length == 0) {
+
             blobs.release();
             ycbcrThreshMat.release();
             maskMat.release();
+
             detectedPattern = Pattern.A;
-            return maskMat;
+
+            return resizedMat;
+
         }
+
+        maskMat.release();
 
         //PASO 9: Dibujar los blobs en el mat sin filtros
         Mat keypointsMat = new Mat();
         Features2d.drawKeypoints(resizedMat, blobs, keypointsMat, new Scalar(0, 0, 255), Features2d.DrawMatchesFlags_DRAW_RICH_KEYPOINTS);
 
         //PASO 10: Encontrar los contornos del mat hsv threshold sin difuminar
-        ArrayList<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        ArrayList<MatOfPoint> contours = new ArrayList<>();
         CVGripUtils.cvFindContours(ycbcrThreshMaskMat, false, contours);
 
         //PASO 11: Encontrar el blob mas grande en la imagen (por si se detectaron varios)
@@ -195,10 +207,11 @@ public class RingPipeline extends OpenCvPipeline {
 
                 if (Math.pow(cx - circleX, 2) + Math.pow(cy - circleY, 2) < circleRadiusPow) {
 
-                    if (highestYPoint == null && lowestYPoint == null) {
+                    if (highestYPoint == null) {
                         highestYPoint = point;
+                    }
+                    if(lowestYPoint == null) {
                         lowestYPoint = point;
-                        continue;
                     }
 
                     if (point.y > highestYPoint.y) {
@@ -215,13 +228,15 @@ public class RingPipeline extends OpenCvPipeline {
 
         }
 
+        if(highestYPoint == null || lowestYPoint == null) return keypointsMat;
+
         // PASO 13: Calcular el delta de el punto mas abajo y el mas arriba
         // para obtener la altura de los anillos
         double ringsHeight = highestYPoint.y - lowestYPoint.y;
 
-        if(ringsHeight <= 5) {
+        if(ringsHeight <= 5 * aspectRatioPercentage) {
             detectedPattern = Pattern.A;
-        } else if(ringsHeight <= 15) {
+        } else if(ringsHeight <= 15 * aspectRatioPercentage) {
             detectedPattern = Pattern.B;
         } else {
             detectedPattern = Pattern.C;
@@ -230,12 +245,48 @@ public class RingPipeline extends OpenCvPipeline {
         //Dibujar los contornos en el mat donde se dibujaron los blobs
         Imgproc.drawContours(keypointsMat, contours, -1, new Scalar(0, 255, 0), 2);
 
+
+        drawTextOutline(keypointsMat, String.format("%.1f", ringsHeight) + " (Stack " + detectedPattern.toString() + ")",
+                        new Point(highestYPoint.x, highestYPoint.y - ringsHeight), 0.8, 3, aspectRatioPercentage);
+
         return keypointsMat;
 
+    }
+
+    private void drawTextOutline(Mat input, String text, Point position, double textSize, double thickness, double aspectRatioPercentage) {
+
+        // Outline
+        Imgproc.putText (
+                input,
+                text,
+                position,
+                Imgproc.FONT_HERSHEY_PLAIN,
+                textSize * aspectRatioPercentage,
+                new Scalar(255, 255, 255),
+                (int) Math.round(thickness * aspectRatioPercentage)
+        );
+
+        //Text
+        Imgproc.putText (
+                input,
+                text,
+                position,
+                Imgproc.FONT_HERSHEY_PLAIN,
+                textSize  * aspectRatioPercentage,
+                new Scalar(0, 0, 0),
+                (int) Math.round((thickness * aspectRatioPercentage) * (0.4 * aspectRatioPercentage))
+        );
+
+    }
+
+    public void destroy() {
+        nativeReleaseBlobDetector();
     }
 
     native void nativeInitBlobDetector();
 
     native void nativeDetectBlobs(long inputPtr, long outputPtr);
+
+    native void nativeReleaseBlobDetector();
 
 }

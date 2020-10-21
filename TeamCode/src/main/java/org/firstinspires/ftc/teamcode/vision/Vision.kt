@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous
+package org.firstinspires.ftc.teamcode.vision
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.hardware.HardwareMap
@@ -13,18 +13,24 @@ import org.openftc.easyopencv.OpenCvInternalCamera
 
 open class Vision(private val hardwareMap: HardwareMap) {
 
-    lateinit var phoneCam: OpenCvCamera
+    var phoneCam: OpenCvCamera? = null;
 
-    val ringPipeline = RingPipeline()
+    var ringPipeline: RingPipeline? = null;
 
-    fun initRingVision() {
+    private fun initVision() {
 
         val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName)
         phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId)
 
-        phoneCam.setPipeline(ringPipeline)
+    }
 
-        phoneCam.openCameraDeviceAsync { phoneCam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT) }
+    fun initRingVision() {
+
+        initVision();
+        ringPipeline = RingPipeline()
+
+        phoneCam?.setPipeline(ringPipeline)
+        phoneCam?.openCameraDeviceAsync { phoneCam?.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT) }
 
     }
 

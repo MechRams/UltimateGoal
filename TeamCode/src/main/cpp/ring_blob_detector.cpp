@@ -74,3 +74,11 @@ Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeDetectBlobs(JNIEnv
     vecKeyPointToMat(keyPoints, *output);
 
 }
+extern "C"
+JNIEXPORT void JNICALL
+Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeReleaseBlobDetector(JNIEnv *env, jobject thiz) {
+
+    detector->clear();
+    delete detector;
+
+}

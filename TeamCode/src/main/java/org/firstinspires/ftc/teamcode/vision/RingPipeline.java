@@ -245,7 +245,6 @@ public class RingPipeline extends OpenCvPipeline {
         //Dibujar los contornos en el mat donde se dibujaron los blobs
         Imgproc.drawContours(keypointsMat, contours, -1, new Scalar(0, 255, 0), 2);
 
-
         drawTextOutline(keypointsMat, String.format("%.1f", ringsHeight) + " (Stack " + detectedPattern.toString() + ")",
                         new Point(highestYPoint.x, highestYPoint.y - ringsHeight), 0.8, 3, aspectRatioPercentage);
 

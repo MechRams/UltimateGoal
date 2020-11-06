@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.arcrobotics.ftclib.hardware.motors.MotorEx
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
+import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
+
 
 class Hardware {
 
@@ -18,6 +23,12 @@ class Hardware {
     //otros motores
     lateinit var motorWobbleArm: DcMotor
 
+    lateinit var motorShooterLeft: MotorEx
+    lateinit var motorShooterRight: MotorEx
+
+    //servos
+    lateinit var servoWobbleClaw: Servo
+
     var useSleeps = true
 
     //sensores
@@ -28,31 +39,22 @@ class Hardware {
         this.hdwMap = hdwMap
 
         //se obtienen todos los motores, servos y sensores del hardwaremap dado
-        if (invertedChassis) {
-            wheelFrontRight = hdwMap.get(DcMotor::class.java, "BL")
-            wheelFrontLeft = hdwMap.get(DcMotor::class.java, "BR")
-            wheelBackRight = hdwMap.get(DcMotor::class.java, "FL")
-            wheelBackLeft = hdwMap.get(DcMotor::class.java, "FR")
-        } else {
-            wheelFrontRight = hdwMap.get(DcMotor::class.java, "FR")
-            wheelFrontLeft = hdwMap.get(DcMotor::class.java, "FL")
-            wheelBackRight = hdwMap.get(DcMotor::class.java, "BR")
-            wheelBackLeft = hdwMap.get(DcMotor::class.java, "BL")
-        }
+        wheelFrontRight = hdwMap.getDevice<DcMotor>("FR")!!
+        wheelFrontLeft = hdwMap.getDevice<DcMotor>("FL")!!
+        wheelBackRight = hdwMap.getDevice<DcMotor>("BL")!!
+        wheelBackLeft = hdwMap.getDevice<DcMotor>("BR")!!
 
-        motorWobbleArm = hdwMap.get(DcMotor::class.java, "WA")
+        motorWobbleArm = hdwMap.getDevice<DcMotor>("WA")!!
+        motorShooterLeft = MotorEx(hdwMap, "SL")
+        motorShooterRight = MotorEx(hdwMap, "SR")
+
+        servoWobbleClaw = hdwMap.getDevice<Servo>("CW")!!
 
         //La direccion de estos motores sera FORWARD
         motorWobbleArm.direction = DcMotorSimple.Direction.FORWARD
 
         //La direccion de estos motores sera REVERSE
-
-        //el power de todos los motores se define a 0
-        wheelFrontRight.power = 0.0
-        wheelBackRight.power = 0.0
-        wheelFrontLeft.power = 0.0
-        wheelBackLeft.power = 0.0
-        motorWobbleArm.power = 0.0
+        motorShooterRight.motorEx.direction = DcMotorSimple.Direction.FORWARD
 
         //estos motores frenaran si su power es 0
         motorWobbleArm.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -60,11 +62,17 @@ class Hardware {
         //se define la posicion por default de estos servos
 
         //definimos los motores que correran con y sin encoders
-        wheelFrontRight.mode = DcMotor.RunMode.RUN_USING_ENCODER //declaramos todos los motores que tienen encoders conectados. generalmente solo son las llantas, pero a veces tambien sera util tener un lift o algo similar con encoders, para poder hacer que vaya a posiciones especificas.
+        wheelFrontRight.mode = DcMotor.RunMode.RUN_USING_ENCODER
         wheelFrontLeft.mode = DcMotor.RunMode.RUN_USING_ENCODER
         wheelBackRight.mode = DcMotor.RunMode.RUN_USING_ENCODER
         wheelBackLeft.mode = DcMotor.RunMode.RUN_USING_ENCODER
         motorWobbleArm.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
+        val hubs = hardwareMap.getAll(LynxModule::class.java)
+
+        for (hub in hubs) {
+            hub.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
+        }
 
     }
 
@@ -83,5 +91,7 @@ class Hardware {
         }
 
     }
+
+    inline fun <reified T> HardwareMap.getDevice(name: String): T? = this.get(T::class.java, name)
 
 }

@@ -1,9 +1,9 @@
-package org.firstinspires.ftc.teamcode.commander.command
+package org.firstinspires.ftc.teamcode.commander.command.wobblearm
 
 import com.github.serivesmejia.deltautils.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
 
-class CommandArmPositionMiddle(val armSubsystem: WobbleArmSubsystem) : DeltaCommand() {
+class CmdArmPositionUp(val armSubsystem: WobbleArmSubsystem) : DeltaCommand() {
 
     init {
         require(armSubsystem)
@@ -14,9 +14,9 @@ class CommandArmPositionMiddle(val armSubsystem: WobbleArmSubsystem) : DeltaComm
         armSubsystem.armController.reset()
 
         armSubsystem.armController.setSetpoint(armSubsystem.ARM_MIDDLE_POSITION)
-                     .setDeadzone(0.1)
-                     .setErrorTolerance(10.0)
-                     .setInitialPower(0.6)
+                                  .setDeadzone(0.1)
+                                  .setErrorTolerance(10.0)
+                                  .setInitialPower(0.6)
 
         armSubsystem.armMoving = true
 
@@ -25,11 +25,8 @@ class CommandArmPositionMiddle(val armSubsystem: WobbleArmSubsystem) : DeltaComm
     override fun run() { }
 
     override fun end(interrupted: Boolean) {
-
         armSubsystem.armController.reset()
-
         armSubsystem.armMoving = false
-
     }
 
 

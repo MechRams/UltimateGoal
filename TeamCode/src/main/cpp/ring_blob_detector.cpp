@@ -8,8 +8,6 @@
 using namespace cv;
 using namespace std;
 
-Ptr<SimpleBlobDetector> detector;
-
 int imax = std::numeric_limits<int>::max();
 
 void vecKeyPointToMat(vector<KeyPoint>& v_kp, Mat& mat) {
@@ -25,8 +23,8 @@ void vecKeyPointToMat(vector<KeyPoint>& v_kp, Mat& mat) {
 }
 
 extern "C"
-JNIEXPORT void JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(JNIEnv *env, jobject thiz) {
+JNIEXPORT jlong JNICALL
+Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeCreateBlobDetector(JNIEnv *env, jobject thiz, jdouble minArea, jdouble minCircularity, jdouble maxCircularity) {
 
     SimpleBlobDetector::Params params;
 
@@ -41,12 +39,12 @@ Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(J
     params.blobColor = 255;
 
     params.filterByArea = true;
-    params.minArea = 800;
+    params.minArea = minArea;
     params.maxArea = imax;
 
     params.filterByCircularity = true;
-    params.minCircularity = 0.5084745762711864;
-    params.maxCircularity = 1.0;
+    params.minCircularity = minCircularity;
+    params.maxCircularity = maxCircularity;
 
     params.filterByInertia = true;
     params.minInertiaRatio = 0.1;
@@ -56,29 +54,35 @@ Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeInitBlobDetector(J
     params.minConvexity = 0.95;
     params.maxConvexity = imax;
 
-    detector = SimpleBlobDetector::create(params);
+    SimpleBlobDetector *blobDet = SimpleBlobDetector::create(params);
+
+    blobDet = static_cast<SimpleBlobDetector*> (malloc(sizeof(&blobDet)));
+
+    return (long)blobDet;
 
 }
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeDetectBlobs(JNIEnv *env, jobject thiz, jlong inputPtr, jlong outputPtr) {
+Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeDetectBlobs(JNIEnv *env, jobject thiz, jlong blob_det_ptr, jlong input_ptr, jlong output_ptr) {
 
-    Mat* input = (cv::Mat*) inputPtr;
-    Mat* output = (cv::Mat*) outputPtr;
+    auto* blob_det = (SimpleBlobDetector*) blob_det_ptr;
+
+    Mat* input = (cv::Mat*) input_ptr;
+    Mat* output = (cv::Mat*) output_ptr;
 
     vector<KeyPoint> keyPoints = vector<KeyPoint>();
 
-    detector->detect(*input, keyPoints);
+    blob_det->detect(*input, keyPoints);
 
     vecKeyPointToMat(keyPoints, *output);
 
 }
+
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_RingPipeline_nativeReleaseBlobDetector(JNIEnv *env, jobject thiz) {
-
-    detector->clear();
-    delete detector;
-
+Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeReleaseBlobDetector(JNIEnv *env, jobject thiz, jlong blob_det_ptr) {
+    auto* blob_det = (SimpleBlobDetector*) blob_det_ptr;
+    blob_det->clear();
+    delete blob_det;
 }

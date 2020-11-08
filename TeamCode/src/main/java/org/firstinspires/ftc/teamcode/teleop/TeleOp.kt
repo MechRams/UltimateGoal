@@ -53,7 +53,7 @@ class TeleOp : JoystickHolonomicLinearOpMode() {
 
     override fun setup() {
 
-        hdw.initHardware(hardwareMap, false)
+        hdw.initHardware(hardwareMap)
 
         frontLeft = hdw.wheelFrontLeft
         frontRight = hdw.wheelFrontRight

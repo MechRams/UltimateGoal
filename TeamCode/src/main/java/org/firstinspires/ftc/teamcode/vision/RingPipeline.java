@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.vision;
 
+import org.firstinspires.ftc.teamcode.vision.cv.CVGripUtils;
+import org.firstinspires.ftc.teamcode.vision.cv.NativeBlobDetector;
 import org.opencv.core.Core;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
@@ -28,16 +30,14 @@ public class RingPipeline extends OpenCvPipeline {
 
     private double aspectRatio;
 
-    static {
-        System.loadLibrary("TeamCode");
-    }
+    private NativeBlobDetector blobDetector;
 
     @Override
     public void init(Mat input) {
 
         aspectRatio = (double)input.height() / (double)input.width();
 
-        nativeInitBlobDetector();
+        blobDetector = new NativeBlobDetector(800.0, 0.5, 1.0);
 
     }
 
@@ -138,8 +138,7 @@ public class RingPipeline extends OpenCvPipeline {
         dilateMat.release();
 
         //PASO 8: Encontrar los blobs en el mat mascareado para localizar la posicion de la pila de rings
-        MatOfKeyPoint blobs = new MatOfKeyPoint();
-        nativeDetectBlobs(maskMat.nativeObj, blobs.nativeObj);
+        MatOfKeyPoint blobs = blobDetector.detect(maskMat);
 
         KeyPoint[] blobsArray = blobs.toArray();
 
@@ -279,13 +278,7 @@ public class RingPipeline extends OpenCvPipeline {
     }
 
     public void destroy() {
-        nativeReleaseBlobDetector();
+        blobDetector.release();
     }
-
-    native void nativeInitBlobDetector();
-
-    native void nativeDetectBlobs(long inputPtr, long outputPtr);
-
-    native void nativeReleaseBlobDetector();
 
 }

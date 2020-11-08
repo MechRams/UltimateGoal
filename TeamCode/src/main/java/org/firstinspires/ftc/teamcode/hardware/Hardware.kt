@@ -34,7 +34,7 @@ class Hardware {
     //sensores
     //public ColorSensor colorSensor = null; (ejemplo)
     //si el boolean "invertedChassis" es true, las llantas de atras del chasis se convierten en las de adelante y viceversa.
-    fun initHardware(hdwMap: HardwareMap, invertedChassis: Boolean) {
+    fun initHardware(hdwMap: HardwareMap) {
 
         this.hdwMap = hdwMap
 

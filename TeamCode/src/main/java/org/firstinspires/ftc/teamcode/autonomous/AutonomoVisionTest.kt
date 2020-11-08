@@ -12,16 +12,16 @@ class AutonomoVisionTest : LinearOpMode() {
     override fun runOpMode() {
 
         vision = Vision(hardwareMap)
-        vision.initRingVision()
+        vision.initRingVision2()
 
         waitForStart()
 
         while(opModeIsActive()) {
 
-            telemetry.addData("Ring Stack Pattern", vision.ringPipeline?.detectedPattern)
+            telemetry.addData("Ring Stack Pattern", vision.ringPipeline2?.getLatestMostLikelyHeight())
 
             telemetry.addData("Frame Count", vision.phoneCam?.frameCount)
-            telemetry.addData("FPS", String.format("%.2f", vision.phoneCam?.fps))
+            telemetry.addData("FPS", "%.2f", vision.phoneCam?.fps)
             telemetry.addData("Total frame time ms", vision.phoneCam?.totalFrameTimeMs)
             telemetry.addData("Pipeline time ms", vision.phoneCam?.pipelineTimeMs)
             telemetry.addData("Overhead time ms", vision.phoneCam?.overheadTimeMs)

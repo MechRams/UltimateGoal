@@ -10,7 +10,11 @@
 using namespace cv;
 using namespace std;
 
-int imax = std::numeric_limits<int>::max();
+SimpleBlobDetector_Context::SimpleBlobDetector_Context(const Ptr<SimpleBlobDetector>& detector){
+    this->detector = detector;
+}
+
+int i_max = numeric_limits<int>::max();
 
 void vecKeyPointToMat(vector<KeyPoint>& v_kp, Mat& mat) {
 
@@ -22,10 +26,6 @@ void vecKeyPointToMat(vector<KeyPoint>& v_kp, Mat& mat) {
         mat.at< Vec<float, 7> >(i, 0) = Vec<float, 7>(kp.pt.x, kp.pt.y, kp.size, kp.angle, kp.response, (float)kp.octave, (float)kp.class_id);
     }
 
-}
-
-SimpleBlobDetector_Context::SimpleBlobDetector_Context(const Ptr<SimpleBlobDetector>& detector){
-    this->detector = detector;
 }
 
 extern "C"
@@ -46,7 +46,7 @@ Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeCreateBlo
 
     params.filterByArea = true;
     params.minArea = minArea;
-    params.maxArea = imax;
+    params.maxArea = i_max;
 
     params.filterByCircularity = true;
     params.minCircularity = minCircularity;
@@ -54,11 +54,11 @@ Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeCreateBlo
 
     params.filterByInertia = true;
     params.minInertiaRatio = 0.1;
-    params.maxInertiaRatio = imax;
+    params.maxInertiaRatio = i_max;
 
     params.filterByConvexity = true;
     params.minConvexity = 0.95;
-    params.maxConvexity = imax;
+    params.maxConvexity = i_max;
 
     auto* blobDetCtx = new SimpleBlobDetector_Context(SimpleBlobDetector::create(params));
     return (jlong) blobDetCtx;

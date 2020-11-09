@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision;
 
-import org.firstinspires.ftc.teamcode.vision.cv.CVGripUtils;
+import org.firstinspires.ftc.teamcode.vision.cv.CVUtils;
 import org.firstinspires.ftc.teamcode.vision.cv.NativeBlobDetector;
 import org.opencv.core.Core;
 import org.opencv.core.KeyPoint;
@@ -53,7 +53,7 @@ public class RingPipeline extends OpenCvPipeline {
 
         //PASO 2: Difuminar la imagen para eliminar puntos de color y/o elementos que podrian hacer ruido en el resultado final
         Mat blurredMat = new Mat();
-        CVGripUtils.cvBoxBlurMat(resizedMat, 3, blurredMat);
+        CVUtils.cvBoxBlurMat(resizedMat, 3, blurredMat);
 
         //PASO 3: Convertir el espacio del color del Mat de RGB A YcCrCb
         // (Dos veces con un mat difuminado y uno normal)
@@ -92,8 +92,8 @@ public class RingPipeline extends OpenCvPipeline {
         Mat ycbcrBlurredThreshMaskMat = new Mat();
         Mat ycbcrThreshMaskMat = new Mat();
 
-        CVGripUtils.cvMask(ycbcrBlurredThreshMat, hsvBlurredThreshMat, ycbcrBlurredThreshMaskMat);
-        CVGripUtils.cvMask(ycbcrThreshMat, hsvThreshMat, ycbcrThreshMaskMat);
+        CVUtils.cvMask(ycbcrBlurredThreshMat, hsvBlurredThreshMat, ycbcrBlurredThreshMaskMat);
+        CVUtils.cvMask(ycbcrThreshMat, hsvThreshMat, ycbcrThreshMaskMat);
 
         hsvMat.release();
         hsvBlurredMat.release();
@@ -111,7 +111,7 @@ public class RingPipeline extends OpenCvPipeline {
         int erodeBordertype = Core.BORDER_CONSTANT;
         Scalar erodeBordervalue = new Scalar(-1);
 
-        CVGripUtils.cvErode(ycbcrBlurredThreshMaskMat, erodeKernel, erodeAnchor, erodeIterations, erodeBordertype, erodeBordervalue, erodeMat);
+        CVUtils.cvErode(ycbcrBlurredThreshMaskMat, erodeKernel, erodeAnchor, erodeIterations, erodeBordertype, erodeBordervalue, erodeMat);
 
         ycbcrBlurredMat.release();
         erodeKernel.release();
@@ -125,7 +125,7 @@ public class RingPipeline extends OpenCvPipeline {
         int dilateBordertype = Core.BORDER_CONSTANT;
         Scalar dilateBordervalue = new Scalar(-1);
 
-        CVGripUtils.cvDilate(erodeMat, dilateKernel, dilateAnchor, dilateIterations, dilateBordertype, dilateBordervalue, dilateMat);
+        CVUtils.cvDilate(erodeMat, dilateKernel, dilateAnchor, dilateIterations, dilateBordertype, dilateBordervalue, dilateMat);
 
         erodeMat.release();
         dilateKernel.release();
@@ -133,7 +133,7 @@ public class RingPipeline extends OpenCvPipeline {
         //PASO 7: Hacer una mascara (recortar partes de un mat) con el mat original recortando
         //las partes blancas de la imagen a la que se le aplicaron los multiples filtros
         Mat maskMat = new Mat();
-        CVGripUtils.cvMask(resizedMat, dilateMat, maskMat);
+        CVUtils.cvMask(resizedMat, dilateMat, maskMat);
 
         dilateMat.release();
 
@@ -164,7 +164,7 @@ public class RingPipeline extends OpenCvPipeline {
 
         //PASO 10: Encontrar los contornos del mat hsv threshold sin difuminar
         ArrayList<MatOfPoint> contours = new ArrayList<>();
-        CVGripUtils.cvFindContours(ycbcrThreshMaskMat, false, contours);
+        CVUtils.cvFindContours(ycbcrThreshMaskMat, false, contours);
 
         //PASO 11: Encontrar el blob mas grande en la imagen (por si se detectaron varios)
         KeyPoint biggestKeyPoint = null;

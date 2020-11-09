@@ -31,7 +31,7 @@ class AutonomoVisionTest : LinearOpMode() {
 
         }
 
-        vision.ringPipeline?.destroy();
+        vision.ringPipeline2?.destroy()
 
     }
 

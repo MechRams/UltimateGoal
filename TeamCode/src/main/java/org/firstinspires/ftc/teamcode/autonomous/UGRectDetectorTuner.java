@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.arcrobotics.ftclib.vision.UGRectDetector;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+@Autonomous(name="Rect Detector Tuner", group="test")
 public class UGRectDetectorTuner extends LinearOpMode {
 
     static double topRectangleWidthPerc = 0.25;

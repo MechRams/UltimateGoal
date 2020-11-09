@@ -11,7 +11,7 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
-public class CVGripUtils {
+public class CVUtils {
 
     /**
      * Softens an image using a box filter.

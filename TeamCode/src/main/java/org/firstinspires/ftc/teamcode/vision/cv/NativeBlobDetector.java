@@ -29,14 +29,14 @@ public class NativeBlobDetector {
     }
 
     @Override
-    public void finalize() {
+    protected void finalize() {
         release();
     }
 
-    native long nativeCreateBlobDetector(double minArea, double minCircularity, double maxCircularity);
+    private static native long nativeCreateBlobDetector(double minArea, double minCircularity, double maxCircularity);
 
-    native void nativeDetectBlobs(long blobDetPtr, long inputPtr, long outputPtr);
+    private static native void nativeDetectBlobs(long blobDetPtr, long inputPtr, long outputPtr);
 
-    native void nativeReleaseBlobDetector(long blobDetPtr);
+    private static native void nativeReleaseBlobDetector(long blobDetPtr);
 
 }

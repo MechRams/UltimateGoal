@@ -1,13 +1,10 @@
 package org.firstinspires.ftc.teamcode.vision
 
-import org.firstinspires.ftc.teamcode.vision.cv.CVGripUtils
+import org.firstinspires.ftc.teamcode.vision.cv.CVUtils
 import org.firstinspires.ftc.teamcode.vision.cv.NativeBlobDetector
-import org.openftc.easyopencv.OpenCvPipeline
-
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
-
-import kotlin.math.abs
+import org.openftc.easyopencv.OpenCvPipeline
 import kotlin.math.hypot
 import kotlin.math.pow
 import kotlin.math.round
@@ -92,19 +89,19 @@ class RingPipeline2 : OpenCvPipeline() {
 
             val mask = Mat(input.rows(), input.cols(), CvType.CV_8UC1)
 
-            CVGripUtils.cvMask(ycbcrMask, hsvMask, mask)
+            CVUtils.cvMask(ycbcrMask, hsvMask, mask)
 
             ycbcrMask.release()
             hsvMask.release()
 
             /**applying to input and putting it on ret in black or yellow**/
-            CVGripUtils.cvMask(input, mask, ret)
+            CVUtils.cvMask(input, mask, ret)
 
             ycbcrMask.release()
             hsvMask.release()
 
-            /**applying GaussianBlur to reduce noise when finding contours**/
-            Imgproc.GaussianBlur(mask, mask, Size(5.0, 5.0), 0.00)
+            /**applying box blur to reduce noise when finding contours**/
+            CVUtils.cvBoxBlurMat(mask, 1.0, mask)
 
             /**erode then dilate to improve results**/
             val anchor = Point(-1.0, -1.0)
@@ -114,11 +111,11 @@ class RingPipeline2 : OpenCvPipeline() {
 
             val erodeMat = Mat()
             val erodeIterations = 1.0
-            CVGripUtils.cvErode(mask, kernel, anchor, erodeIterations, borderType, borderValue, erodeMat)
+            CVUtils.cvErode(mask, kernel, anchor, erodeIterations, borderType, borderValue, erodeMat)
 
             val erodeDilateMask = Mat()
             val dilateIterations = 12.0
-            CVGripUtils.cvDilate(erodeMat, kernel, anchor, dilateIterations, borderType, borderValue, erodeDilateMask)
+            CVUtils.cvDilate(erodeMat, kernel, anchor, dilateIterations, borderType, borderValue, erodeDilateMask)
 
             erodeMat.release()
             kernel.release()
@@ -311,5 +308,9 @@ class RingPipeline2 : OpenCvPipeline() {
     fun getLatestMostLikelyStack() : RingStack? = latestMostLikelyStack
 
     fun getLatestMostLikelyHeight() : RingHeight = getLatestMostLikelyStack()?.ringHeight ?: RingHeight.ZERO
+
+    fun destroy() {
+        blobDet.release()
+    }
 
 }

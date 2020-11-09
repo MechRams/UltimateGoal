@@ -14,7 +14,7 @@ open class BaseAutonomo : IMUPIDEncoderHolonomicLinearOpMode() {
     override fun _runOpMode() {
 
         setRotatePID(PIDCoefficients(0.0152, 0.0, 0.0)) //definir constantes PID
-        imuParameters.DEAD_ZONE = 0.09 //el power minimo con el que se puede mover el robot
+        imuParameters.DEAD_ZONE = 0.1 //el power minimo con el que se puede mover el robot
 
         encoderParameters.TICKS_PER_REV = NeveRest_Orbital_20.TICKS_PER_REVOLUTION
         encoderParameters.DRIVE_GEAR_REDUCTION = TwoGearRatio(1.0, 1.0)

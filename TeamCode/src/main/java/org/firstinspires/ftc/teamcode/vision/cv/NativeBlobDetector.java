@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision.cv;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.qualcomm.robotcore.util.RobotLog;
+
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 
@@ -23,6 +26,11 @@ public class NativeBlobDetector {
 
     public void release() {
         nativeReleaseBlobDetector(nativeObj);
+    }
+
+    @Override
+    public void finalize() {
+        release();
     }
 
     native long nativeCreateBlobDetector(double minArea, double minCircularity, double maxCircularity);

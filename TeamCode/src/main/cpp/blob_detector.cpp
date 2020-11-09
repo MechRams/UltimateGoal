@@ -5,6 +5,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/features2d.hpp>
 
+#include "blob_detector.h"
+
 using namespace cv;
 using namespace std;
 
@@ -20,6 +22,10 @@ void vecKeyPointToMat(vector<KeyPoint>& v_kp, Mat& mat) {
         mat.at< Vec<float, 7> >(i, 0) = Vec<float, 7>(kp.pt.x, kp.pt.y, kp.size, kp.angle, kp.response, (float)kp.octave, (float)kp.class_id);
     }
 
+}
+
+SimpleBlobDetector_Context::SimpleBlobDetector_Context(const Ptr<SimpleBlobDetector>& detector){
+    this->detector = detector;
 }
 
 extern "C"
@@ -54,11 +60,8 @@ Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeCreateBlo
     params.minConvexity = 0.95;
     params.maxConvexity = imax;
 
-    SimpleBlobDetector *blobDet = SimpleBlobDetector::create(params);
-
-    blobDet = static_cast<SimpleBlobDetector*> (malloc(sizeof(&blobDet)));
-
-    return (long)blobDet;
+    auto* blobDetCtx = new SimpleBlobDetector_Context(SimpleBlobDetector::create(params));
+    return (jlong) blobDetCtx;
 
 }
 
@@ -66,14 +69,14 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeDetectBlobs(JNIEnv *env, jobject thiz, jlong blob_det_ptr, jlong input_ptr, jlong output_ptr) {
 
-    auto* blob_det = (SimpleBlobDetector*) blob_det_ptr;
+    auto* blobDetCtx = (SimpleBlobDetector_Context*) blob_det_ptr;
 
     Mat* input = (cv::Mat*) input_ptr;
     Mat* output = (cv::Mat*) output_ptr;
 
     vector<KeyPoint> keyPoints = vector<KeyPoint>();
 
-    blob_det->detect(*input, keyPoints);
+    blobDetCtx->detector->detect(*input, keyPoints);
 
     vecKeyPointToMat(keyPoints, *output);
 
@@ -82,7 +85,11 @@ Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeDetectBlo
 extern "C"
 JNIEXPORT void JNICALL
 Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeReleaseBlobDetector(JNIEnv *env, jobject thiz, jlong blob_det_ptr) {
-    auto* blob_det = (SimpleBlobDetector*) blob_det_ptr;
-    blob_det->clear();
-    delete blob_det;
+
+    auto* blobDetCtx = (SimpleBlobDetector_Context*) blob_det_ptr;
+
+    blobDetCtx->detector->clear();
+    delete blobDetCtx->detector;
+    delete blobDetCtx;
+
 }

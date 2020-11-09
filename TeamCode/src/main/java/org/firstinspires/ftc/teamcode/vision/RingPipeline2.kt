@@ -52,15 +52,20 @@ class RingPipeline2 : OpenCvPipeline() {
     private var blobDet: NativeBlobDetector
     private var ret: Mat
 
+    private var lastOutput: Mat
+
     /**
      * default init call, body of constructors
      */
     init {
         ret = Mat()
+        lastOutput = Mat()
         blobDet = NativeBlobDetector(800.0, 0.7, 1.0)
     }
 
     override fun processFrame(input: Mat): Mat {
+
+        lastOutput.release()
 
         ret = Mat(input.rows(), input.cols(), CvType.CV_8UC1) // resetting pointer held in ret
 
@@ -121,14 +126,14 @@ class RingPipeline2 : OpenCvPipeline() {
             /**finding blobs in dilated Mask**/
             val blobs = blobDet.detect(erodeDilateMask)
 
+            erodeDilateMask.release()
+
             //we found no blobs, meaning there aren't any rings in the picture
             //we exit the function here to save resources.
             if(blobs.toArray().isEmpty()) {
                 blobs.release()
                 return input
             }
-
-            erodeDilateMask.release()
 
             val centerX = input.width().toDouble() / 2.0
             val centerY = input.height().toDouble() / 2.0
@@ -140,6 +145,8 @@ class RingPipeline2 : OpenCvPipeline() {
             val hierarchy = Mat()
 
             Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE)
+
+            hierarchy.release()
 
             for(keyPoint in blobs.toArray()) {
 
@@ -167,7 +174,6 @@ class RingPipeline2 : OpenCvPipeline() {
                 val rect: Rect = Imgproc.boundingRect(contoursInBlobMat)
                 Imgproc.rectangle(input, rect, Scalar(0.0, 0.0, 255.0), 2)
 
-                blobs.release()
                 contoursInBlobMat.release()
 
                 val rectCenterX = rect.x - rect.width / 2
@@ -193,6 +199,12 @@ class RingPipeline2 : OpenCvPipeline() {
 
             }
 
+            blobs.release()
+
+            for (contour in contours) {
+                contour.release()
+            }
+
             val mlStack = getMostLikelyStack()
 
             if(mlStack != null) {
@@ -209,7 +221,6 @@ class RingPipeline2 : OpenCvPipeline() {
 
             mask.release()
             ret.release()
-            hierarchy.release()
 
         } catch (e: Exception) {
             /**error handling, prints stack trace for specific debug**/
@@ -218,7 +229,7 @@ class RingPipeline2 : OpenCvPipeline() {
             e.printStackTrace()
         }
 
-        /**returns the black and orange mask with contours drawn to see logic in action**/
+        lastOutput = input;
         return input
 
     }

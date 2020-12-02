@@ -8,6 +8,7 @@ import com.github.serivesmejia.deltautils.deltapid.PIDController
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionSave
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionStop
 
 class WobbleArmSubsystem(val wobbleArmMotor: DcMotor, val wobbleClawServo: Servo) : DeltaSubsystem() {
 
@@ -20,7 +21,7 @@ class WobbleArmSubsystem(val wobbleArmMotor: DcMotor, val wobbleClawServo: Servo
     val ARM_UP_POSITION = NeveRest_Classic_40.TICKS_PER_REVOLUTION / 2.0
 
     init {
-        setDefaultCommand(CmdArmPositionSave(this))
+        setDefaultCommand(CmdArmPositionStop(this))
     }
 
     override fun loop() {

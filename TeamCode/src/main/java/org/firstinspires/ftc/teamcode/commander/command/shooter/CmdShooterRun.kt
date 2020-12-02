@@ -13,7 +13,9 @@ open class CmdShooterRun(val shooterSubsystem: ShooterSubsystem, val rpm: Double
         shooterSubsystem.setTargetRPM(rpm);
     }
 
-    override fun run() { }
+    override fun run() {
+        finish()
+    }
 
     override fun end(interrupted: Boolean) { }
 

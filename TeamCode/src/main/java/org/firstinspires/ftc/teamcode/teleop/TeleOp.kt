@@ -3,12 +3,14 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.github.serivesmejia.deltautils.deltadrive.extendable.linearopmode.holonomic.JoystickHolonomicLinearOpMode;
 import com.github.serivesmejia.deltautils.deltaevent.event.gamepad.SuperGamepadEvent
 import com.github.serivesmejia.deltautils.deltacommander.DeltaScheduler
+
 import com.github.serivesmejia.deltautils.deltaevent.gamepad.GamepadDataPacket
 import com.github.serivesmejia.deltautils.deltaevent.gamepad.button.Button
+
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionUp
-import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterSubsystem
-import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
+
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.*
+import org.firstinspires.ftc.teamcode.commander.subsystem.*
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 
 @TeleOp(name="TeleOp", group="Final")
@@ -32,17 +34,14 @@ class TeleOp : JoystickHolonomicLinearOpMode() {
         })
 
         //EMPIEZA CODIGO DEL START B
-        superGamepad2.registerEvent(object: SuperGamepadEvent() {
-
-        })
-
         superGamepad2.scheduleOnPress(Button.DPAD_UP, CmdArmPositionUp(armSubsystem))
+        superGamepad2.scheduleOnPress(Button.DPAD_DOWN, CmdArmPositionSave(armSubsystem))
+
+        waitForStart()
 
         superGamepad1.attachToScheduler()
         superGamepad2.attachToScheduler()
 
-        waitForStart()
-        
         while(opModeIsActive()) {
             DeltaScheduler.instance.update()
         }

@@ -7,6 +7,7 @@ import com.github.serivesmejia.deltautils.deltacommander.DeltaSubsystem
 import com.github.serivesmejia.deltautils.deltadrive.motors.revrobotics.HDHex_Motor_Only
 import com.github.serivesmejia.deltautils.deltapid.PIDCoefficients
 import com.github.serivesmejia.deltautils.deltapid.PIDController
+import org.firstinspires.ftc.teamcode.commander.command.shooter.CmdShooterStop
 
 class ShooterSubsystem(val leftMotor: MotorEx, val rightMotor: MotorEx) : DeltaSubsystem()  {
 
@@ -18,20 +19,8 @@ class ShooterSubsystem(val leftMotor: MotorEx, val rightMotor: MotorEx) : DeltaS
     private var targetTPS = 0.0
 
     init {
-
         updateController()
-
-        setDefaultCommand(object: DeltaCommand() {
-
-            override fun init() {
-                setTargetRPM(0.0)
-            }
-
-            override fun run() { }
-            override fun end(interrupted: Boolean) { }
-
-        })
-
+        setDefaultCommand(CmdShooterStop(this))
     }
 
     override fun loop() {

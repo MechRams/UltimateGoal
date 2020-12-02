@@ -59,11 +59,11 @@ public class UGRectDetectorTuner extends LinearOpMode {
 
             detector.setRectangleSize(rectangleWidth, rectangleHeight);
 
-            telemetry.addData("[Data Order]", "Height, Weight");
+            telemetry.addData("[Data Order]", "Width, Height");
 
             telemetry.addData("[Top Rect%]", "%.2f %.2f", topRectangleWidthPerc, topRectangleHeightPerc);
             telemetry.addData("[Bottom Rect%]", "%.2f %.2f", bottomRectangleWidthPerc, bottomRectangleHeightPerc);
-            telemetry.addData("[Rectangle Size(PX)]", "%.2f %.2f", rectangleWidth, rectangleHeight);
+            telemetry.addData("[Rectangle Size(PX)]", "%d %d", rectangleWidth, rectangleHeight);
 
             telemetry.update();
 

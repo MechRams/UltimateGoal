@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision
 
-import org.firstinspires.ftc.teamcode.vision.cv.CVUtils
+import org.firstinspires.ftc.teamcode.vision.cv.CvUtils
 import org.firstinspires.ftc.teamcode.vision.cv.NativeBlobDetector
 import org.opencv.core.*
 import org.opencv.imgproc.Imgproc
@@ -49,20 +49,15 @@ class RingPipeline2 : OpenCvPipeline() {
     private var blobDet: NativeBlobDetector
     private var ret: Mat
 
-    private var lastOutput: Mat
-
     /**
      * default init call, body of constructors
      */
     init {
         ret = Mat()
-        lastOutput = Mat()
         blobDet = NativeBlobDetector(800.0, 0.7, 1.0)
     }
 
     override fun processFrame(input: Mat): Mat {
-
-        lastOutput.release()
 
         ret = Mat(input.rows(), input.cols(), CvType.CV_8UC1) // resetting pointer held in ret
 
@@ -89,19 +84,19 @@ class RingPipeline2 : OpenCvPipeline() {
 
             val mask = Mat(input.rows(), input.cols(), CvType.CV_8UC1)
 
-            CVUtils.cvMask(ycbcrMask, hsvMask, mask)
+            CvUtils.cvMask(ycbcrMask, hsvMask, mask)
 
             ycbcrMask.release()
             hsvMask.release()
 
             /**applying to input and putting it on ret in black or yellow**/
-            CVUtils.cvMask(input, mask, ret)
+            CvUtils.cvMask(input, mask, ret)
 
             ycbcrMask.release()
             hsvMask.release()
 
             /**applying box blur to reduce noise when finding contours**/
-            CVUtils.cvBoxBlurMat(mask, 1.0, mask)
+            CvUtils.cvBoxBlurMat(mask, 1.0, mask)
 
             /**erode then dilate to improve results**/
             val anchor = Point(-1.0, -1.0)
@@ -111,11 +106,11 @@ class RingPipeline2 : OpenCvPipeline() {
 
             val erodeMat = Mat()
             val erodeIterations = 1.0
-            CVUtils.cvErode(mask, kernel, anchor, erodeIterations, borderType, borderValue, erodeMat)
+            CvUtils.cvErode(mask, kernel, anchor, erodeIterations, borderType, borderValue, erodeMat)
 
             val erodeDilateMask = Mat()
             val dilateIterations = 12.0
-            CVUtils.cvDilate(erodeMat, kernel, anchor, dilateIterations, borderType, borderValue, erodeDilateMask)
+            CvUtils.cvDilate(erodeMat, kernel, anchor, dilateIterations, borderType, borderValue, erodeDilateMask)
 
             erodeMat.release()
             kernel.release()
@@ -226,7 +221,6 @@ class RingPipeline2 : OpenCvPipeline() {
             e.printStackTrace()
         }
 
-        lastOutput = input;
         return input
 
     }

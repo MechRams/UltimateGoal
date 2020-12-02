@@ -6,8 +6,6 @@ import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap
-
 
 class Hardware {
 
@@ -29,11 +27,9 @@ class Hardware {
     //servos
     lateinit var servoWobbleClaw: Servo
 
-    var useSleeps = true
-
     //sensores
     //public ColorSensor colorSensor = null; (ejemplo)
-    //si el boolean "invertedChassis" es true, las llantas de atras del chasis se convierten en las de adelante y viceversa.
+
     fun initHardware(hdwMap: HardwareMap) {
 
         this.hdwMap = hdwMap
@@ -50,11 +46,8 @@ class Hardware {
 
         servoWobbleClaw = hdwMap.getDevice<Servo>("CW")!!
 
-        //La direccion de estos motores sera FORWARD
-        motorWobbleArm.direction = DcMotorSimple.Direction.FORWARD
-
         //La direccion de estos motores sera REVERSE
-        motorShooterRight.motorEx.direction = DcMotorSimple.Direction.FORWARD
+        motorShooterRight.motorEx.direction = DcMotorSimple.Direction.REVERSE
 
         //estos motores frenaran si su power es 0
         motorWobbleArm.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
@@ -68,26 +61,10 @@ class Hardware {
         wheelBackLeft.mode = DcMotor.RunMode.RUN_USING_ENCODER
         motorWobbleArm.mode = DcMotor.RunMode.RUN_USING_ENCODER
 
-        val hubs = hardwareMap.getAll(LynxModule::class.java)
+        val hubs = hdwMap.getAll(LynxModule::class.java)
 
         for (hub in hubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
-        }
-
-    }
-
-    //esta es la parte en la que se declaran metodos publicos para poder definir la posicion de los servos en un solo lugar.
-    //esto lo hice en Skystone para no tener que cambiar las posiciones de los servos en cada uno de los autonomos cada que cambiabamos o agregabamos algo
-    //recomiendo llamar a estos metodos con nombres explicativos (en ingles) tales como armDown(), armUp(), grabCube(), releaseCube(), etc.
-
-    fun sleep(milliseconds: Long) { //el metodo que congela el programa.
-
-        if (!useSleeps) return
-
-        try {
-            Thread.sleep(milliseconds)
-        } catch (e: InterruptedException) {
-            Thread.currentThread().interrupt()
         }
 
     }

@@ -47,33 +47,38 @@ class RingPipeline2 : OpenCvPipeline() {
     @Volatile private var latestMostLikelyStack: RingStack? = null
 
     private var blobDet: NativeBlobDetector
-    private var ret: Mat
+    val ret = Mat()
+
+    val ycbcrMat = Mat() // variable to store ycbcr mask in
+    val hsvMat = Mat() // variable to store hsv mask in
+
+    val ycbcrMask = Mat() // variable to store ycbcr mask in
+    val hsvMask = Mat() // variable to store hsv mask in
+
+    val mask = Mat()
+
+    val hierarchy = Mat()
+    val kernel = Mat()
+
+    val erodeMat = Mat()
+    val erodeDilateMask = Mat()
 
     /**
      * default init call, body of constructors
      */
     init {
-        ret = Mat()
         blobDet = NativeBlobDetector(800.0, 0.7, 1.0)
     }
 
     override fun processFrame(input: Mat): Mat {
 
-        ret = Mat(input.rows(), input.cols(), CvType.CV_8UC1) // resetting pointer held in ret
-
         detectedStacks.clear()
 
         try { // try catch in order for opMode to not crash and force a restart
 
-            val ycbcrMat = Mat(input.rows(), input.cols(), CvType.CV_8UC1) // variable to store ycbcr mask in
-            val hsvMat = Mat(input.rows(), input.cols(), CvType.CV_8UC1) // variable to store hsv mask in
-
             /**converting from RGB color space to YCrCb color space**/
             Imgproc.cvtColor(input, ycbcrMat, Imgproc.COLOR_RGB2YCrCb)
             Imgproc.cvtColor(input, hsvMat, Imgproc.COLOR_RGB2HSV)
-
-            val ycbcrMask = Mat(input.rows(), input.cols(), CvType.CV_8UC1) // variable to store ycbcr mask in
-            val hsvMask = Mat(input.rows(), input.cols(), CvType.CV_8UC1) // variable to store hsv mask in
 
             /**checking if any pixel is within the orange bounds to make a black and white mask**/
             Core.inRange(ycbcrMat, lowerYCrCb, upperYCrCb, ycbcrMask)
@@ -81,8 +86,6 @@ class RingPipeline2 : OpenCvPipeline() {
 
             ycbcrMat.release()
             hsvMat.release()
-
-            val mask = Mat(input.rows(), input.cols(), CvType.CV_8UC1)
 
             CvUtils.cvMask(ycbcrMask, hsvMask, mask)
 
@@ -102,13 +105,10 @@ class RingPipeline2 : OpenCvPipeline() {
             val anchor = Point(-1.0, -1.0)
             val borderType = Core.BORDER_CONSTANT
             val borderValue = Scalar(-1.0)
-            val kernel = Mat()
 
-            val erodeMat = Mat()
             val erodeIterations = 1.0
             CvUtils.cvErode(mask, kernel, anchor, erodeIterations, borderType, borderValue, erodeMat)
 
-            val erodeDilateMask = Mat()
             val dilateIterations = 12.0
             CvUtils.cvDilate(erodeMat, kernel, anchor, dilateIterations, borderType, borderValue, erodeDilateMask)
 
@@ -134,7 +134,6 @@ class RingPipeline2 : OpenCvPipeline() {
 
             /**finding contours on mask**/
             val contours: List<MatOfPoint> = ArrayList()
-            val hierarchy = Mat()
 
             Imgproc.findContours(mask, contours, hierarchy, Imgproc.RETR_TREE, Imgproc.CHAIN_APPROX_NONE)
 

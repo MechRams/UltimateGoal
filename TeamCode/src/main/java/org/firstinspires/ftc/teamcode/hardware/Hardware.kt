@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.hardware
 
+import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -19,10 +20,12 @@ class Hardware {
     lateinit var wheelBackLeft: DcMotor
 
     //otros motores
-    lateinit var motorWobbleArm: DcMotor
+    lateinit var motorWobbleArm: MotorEx
 
     lateinit var motorShooterLeft: MotorEx
     lateinit var motorShooterRight: MotorEx
+
+    lateinit var motorIntakeConvey: MotorEx
 
     //servos
     lateinit var servoWobbleClaw: Servo
@@ -35,22 +38,23 @@ class Hardware {
         this.hdwMap = hdwMap
 
         //se obtienen todos los motores, servos y sensores del hardwaremap dado
-        wheelFrontRight = hdwMap.getDevice<DcMotor>("FR")!!
-        wheelFrontLeft = hdwMap.getDevice<DcMotor>("FL")!!
-        wheelBackRight = hdwMap.getDevice<DcMotor>("BL")!!
-        wheelBackLeft = hdwMap.getDevice<DcMotor>("BR")!!
+        wheelFrontRight = hdwMap.get<DcMotor>("FR")!!
+        wheelFrontLeft = hdwMap.get<DcMotor>("FL")!!
+        wheelBackRight = hdwMap.get<DcMotor>("BL")!!
+        wheelBackLeft = hdwMap.get<DcMotor>("BR")!!
 
-        motorWobbleArm = hdwMap.getDevice<DcMotor>("WA")!!
+        motorWobbleArm = MotorEx(hdwMap, "WA")
         motorShooterLeft = MotorEx(hdwMap, "SL")
         motorShooterRight = MotorEx(hdwMap, "SR")
+        motorIntakeConvey = MotorEx(hdwMap, "IN")
 
-        servoWobbleClaw = hdwMap.getDevice<Servo>("CW")!!
+        servoWobbleClaw = hdwMap.get<Servo>("WC")!!
 
         //La direccion de estos motores sera REVERSE
-        motorShooterRight.motorEx.direction = DcMotorSimple.Direction.REVERSE
+        motorShooterRight.inverted = true
 
         //estos motores frenaran si su power es 0
-        motorWobbleArm.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
+        motorWobbleArm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
 
         //se define la posicion por default de estos servos
 
@@ -59,7 +63,8 @@ class Hardware {
         wheelFrontLeft.mode = DcMotor.RunMode.RUN_USING_ENCODER
         wheelBackRight.mode = DcMotor.RunMode.RUN_USING_ENCODER
         wheelBackLeft.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        motorWobbleArm.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
+        motorWobbleArm.setRunMode(Motor.RunMode.VelocityControl)
 
         val hubs = hdwMap.getAll(LynxModule::class.java)
 
@@ -69,6 +74,6 @@ class Hardware {
 
     }
 
-    inline fun <reified T> HardwareMap.getDevice(name: String): T? = this.get(T::class.java, name)
+    inline fun <reified T> HardwareMap.get(name: String): T? = this.get(T::class.java, name)
 
 }

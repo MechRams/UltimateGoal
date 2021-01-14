@@ -1,22 +1,25 @@
 package org.firstinspires.ftc.teamcode.commander.command.shooter
 
+import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.github.serivesmejia.deltautils.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterSubsystem
 
-open class CmdShooterRun(val shooterSubsystem: ShooterSubsystem, val rpm: Double) : DeltaCommand() {
+open class CmdShooterRun(val shooterSubsystem: ShooterSubsystem, val power: Double) : DeltaCommand() {
 
     init {
         require(shooterSubsystem)
     }
 
     override fun init() {
-        shooterSubsystem.setTargetRPM(rpm);
+        shooterSubsystem.shooterMotors.setRunMode(Motor.RunMode.VelocityControl)
     }
 
     override fun run() {
-        finish()
+        shooterSubsystem.shooterMotors.set(power)
     }
 
-    override fun end(interrupted: Boolean) { }
+    override fun end(interrupted: Boolean) {
+        shooterSubsystem.shooterMotors.setRunMode(Motor.RunMode.RawPower)
+    }
 
 }

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.commander.command.intakeconvey
 
-import com.github.serivesmejia.deltautils.deltacommander.DeltaCommand
+import com.github.serivesmejia.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.IntakeConveySubsystem
 
 open class CmdIntakeConveyRun(val subsystem: IntakeConveySubsystem, val power: Double) : DeltaCommand() {

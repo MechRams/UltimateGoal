@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.commander.command.shooter
 
 import com.arcrobotics.ftclib.hardware.motors.Motor
-import com.github.serivesmejia.deltautils.deltacommander.DeltaCommand
+import com.github.serivesmejia.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterSubsystem
 
 open class CmdShooterRun(val shooterSubsystem: ShooterSubsystem, val power: Double) : DeltaCommand() {

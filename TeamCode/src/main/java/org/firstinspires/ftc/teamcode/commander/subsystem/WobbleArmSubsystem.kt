@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.commander.subsystem
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
-import com.github.serivesmejia.deltautils.deltacommander.DeltaSubsystem
-import com.github.serivesmejia.deltautils.deltadrive.motors.andymark.NeveRest_Classic_40
+import com.github.serivesmejia.deltacommander.DeltaSubsystem
+import com.github.serivesmejia.deltadrive.motors.andymark.NeveRest_Classic_40
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionStop
 import kotlin.math.round

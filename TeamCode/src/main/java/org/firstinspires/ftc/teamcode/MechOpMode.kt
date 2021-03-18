@@ -18,14 +18,20 @@ abstract class MechOpMode : LinearOpMode() {
     lateinit var superGamepad2: SuperGamepad
 
     override fun runOpMode() {
-        superGamepad1 = SuperGamepad(gamepad1)
+        superGamepad1 = SuperGamepad(gamepad1) //crear dos "super gamepads" con los gamepads originals
         superGamepad2 = SuperGamepad(gamepad2)
 
-        hdw.initHardware(hardwareMap)
+        hdw.initHardware(hardwareMap) //inicializamos el hardware
         subsystems.init(hdw) //inicializamos todos los subsistemas/mecanismos
 
         deltaHdw = DeltaHardwareHolonomic(hardwareMap, Invert.RIGHT_SIDE)
-        deltaHdw.initHardware(hdw.wheelFrontLeft, hdw.wheelFrontRight, hdw.wheelBackLeft, hdw.wheelBackRight, true)
+        deltaHdw.initHardware(
+                hdw.wheelFrontLeft,
+                hdw.wheelFrontRight,
+                hdw.wheelBackLeft,
+                hdw.wheelBackRight,
+                true
+        )
 
         run()
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.vision.Vision
@@ -10,6 +11,8 @@ class AutonomoVisionTest : LinearOpMode() {
     private lateinit var vision: Vision
 
     override fun runOpMode() {
+
+        telemetry = FtcDashboard.getInstance().telemetry
 
         vision = Vision(hardwareMap)
         vision.initRingVision2()

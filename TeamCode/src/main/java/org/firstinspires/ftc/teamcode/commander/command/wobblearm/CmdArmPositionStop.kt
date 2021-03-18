@@ -17,6 +17,4 @@ class CmdArmPositionStop(val armSubsystem: WobbleArmSubsystem) : DeltaCommand() 
 
     override fun run() { }
 
-    override fun end(interrupted: Boolean) {}
-
 }

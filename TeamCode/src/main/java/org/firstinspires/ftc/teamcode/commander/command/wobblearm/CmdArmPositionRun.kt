@@ -26,3 +26,9 @@ open class CmdArmPositionRun(private val armSubsystem: WobbleArmSubsystem, priva
     }
 
 }
+
+class CmdArmPositionMiddle(armSubsystem: WobbleArmSubsystem) : CmdArmPositionRun(armSubsystem, armSubsystem.ARM_MIDDLE_POSITION)
+
+class CmdArmPositionUp(armSubsystem: WobbleArmSubsystem) : CmdArmPositionRun(armSubsystem, armSubsystem.ARM_UP_POSITION)
+
+class CmdArmPositionSave(armSubsystem: WobbleArmSubsystem) : CmdArmPositionRun(armSubsystem, armSubsystem.ARM_SAVE_POSITION)

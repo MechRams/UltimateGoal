@@ -74,6 +74,6 @@ class Hardware {
 
     }
 
-    inline fun <reified T> HardwareMap.get(name: String): T? = this.get(T::class.java, name)
+    private inline fun <reified T> HardwareMap.get(name: String): T? = this.get(T::class.java, name)
 
 }

@@ -8,58 +8,60 @@ import com.github.serivesmejia.deltaevent.gamepad.button.Button
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.MechOpMode
+import org.firstinspires.ftc.teamcode.commander.command.drive.DriveJoystickCmd
 import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.*
 import org.firstinspires.ftc.teamcode.commander.command.shooter.*
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.*
 
 @TeleOp(name="TeleOp", group="Final")
-class TeleOp : MechOpMode() {
+class MechTeleOp : MechOpMode() {
 
     override fun run() {
-        val mecanumDrive = MecanumDrive(deltaHdw)
-
-        // EMPIEZA CODIGO DEL START A
-
-        superGamepad1.registerEvent(object: SuperGamepadEvent() {
-            override fun loop(gdp: GamepadDataPacket) {
-                mecanumDrive.joystickRobotCentric(gdp.gamepad, true, 0.7)
-            }
-        })
+        DeltaScheduler.instance.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
 
         superGamepad1.attachToScheduler()
 
         // EMPIEZA CODIGO DEL START B
 
         superGamepad2.scheduleOn(Button.A,
-                // encender hacia adentro el intake cuando se presiona A
-                CmdIntakeConveyIn(subsystems.intakeConvey),
-                // apagar el intake cuando se deja de presionar A
-                CmdIntakeConveyStop(subsystems.intakeConvey)
+            // encender hacia adentro el intake cuando se presiona A
+            CmdIntakeConveyIn(subsystems.intakeConvey),
+            // apagar el intake cuando se deja de presionar A
+            CmdIntakeConveyStop(subsystems.intakeConvey)
         )
 
         superGamepad2.scheduleOn(Button.B,
-                // encender hacia afuera el intake cuando se presiona A
-                CmdIntakeConveyOut(subsystems.intakeConvey),
-                // apagar el intake cuando se deja de presionar A
-                CmdIntakeConveyStop(subsystems.intakeConvey)
+            // encender hacia afuera el intake cuando se presiona B
+            CmdIntakeConveyOut(subsystems.intakeConvey),
+            // apagar el intake cuando se deja de presionar B
+            CmdIntakeConveyStop(subsystems.intakeConvey)
         )
 
         superGamepad2.scheduleOn(Button.X,
-                // encender el shooter cuando se presiona X
-                // usar los triggers para desacelerar
-                CmdShooterRun(subsystems.shooter) { 1.0 - eitherTrigger(gamepad2) },
-                //comando para cuando se deja de presionar X
-                CmdShooterStop(subsystems.shooter)
+            // encender el shooter cuando se presiona X
+            // usar los triggers para desacelerar
+            CmdShooterRun(subsystems.shooter) { 1.0 - eitherTrigger(gamepad2) },
+            //comando para cuando se deja de presionar X
+            CmdShooterStop(subsystems.shooter)
         )
 
         //controlar el brazo para el wobble
 
         //mover el brazo arriba con el dpad up
-        superGamepad2.scheduleOnPress(Button.DPAD_UP, CmdArmPositionUp(subsystems.wobbleArm))
+        superGamepad2.scheduleOnPress(
+            Button.DPAD_UP,
+            CmdArmPositionUp(subsystems.wobbleArm)
+        )
         //mover el brazo enmedio con el boton dpad right
-        superGamepad2.scheduleOnPress(Button.DPAD_RIGHT, CmdArmPositionMiddle(subsystems.wobbleArm))
+        superGamepad2.scheduleOnPress(
+            Button.DPAD_RIGHT,
+            CmdArmPositionMiddle(subsystems.wobbleArm)
+        )
         //meter el brazo con el boton dpad right
-        superGamepad2.scheduleOnPress(Button.DPAD_DOWN, CmdArmPositionSave(subsystems.wobbleArm))
+        superGamepad2.scheduleOnPress(
+            Button.DPAD_DOWN,
+            CmdArmPositionSave(subsystems.wobbleArm)
+        )
 
         superGamepad2.attachToScheduler()
 

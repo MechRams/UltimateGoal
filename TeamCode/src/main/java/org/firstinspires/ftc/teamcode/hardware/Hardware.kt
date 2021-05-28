@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 
-class Hardware {
+class Hardware(val onlyDrive: Boolean) {
 
     //hardwaremap que se obtuvo en el constructor
     lateinit var hdwMap: HardwareMap
@@ -38,23 +38,25 @@ class Hardware {
         this.hdwMap = hdwMap
 
         //se obtienen todos los motores, servos y sensores del hardwaremap dado
-        wheelFrontRight = hdwMap.get<DcMotor>("FR")!!
-        wheelFrontLeft = hdwMap.get<DcMotor>("FL")!!
-        wheelBackRight = hdwMap.get<DcMotor>("BL")!!
-        wheelBackLeft = hdwMap.get<DcMotor>("BR")!!
+        wheelFrontRight = device("FR")
+        wheelFrontLeft = device("FL")
+        wheelBackRight = device("BL")
+        wheelBackLeft = device("BR")
 
-        motorWobbleArm = MotorEx(hdwMap, "WA")
-        motorShooterLeft = MotorEx(hdwMap, "SL")
-        motorShooterRight = MotorEx(hdwMap, "SR")
-        motorIntakeConvey = MotorEx(hdwMap, "IN")
+        if(onlyDrive) {
+            motorWobbleArm = MotorEx(hdwMap, "WA")
+            motorShooterLeft = MotorEx(hdwMap, "SL")
+            motorShooterRight = MotorEx(hdwMap, "SR")
+            motorIntakeConvey = MotorEx(hdwMap, "IN")
 
-        servoWobbleClaw = hdwMap.get<Servo>("WC")!!
+            servoWobbleClaw = device("WC")
 
-        //La direccion de estos motores sera REVERSE
-        motorShooterRight.inverted = true
+            //La direccion de estos motores sera REVERSE
+            motorShooterRight.inverted = true
 
-        //estos motores frenaran si su power es 0
-        motorWobbleArm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
+            //estos motores frenaran si su power es 0
+            motorWobbleArm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)
+        }
 
         //se define la posicion por default de estos servos
 
@@ -71,9 +73,8 @@ class Hardware {
         for (hub in hubs) {
             hub.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
         }
-
     }
 
-    private inline fun <reified T> HardwareMap.get(name: String): T? = this.get(T::class.java, name)
+    private inline fun <reified T> device(name: String): T = hdwMap.get(T::class.java, name)
 
 }

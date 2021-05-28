@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode
 
+import com.github.serivesmejia.deltacommander.DeltaScheduler
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.utils.Invert
 import com.github.serivesmejia.deltaevent.gamepad.SuperGamepad
@@ -7,9 +8,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.commander.Subsystems
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 
-abstract class MechOpMode : LinearOpMode() {
+abstract class MechOpMode(onlyChassis: Boolean = false) : LinearOpMode() {
 
-    val hdw = Hardware()
+    val hdw = Hardware(onlyChassis)
     lateinit var deltaHdw: DeltaHardwareHolonomic
 
     val subsystems = Subsystems()
@@ -18,11 +19,13 @@ abstract class MechOpMode : LinearOpMode() {
     lateinit var superGamepad2: SuperGamepad
 
     override fun runOpMode() {
+        DeltaScheduler.reset()
+
         superGamepad1 = SuperGamepad(gamepad1) //crear dos "super gamepads" con los gamepads originals
         superGamepad2 = SuperGamepad(gamepad2)
 
         hdw.initHardware(hardwareMap) //inicializamos el hardware
-        subsystems.init(hdw) //inicializamos todos los subsistemas/mecanismos
+        subsystems.init(hdw, deltaHdw) //inicializamos todos los subsistemas/mecanismos
 
         deltaHdw = DeltaHardwareHolonomic(hardwareMap, Invert.RIGHT_SIDE)
         deltaHdw.initHardware(

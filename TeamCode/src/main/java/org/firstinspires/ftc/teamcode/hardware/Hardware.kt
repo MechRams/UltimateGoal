@@ -43,7 +43,7 @@ class Hardware(val onlyDrive: Boolean) {
         wheelBackRight = device("BL")
         wheelBackLeft = device("BR")
 
-        if(onlyDrive) {
+        if(!onlyDrive) {
             motorWobbleArm = MotorEx(hdwMap, "WA")
             motorShooterLeft = MotorEx(hdwMap, "SL")
             motorShooterRight = MotorEx(hdwMap, "SR")
@@ -66,7 +66,9 @@ class Hardware(val onlyDrive: Boolean) {
         wheelBackRight.mode = DcMotor.RunMode.RUN_USING_ENCODER
         wheelBackLeft.mode = DcMotor.RunMode.RUN_USING_ENCODER
 
-        motorWobbleArm.setRunMode(Motor.RunMode.VelocityControl)
+        if(!onlyDrive) {
+            motorWobbleArm.setRunMode(Motor.RunMode.VelocityControl)
+        }
 
         val hubs = hdwMap.getAll(LynxModule::class.java)
 

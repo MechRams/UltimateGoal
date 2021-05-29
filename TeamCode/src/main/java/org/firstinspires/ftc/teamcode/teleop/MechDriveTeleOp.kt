@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.teleop
 import com.github.serivesmejia.deltacommander.DeltaScheduler
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.commander.command.drive.DriveJoystickCmd
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
+@TeleOp(name="Drive Test TeleOp", group="Test")
 class MechDriveTeleOp : MechOpMode(true) {
 
     override fun run() {

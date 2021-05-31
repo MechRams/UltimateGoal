@@ -14,16 +14,20 @@ class Subsystems {
     lateinit var shooter: ShooterSubsystem
     lateinit var drive: MecanumDriveSubsystem
 
-    fun init(hdw: Hardware, deltaHdw: DeltaHardwareHolonomic) {
+    fun init(hdw: Hardware, deltaHdw: DeltaHardwareHolonomic, onlyChassis: Boolean) {
         DeltaScheduler.reset()
 
-        intakeConvey = IntakeConveySubsystem(hdw.motorIntakeConvey)
-        DeltaScheduler.instance.addSubsystem(intakeConvey)
+        drive = MecanumDriveSubsystem(deltaHdw)
 
-        wobbleArm = WobbleArmSubsystem(hdw.motorWobbleArm, hdw.servoWobbleClaw)
-        DeltaScheduler.instance.addSubsystem(wobbleArm)
+        if(!onlyChassis) {
+            intakeConvey = IntakeConveySubsystem(hdw.motorIntakeConvey)
+            DeltaScheduler.instance.addSubsystem(intakeConvey)
 
-        shooter = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight)
-        DeltaScheduler.instance.addSubsystem(shooter)
+            wobbleArm = WobbleArmSubsystem(hdw.motorWobbleArm, hdw.servoWobbleClaw)
+            DeltaScheduler.instance.addSubsystem(wobbleArm)
+
+            shooter = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight)
+            DeltaScheduler.instance.addSubsystem(shooter)
+        }
     }
 }

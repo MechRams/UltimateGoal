@@ -12,9 +12,9 @@ class MechDriveTeleOp : MechOpMode(true) {
         telemetry.addData("[>]", "Listos!")
         telemetry.update()
 
-        DeltaScheduler.instance.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
-
         waitForStart()
+
+        DeltaScheduler.instance.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
 
         while(opModeIsActive()) {
             telemetry.addData("[>]", "Nyooom")

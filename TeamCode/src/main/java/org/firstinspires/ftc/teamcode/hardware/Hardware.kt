@@ -34,18 +34,17 @@ class Hardware(val onlyDrive: Boolean) {
     //public ColorSensor colorSensor = null; (ejemplo)
 
     fun initHardware(hdwMap: HardwareMap) {
-
         this.hdwMap = hdwMap
 
         //se obtienen todos los motores, servos y sensores del hardwaremap dado
         wheelFrontRight = device("FR")
-        wheelFrontLeft = device("FL")
-        wheelBackRight = device("BL")
-        wheelBackLeft = device("BR")
+        wheelFrontLeft  = device("FL")
+        wheelBackRight  = device("BL")
+        wheelBackLeft   = device("BR")
 
         if(!onlyDrive) {
-            motorWobbleArm = MotorEx(hdwMap, "WA")
-            motorShooterLeft = MotorEx(hdwMap, "SL")
+            motorWobbleArm    = MotorEx(hdwMap, "WA")
+            motorShooterLeft  = MotorEx(hdwMap, "SL")
             motorShooterRight = MotorEx(hdwMap, "SR")
             motorIntakeConvey = MotorEx(hdwMap, "IN")
 

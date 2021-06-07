@@ -38,9 +38,9 @@ class Hardware(val onlyDrive: Boolean) {
 
         //se obtienen todos los motores, servos y sensores del hardwaremap dado
         wheelFrontRight = device("FR")
-        wheelFrontLeft  = device("FL")
-        wheelBackRight  = device("BL")
-        wheelBackLeft   = device("BR")
+        wheelFrontLeft = device("FL")
+        wheelBackRight = device("BR")
+        wheelBackLeft = device("BL")
 
         if(!onlyDrive) {
             motorWobbleArm    = MotorEx(hdwMap, "WA")

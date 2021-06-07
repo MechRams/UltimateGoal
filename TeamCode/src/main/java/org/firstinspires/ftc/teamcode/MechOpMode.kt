@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.commander.Subsystems
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 
-abstract class MechOpMode(onlyChassis: Boolean = false) : LinearOpMode() {
+abstract class MechOpMode(private val onlyChassis: Boolean = false) : LinearOpMode() {
 
     val hdw = Hardware(onlyChassis)
     lateinit var deltaHdw: DeltaHardwareHolonomic
@@ -25,7 +25,6 @@ abstract class MechOpMode(onlyChassis: Boolean = false) : LinearOpMode() {
         superGamepad2 = SuperGamepad(gamepad2)
 
         hdw.initHardware(hardwareMap) //inicializamos el hardware
-        subsystems.init(hdw, deltaHdw) //inicializamos todos los subsistemas/mecanismos
 
         deltaHdw = DeltaHardwareHolonomic(hardwareMap, Invert.RIGHT_SIDE)
         deltaHdw.initHardware(
@@ -35,6 +34,8 @@ abstract class MechOpMode(onlyChassis: Boolean = false) : LinearOpMode() {
                 hdw.wheelBackRight,
                 true
         )
+
+        subsystems.init(hdw, deltaHdw, onlyChassis) //inicializamos todos los subsistemas/mecanismos
 
         run()
     }

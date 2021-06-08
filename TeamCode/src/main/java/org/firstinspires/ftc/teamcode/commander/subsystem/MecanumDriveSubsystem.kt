@@ -9,8 +9,10 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic) : DeltaSubsystem()
 
     val drive = DeltaMecanumDrive(deltaHdw)
 
-    override fun loop() {
+    init {
         defaultCommand = DriveStopCmd(this)
     }
+
+    override fun loop() { }
 
 }

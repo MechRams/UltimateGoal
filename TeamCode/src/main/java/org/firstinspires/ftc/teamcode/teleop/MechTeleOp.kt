@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.github.serivesmejia.deltacommander.DeltaScheduler
 import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltaevent.gamepad.button.Button
@@ -15,6 +17,8 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.*
 class MechTeleOp : MechOpMode() {
 
     override fun run() {
+        telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
+
         deltaScheduler.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
 
         superGamepad1.scheduleOn(Button.A,
@@ -31,10 +35,10 @@ class MechTeleOp : MechOpMode() {
             CmdIntakeConveyStop(subsystems.intakeConvey)
         )
 
-        superGamepad2.scheduleOn(Button.X,
+        superGamepad1.scheduleOn(Button.X,
             // encender el shooter cuando se presiona X
             // usar los triggers para desacelerar
-            CmdShooterRun(subsystems.shooter) { 1.0 - eitherTrigger(gamepad2) },
+            CmdShooterRun(subsystems.shooter) { 1.0 - eitherTrigger(gamepad1) },
             //comando para cuando se deja de presionar X
             CmdShooterStop(subsystems.shooter)
         )
@@ -62,6 +66,11 @@ class MechTeleOp : MechOpMode() {
         waitForStart()
 
         while(opModeIsActive()) {
+            telemetry.addData("fl", hdw.wheelFrontLeft.power)
+            telemetry.addData("fr", hdw.wheelFrontRight.power)
+            telemetry.addData("bl", hdw.wheelBackLeft.power)
+            telemetry.addData("br", hdw.wheelBackRight.power)
+            telemetry.update()
             deltaScheduler.update()
         }
     }

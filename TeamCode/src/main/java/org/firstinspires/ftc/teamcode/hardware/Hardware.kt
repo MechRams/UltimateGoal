@@ -52,6 +52,7 @@ class Hardware(val onlyDrive: Boolean) {
 
             //La direccion de estos motores sera REVERSE
             motorShooterRight.inverted = true
+            motorIntakeConvey.inverted = true
 
             //estos motores frenaran si su power es 0
             motorWobbleArm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)

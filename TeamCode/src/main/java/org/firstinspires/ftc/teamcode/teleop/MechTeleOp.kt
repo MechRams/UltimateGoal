@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import com.github.serivesmejia.deltacommander.DeltaScheduler
-import com.github.serivesmejia.deltadrive.drivebase.MecanumDrive
-import com.github.serivesmejia.deltaevent.event.gamepad.SuperGamepadEvent
-import com.github.serivesmejia.deltaevent.gamepad.GamepadDataPacket
+import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltaevent.gamepad.button.Button
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.Gamepad
@@ -17,20 +15,16 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.*
 class MechTeleOp : MechOpMode() {
 
     override fun run() {
-        DeltaScheduler.instance.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
+        deltaScheduler.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
 
-        superGamepad1.attachToScheduler()
-
-        // EMPIEZA CODIGO DEL START B
-
-        superGamepad2.scheduleOn(Button.A,
+        superGamepad1.scheduleOn(Button.A,
             // encender hacia adentro el intake cuando se presiona A
             CmdIntakeConveyIn(subsystems.intakeConvey),
             // apagar el intake cuando se deja de presionar A
             CmdIntakeConveyStop(subsystems.intakeConvey)
         )
 
-        superGamepad2.scheduleOn(Button.B,
+        superGamepad1.scheduleOn(Button.B,
             // encender hacia afuera el intake cuando se presiona B
             CmdIntakeConveyOut(subsystems.intakeConvey),
             // apagar el intake cuando se deja de presionar B
@@ -48,27 +42,27 @@ class MechTeleOp : MechOpMode() {
         //controlar el brazo para el wobble
 
         //mover el brazo arriba con el dpad up
-        superGamepad2.scheduleOnPress(
+        superGamepad1.scheduleOnPress(
             Button.DPAD_UP,
             CmdArmPositionUp(subsystems.wobbleArm)
         )
         //mover el brazo enmedio con el boton dpad right
-        superGamepad2.scheduleOnPress(
+        superGamepad1.scheduleOnPress(
             Button.DPAD_RIGHT,
             CmdArmPositionMiddle(subsystems.wobbleArm)
         )
         //meter el brazo con el boton dpad right
-        superGamepad2.scheduleOnPress(
+        superGamepad1.scheduleOnPress(
             Button.DPAD_DOWN,
             CmdArmPositionSave(subsystems.wobbleArm)
         )
 
-        superGamepad2.attachToScheduler()
+        superGamepad1.attachToScheduler()
 
         waitForStart()
 
         while(opModeIsActive()) {
-            DeltaScheduler.instance.update()
+            deltaScheduler.update()
         }
     }
 

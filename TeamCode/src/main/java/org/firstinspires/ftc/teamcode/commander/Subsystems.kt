@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commander
 
 import com.github.serivesmejia.deltacommander.DeltaScheduler
+import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import org.firstinspires.ftc.teamcode.commander.subsystem.IntakeConveySubsystem
 import org.firstinspires.ftc.teamcode.commander.subsystem.MecanumDriveSubsystem
@@ -15,19 +16,17 @@ class Subsystems {
     lateinit var drive: MecanumDriveSubsystem
 
     fun init(hdw: Hardware, deltaHdw: DeltaHardwareHolonomic, onlyChassis: Boolean) {
-        DeltaScheduler.reset()
-
         drive = MecanumDriveSubsystem(deltaHdw)
 
         if(!onlyChassis) {
             intakeConvey = IntakeConveySubsystem(hdw.motorIntakeConvey)
-            DeltaScheduler.instance.addSubsystem(intakeConvey)
+            deltaScheduler.addSubsystem(intakeConvey)
 
             wobbleArm = WobbleArmSubsystem(hdw.motorWobbleArm, hdw.servoWobbleClaw)
-            DeltaScheduler.instance.addSubsystem(wobbleArm)
+            deltaScheduler.addSubsystem(wobbleArm)
 
             shooter = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight)
-            DeltaScheduler.instance.addSubsystem(shooter)
+            deltaScheduler.addSubsystem(shooter)
         }
     }
 }

@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.CmdIntakeCo
 
 class IntakeConveySubsystem(val intakeConveyMotor: MotorEx) : DeltaSubsystem() {
     init {
-        setDefaultCommand(CmdIntakeConveyStop(this))
+        defaultCommand = CmdIntakeConveyStop(this)
     }
 
     override fun loop() {

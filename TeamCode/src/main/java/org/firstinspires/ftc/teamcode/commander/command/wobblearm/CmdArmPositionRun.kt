@@ -4,11 +4,9 @@ import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
 
-open class CmdArmPositionRun(private val armSubsystem: WobbleArmSubsystem, private val position: Int) : DeltaCommand() {
+open class CmdArmPositionRun(private val position: Int) : DeltaCommand() {
 
-    init {
-        require(armSubsystem)
-    }
+    val armSubsystem = require<WobbleArmSubsystem>()
 
     override fun init() {
         armSubsystem.wobbleArmMotor.setRunMode(Motor.RunMode.PositionControl)
@@ -27,8 +25,8 @@ open class CmdArmPositionRun(private val armSubsystem: WobbleArmSubsystem, priva
 
 }
 
-class CmdArmPositionMiddle(armSubsystem: WobbleArmSubsystem) : CmdArmPositionRun(armSubsystem, armSubsystem.ARM_MIDDLE_POSITION)
+class CmdArmPositionMiddle : CmdArmPositionRun(WobbleArmSubsystem.ARM_MIDDLE_POSITION)
 
-class CmdArmPositionUp(armSubsystem: WobbleArmSubsystem) : CmdArmPositionRun(armSubsystem, armSubsystem.ARM_UP_POSITION)
+class CmdArmPositionUp : CmdArmPositionRun(WobbleArmSubsystem.ARM_UP_POSITION)
 
-class CmdArmPositionSave(armSubsystem: WobbleArmSubsystem) : CmdArmPositionRun(armSubsystem, armSubsystem.ARM_SAVE_POSITION)
+class CmdArmPositionSave: CmdArmPositionRun(WobbleArmSubsystem.ARM_SAVE_POSITION)

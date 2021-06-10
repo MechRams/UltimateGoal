@@ -11,9 +11,11 @@ class WobbleArmSubsystem(val wobbleArmMotor: MotorEx, val wobbleClawServo: Servo
 
     var armMoving = false
 
-    val ARM_SAVE_POSITION = 0
-    val ARM_MIDDLE_POSITION = round(NeveRest_Classic_40.TICKS_PER_REVOLUTION / 4.0).toInt()
-    val ARM_UP_POSITION = round(NeveRest_Classic_40.TICKS_PER_REVOLUTION / 2.0).toInt()
+    companion object {
+        val ARM_SAVE_POSITION = 0
+        val ARM_MIDDLE_POSITION = round(NeveRest_Classic_40.TICKS_PER_REVOLUTION / 4.0).toInt()
+        val ARM_UP_POSITION = round(NeveRest_Classic_40.TICKS_PER_REVOLUTION / 2.0).toInt()
+    }
 
     init {
         defaultCommand = CmdArmPositionStop(this)

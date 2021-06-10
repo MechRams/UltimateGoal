@@ -69,12 +69,6 @@ class Hardware(val onlyDrive: Boolean) {
         if(!onlyDrive) {
             motorWobbleArm.setRunMode(Motor.RunMode.VelocityControl)
         }
-
-        val hubs = hdwMap.getAll(LynxModule::class.java)
-
-        for (hub in hubs) {
-            hub.bulkCachingMode = LynxModule.BulkCachingMode.AUTO
-        }
     }
 
     private inline fun <reified T> device(name: String): T = hdwMap.get(T::class.java, name)

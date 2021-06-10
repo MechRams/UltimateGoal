@@ -17,7 +17,7 @@ class MechDriveTeleOp : MechOpMode(true) {
 
         waitForStart()
 
-        deltaScheduler.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
+        DriveJoystickCmd(gamepad1).schedule()
 
         while(opModeIsActive()) {
             telemetry.addData("[>]", "Nyooom")

@@ -15,6 +15,6 @@ class ShooterSubsystem(leftMotor: MotorEx, rightMotor: MotorEx) : DeltaSubsystem
         defaultCommand = CmdShooterStop(this)
     }
 
-    override fun loop() {}
+    override fun loop() { }
 
 }

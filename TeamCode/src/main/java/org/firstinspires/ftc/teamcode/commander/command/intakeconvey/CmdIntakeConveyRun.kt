@@ -5,11 +5,9 @@ import org.firstinspires.ftc.teamcode.commander.command.shooter.CmdShooterRun
 import org.firstinspires.ftc.teamcode.commander.subsystem.IntakeConveySubsystem
 import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterSubsystem
 
-open class CmdIntakeConveyRun(val subsystem: IntakeConveySubsystem, val power: Double) : DeltaCommand() {
+open class CmdIntakeConveyRun(val power: Double) : DeltaCommand() {
 
-    init {
-        require(subsystem)
-    }
+    private val subsystem = require<IntakeConveySubsystem>()
 
     override fun init() {}
 
@@ -23,8 +21,8 @@ open class CmdIntakeConveyRun(val subsystem: IntakeConveySubsystem, val power: D
 
 }
 
-class CmdIntakeConveyIn(subsystem: IntakeConveySubsystem) : CmdIntakeConveyRun(subsystem, 1.0)
+class CmdIntakeConveyIn : CmdIntakeConveyRun(1.0)
 
-class CmdIntakeConveyOut(subsystem: IntakeConveySubsystem) : CmdIntakeConveyRun(subsystem, -1.0)
+class CmdIntakeConveyOut : CmdIntakeConveyRun(-1.0)
 
-class CmdIntakeConveyStop(subsystem: IntakeConveySubsystem) : CmdIntakeConveyRun(subsystem, 0.0)
+class CmdIntakeConveyStop : CmdIntakeConveyRun(0.0)

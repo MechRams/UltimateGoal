@@ -7,7 +7,9 @@ repositories {
     flatDir {
         dirs rootProject.file('libs')
     }
-    maven { url 'https://jitpack.io' }
+
+    //maven { url 'https://jitpack.io' }
+    mavenLocal()
 }
 
 dependencies {

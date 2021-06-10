@@ -2,16 +2,19 @@ package org.firstinspires.ftc.teamcode.teleop
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
-import com.github.serivesmejia.deltacommander.DeltaScheduler
 import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltaevent.gamepad.button.Button
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
-import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.commander.command.drive.DriveJoystickCmd
-import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.*
-import org.firstinspires.ftc.teamcode.commander.command.shooter.*
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.*
+import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.CmdIntakeConveyIn
+import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.CmdIntakeConveyOut
+import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.CmdIntakeConveyStop
+import org.firstinspires.ftc.teamcode.commander.command.shooter.CmdShooterRun
+import org.firstinspires.ftc.teamcode.commander.command.shooter.CmdShooterStop
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionMiddle
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionSave
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionUp
 
 @TeleOp(name="TeleOp", group="Final")
 class MechTeleOp : MechOpMode() {
@@ -19,46 +22,44 @@ class MechTeleOp : MechOpMode() {
     override fun run() {
         telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
 
-        deltaScheduler.schedule(DriveJoystickCmd(subsystems.drive, gamepad1))
+        // programar el comando que controlara el chassis con el gamepad
+        DriveJoystickCmd(gamepad1).schedule()
 
         superGamepad1.scheduleOn(Button.A,
             // encender hacia adentro el intake cuando se presiona A
-            CmdIntakeConveyIn(subsystems.intakeConvey),
+            CmdIntakeConveyIn(),
             // apagar el intake cuando se deja de presionar A
-            CmdIntakeConveyStop(subsystems.intakeConvey)
+            CmdIntakeConveyStop()
         )
 
         superGamepad1.scheduleOn(Button.B,
             // encender hacia afuera el intake cuando se presiona B
-            CmdIntakeConveyOut(subsystems.intakeConvey),
+            CmdIntakeConveyOut(),
             // apagar el intake cuando se deja de presionar B
-            CmdIntakeConveyStop(subsystems.intakeConvey)
+            CmdIntakeConveyStop()
         )
 
         superGamepad1.scheduleOn(Button.X,
             // encender el shooter cuando se presiona X
             // usar los triggers para desacelerar
-            CmdShooterRun(subsystems.shooter) { 1.0 - eitherTrigger(gamepad1) },
+            CmdShooterRun(1.0),
             //comando para cuando se deja de presionar X
-            CmdShooterStop(subsystems.shooter)
+            CmdShooterStop()
         )
 
         //controlar el brazo para el wobble
 
         //mover el brazo arriba con el dpad up
-        superGamepad1.scheduleOnPress(
-            Button.DPAD_UP,
-            CmdArmPositionUp(subsystems.wobbleArm)
+        superGamepad1.scheduleOnPress(Button.DPAD_UP,
+            CmdArmPositionUp()
         )
         //mover el brazo enmedio con el boton dpad right
-        superGamepad1.scheduleOnPress(
-            Button.DPAD_RIGHT,
-            CmdArmPositionMiddle(subsystems.wobbleArm)
+        superGamepad1.scheduleOnPress(Button.DPAD_RIGHT,
+            CmdArmPositionMiddle()
         )
-        //meter el brazo con el boton dpad right
-        superGamepad1.scheduleOnPress(
-            Button.DPAD_DOWN,
-            CmdArmPositionSave(subsystems.wobbleArm)
+        //meter el brazo con el boton dpad down
+        superGamepad1.scheduleOnPress(Button.DPAD_DOWN,
+            CmdArmPositionSave()
         )
 
         superGamepad1.attachToScheduler()
@@ -71,17 +72,8 @@ class MechTeleOp : MechOpMode() {
             telemetry.addData("bl", hdw.wheelBackLeft.power)
             telemetry.addData("br", hdw.wheelBackRight.power)
             telemetry.update()
-            deltaScheduler.update()
-        }
-    }
 
-    fun eitherTrigger(gamepad: Gamepad): Double {
-        //usar el valor del left trigger si esta presionado
-        //si no esta presionado el left trigger, usar el valor del right trigger
-        return if (gamepad.left_trigger > 0.2) {
-            1.0 - gamepad.left_trigger.toDouble()
-        } else {
-            1.0 - gamepad.right_trigger.toDouble()
+            deltaScheduler.update()
         }
     }
 

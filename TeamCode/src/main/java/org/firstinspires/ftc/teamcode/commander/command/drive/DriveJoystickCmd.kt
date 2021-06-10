@@ -5,13 +5,10 @@ import com.qualcomm.robotcore.hardware.Gamepad
 import org.firstinspires.ftc.teamcode.commander.subsystem.MecanumDriveSubsystem
 
 class DriveJoystickCmd(
-    private val driveSubsystem: MecanumDriveSubsystem,
     private val gamepad: Gamepad
 ) : DeltaCommand() {
 
-    init {
-        require(driveSubsystem)
-    }
+    private val driveSubsystem = require<MecanumDriveSubsystem>()
 
     override fun run() {
         driveSubsystem.drive.joystickRobotCentric(gamepad, true, 0.7)

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.commander.subsystem
 
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
+import com.github.serivesmejia.deltacontrol.PIDFCoefficients
 import com.github.serivesmejia.deltadrive.drivebase.DeltaMecanumDrive
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.parameters.IMUDriveParameters
@@ -12,12 +13,12 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
     val drive = DeltaMecanumDrive(deltaHdw)
 
     init {
-        defaultCommand = DriveStopCmd(this)
+        defaultCommand = DriveStopCmd()
 
         if(usingIMU) {
             drive.initIMU(IMUDriveParameters().apply {
                 TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
-                COEFFICIENTS = = PIDFCoefficients(0.0045, 0.0, 0.0, 0.000045)
+                COEFFICIENTS = PIDFCoefficients(0.0045, 0.0, 0.0, 0.000045)
             })
         }
     }

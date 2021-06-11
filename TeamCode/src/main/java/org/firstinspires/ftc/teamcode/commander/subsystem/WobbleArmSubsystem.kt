@@ -18,7 +18,7 @@ class WobbleArmSubsystem(val wobbleArmMotor: MotorEx, val wobbleClawServo: Servo
     }
 
     init {
-        defaultCommand = CmdArmPositionStop(this)
+        defaultCommand = CmdArmPositionStop()
     }
 
     override fun loop() {

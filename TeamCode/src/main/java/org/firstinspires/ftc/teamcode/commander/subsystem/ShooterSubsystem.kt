@@ -12,7 +12,7 @@ class ShooterSubsystem(leftMotor: MotorEx, rightMotor: MotorEx) : DeltaSubsystem
     var shooterMotors = MotorGroup(leftMotor, rightMotor)
 
     init {
-        defaultCommand = CmdShooterStop(this)
+        defaultCommand = CmdShooterStop()
     }
 
     override fun loop() { }

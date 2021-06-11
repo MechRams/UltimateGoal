@@ -10,7 +10,7 @@ class IntakeConveySubsystem(val intakeConveyMotor: MotorEx) : DeltaSubsystem() {
     val isForward get() = intakeConveyMotor.get() > 0.0
 
     init {
-        defaultCommand = CmdIntakeConveyStop(this)
+        defaultCommand = CmdIntakeConveyStop()
     }
 
     override fun loop() {

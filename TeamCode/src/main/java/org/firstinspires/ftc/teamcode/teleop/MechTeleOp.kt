@@ -17,13 +17,13 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPosition
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionUp
 
 @TeleOp(name="TeleOp", group="Final")
-class MechTeleOp : MechOpMode() {
+class MechTeleOp : MechOpMode(usingIMU = false) {
 
     override fun run() {
         telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
 
         // programar el comando que controlara el chassis con el gamepad
-        DriveJoystickCmd(gamepad1).schedule()
+        + DriveJoystickCmd(gamepad1)
 
         superGamepad1.scheduleOn(Button.A,
             // encender hacia adentro el intake cuando se presiona A

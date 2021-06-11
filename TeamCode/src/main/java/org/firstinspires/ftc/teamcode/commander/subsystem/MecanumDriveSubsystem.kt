@@ -17,6 +17,7 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
         if(usingIMU) {
             drive.initIMU(IMUDriveParameters().apply {
                 TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
+                COEFFICIENTS = = PIDFCoefficients(0.0045, 0.0, 0.0, 0.000045)
             })
         }
     }

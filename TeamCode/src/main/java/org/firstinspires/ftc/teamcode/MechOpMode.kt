@@ -13,7 +13,10 @@ import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 import org.firstinspires.ftc.teamcode.vision.Vision
 
-abstract class MechOpMode(private val onlyChassis: Boolean = false) : LinearOpMode() {
+abstract class MechOpMode(
+    private val onlyChassis: Boolean = false,
+    private val usingIMU: Boolean = true
+) : LinearOpMode() {
 
     val hdw = Hardware(onlyChassis)
     lateinit var deltaHdw: DeltaHardwareHolonomic
@@ -53,7 +56,7 @@ abstract class MechOpMode(private val onlyChassis: Boolean = false) : LinearOpMo
         )
 
         // crear subsistemas
-        driveSub = MecanumDriveSubsystem(deltaHdw)
+        driveSub = MecanumDriveSubsystem(deltaHdw, usingIMU)
 
         // si queremos utilizar tambien los demas que no sean el drive...
         if(!onlyChassis) {

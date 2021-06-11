@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 @TeleOp(name="Drive Test TeleOp", group="Test")
 @Disabled
-class MechDriveTeleOp : MechOpMode(true) {
+class MechDriveTeleOp : MechOpMode(true, false) {
 
     override fun run() {
         telemetry.addData("[>]", "Listos!")

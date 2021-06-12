@@ -25,7 +25,7 @@ class Hardware(val onlyDrive: Boolean) {
     lateinit var motorShooterLeft: MotorEx
     lateinit var motorShooterRight: MotorEx
 
-    lateinit var motorIntakeConvey: MotorEx
+    lateinit var motorIntakeConvey: DcMotor
 
     //servos
     lateinit var servoWobbleClaw: Servo
@@ -46,13 +46,13 @@ class Hardware(val onlyDrive: Boolean) {
             motorWobbleArm    = MotorEx(hdwMap, "WA")
             motorShooterLeft  = MotorEx(hdwMap, "SL")
             motorShooterRight = MotorEx(hdwMap, "SR")
-            motorIntakeConvey = MotorEx(hdwMap, "IN")
+            motorIntakeConvey = device("IN")
 
             servoWobbleClaw = device("WC")
 
             //La direccion de estos motores sera REVERSE
             motorShooterRight.inverted = true
-            motorIntakeConvey.inverted = true
+            motorIntakeConvey.direction = DcMotorSimple.Direction.REVERSE
 
             //estos motores frenaran si su power es 0
             motorWobbleArm.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE)

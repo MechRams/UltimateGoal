@@ -71,6 +71,7 @@ class MechTeleOp : MechOpMode(usingIMU = false) {
             telemetry.addData("fr", hdw.wheelFrontRight.power)
             telemetry.addData("bl", hdw.wheelBackLeft.power)
             telemetry.addData("br", hdw.wheelBackRight.power)
+            telemetry.addData("in", hdw.motorIntakeConvey.power)
             telemetry.update()
 
             deltaScheduler.update()

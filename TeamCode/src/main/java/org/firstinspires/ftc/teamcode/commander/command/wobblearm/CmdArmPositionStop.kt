@@ -4,11 +4,9 @@ import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
 
-class CmdArmPositionStop(val armSubsystem: WobbleArmSubsystem) : DeltaCommand() {
+class CmdArmPositionStop : DeltaCommand() {
 
-    init {
-        require(armSubsystem)
-    }
+    val armSubsystem = require<WobbleArmSubsystem>()
 
     override fun init() {
         armSubsystem.armMoving = false

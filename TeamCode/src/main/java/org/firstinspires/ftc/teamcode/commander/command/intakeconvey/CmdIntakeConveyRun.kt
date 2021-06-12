@@ -12,11 +12,11 @@ open class CmdIntakeConveyRun(val power: Double) : DeltaCommand() {
     override fun init() {}
 
     override fun run() {
-        subsystem.intakeConveyMotor.set(power)
+        subsystem.intakeConveyMotor.power = power
     }
 
     override fun end(interrupted: Boolean) {
-        subsystem.intakeConveyMotor.set(0.0)
+        subsystem.intakeConveyMotor.power = 0.0
     }
 
 }

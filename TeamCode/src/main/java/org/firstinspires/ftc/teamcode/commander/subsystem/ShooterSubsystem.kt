@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
 import com.github.serivesmejia.deltadrive.motors.revrobotics.HDHex_Motor_Only
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterFlickOutCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
 
 class ShooterSubsystem(
@@ -33,7 +34,7 @@ class ShooterFlickerSubsystem(
     }
 
     init {
-        defaultCommand = FlickerOutCmd()
+        defaultCommand = ShooterFlickOutCmd()
     }
 
     override fun loop() { }

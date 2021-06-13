@@ -43,3 +43,13 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
     }
 
 }
+
+class ShooterFlickOutCmd : DeltaCommand() {
+
+    val shooterSub = require<ShooterFlickerSubsystem>()
+
+    override fun run() {
+        shooterSub.flickerServo.position = ShooterFlickerSubsystem.FLICKER_OUT_POS
+    }
+
+}

@@ -10,6 +10,8 @@ import org.firstinspires.ftc.teamcode.commander.command.drive.DriveJoystickCmd
 import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.IntakeConveyInCmd
 import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.IntakeConveyOutCmd
 import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.IntakeConveyStopCmd
+import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterFlickCmd
+import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterFlickOutCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterRunCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionMiddleCmd
@@ -20,8 +22,6 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionUpC
 class MechTeleOp : MechOpMode(usingIMU = false) {
 
     override fun run() {
-        telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
-
         // programar el comando que controlara el chassis con el gamepad
         + DriveJoystickCmd(gamepad1)
 
@@ -45,6 +45,14 @@ class MechTeleOp : MechOpMode(usingIMU = false) {
             ShooterRunCmd(1.0),
             //comando para cuando se vuelva a presionar X
             ShooterStopCmd()
+        )
+
+        superGamepad1.scheduleOn(Button.Y,
+            // mover el servo adentro y afuera constantemente
+            // mientras se este presionando Y
+            ShooterFlickCmd(),
+            // dejar de mover el servo cuando se deja de presionar Y
+            ShooterFlickOutCmd()
         )
 
         //controlar el brazo para el wobble

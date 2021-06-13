@@ -3,7 +3,7 @@ package com.github.serivesmejia.deltacommander.dsl
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import com.github.serivesmejia.deltacommander.command.DeltaSequentialCmd
 
-class DeltaSequenceDsl(private val block: DeltaSequenceDsl.() -> Unit) {
+class DeltaSequenceBuilder(private val block: DeltaSequenceBuilder.() -> Unit) {
 
     private val commands = mutableListOf<DeltaCommand>()
 
@@ -19,4 +19,4 @@ class DeltaSequenceDsl(private val block: DeltaSequenceDsl.() -> Unit) {
 
 }
 
-fun deltaSequence(block: DeltaSequenceDsl.() -> Unit) = DeltaSequenceDsl(block).build()
+fun deltaSequence(block: DeltaSequenceBuilder.() -> Unit) = DeltaSequenceBuilder(block).build()

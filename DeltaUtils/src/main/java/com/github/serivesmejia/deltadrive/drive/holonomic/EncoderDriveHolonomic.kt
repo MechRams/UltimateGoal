@@ -25,6 +25,7 @@ package com.github.serivesmejia.deltadrive.drive.holonomic
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.parameters.EncoderDriveParameters
 import com.github.serivesmejia.deltadrive.utils.DistanceUnit
+import com.github.serivesmejia.deltadrive.utils.gear.GearRatio
 import com.github.serivesmejia.deltadrive.utils.task.Task
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
@@ -68,9 +69,6 @@ class EncoderDriveHolonomic
 
         parameters.secureParameters()
 
-        val ticksPerInch = parameters.TICKS_PER_REV * parameters.DRIVE_GEAR_REDUCTION.ratioAsDecimal /
-                             (parameters.WHEEL_DIAMETER_INCHES * Math.PI)
-
         if (parameters.DISTANCE_UNIT === DistanceUnit.CENTIMETERS) {
             fl *= 0.393701
             fr *= 0.393701
@@ -79,9 +77,16 @@ class EncoderDriveHolonomic
         }
 
         // Determine new target position, and pass to motor controller
+        var ticksPerInch = calcTicksPerInch(0)
         val newFrontLeftTarget = (hdw.wheelFrontLeft.currentPosition + (fl * ticksPerInch)).roundToInt()
+
+        ticksPerInch = calcTicksPerInch(1)
         val newFrontRightTarget = (hdw.wheelFrontRight.currentPosition + (fr * ticksPerInch)).roundToInt()
+
+        ticksPerInch = calcTicksPerInch(2)
         val newBackLeftTarget = (hdw.wheelBackLeft.currentPosition + (bl * ticksPerInch)).roundToInt()
+
+        ticksPerInch = calcTicksPerInch(3)
         val newBackRightTarget = (hdw.wheelBackRight.currentPosition + (br * ticksPerInch)).roundToInt()
 
         hdw.setTargetPositions(newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget)
@@ -211,6 +216,15 @@ class EncoderDriveHolonomic
             parameters.RIGHT_WHEELS_TURBO, parameters.LEFT_WHEELS_TURBO,
             "turnLeft"
         )
+    }
+
+    private fun calcTicksPerInch(reductionI: Int) =
+        parameters.TICKS_PER_REV * getReduction(reductionI).ratioAsDecimal / (parameters.WHEEL_DIAMETER_INCHES * Math.PI)
+
+    private fun getReduction(reductionI: Int): GearRatio = parameters.DRIVE_GEAR_REDUCTIONS.run {
+        return if(size < reductionI && isNotEmpty())
+            this[reductionI]
+        else parameters.EMPTY_GEAR_REDUCTION
     }
 
     data class Distances(var fl: Int, var fr: Int, var bl: Int, var br: Int)

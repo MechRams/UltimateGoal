@@ -37,12 +37,15 @@ class EncoderDriveParameters {
      */
     var TICKS_PER_REV = 0.0
 
-    private val EMPTY_GEAR_REDUCTION: GearRatio = TwoGearRatio(1.0, 1.0, 0.0)
+    val EMPTY_GEAR_REDUCTION: GearRatio = TwoGearRatio(1.0, 1.0, 0.0)
 
     /**
      * This is < 1.0 and > 0 if geared UP
      */
-    var DRIVE_GEAR_REDUCTION: GearRatio = EMPTY_GEAR_REDUCTION
+    var DRIVE_GEAR_REDUCTIONS = mutableListOf(
+        EMPTY_GEAR_REDUCTION, EMPTY_GEAR_REDUCTION,
+        EMPTY_GEAR_REDUCTION, EMPTY_GEAR_REDUCTION
+    )
 
     /**
      * The wheels diameter, in inches

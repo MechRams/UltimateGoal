@@ -1,15 +1,14 @@
 package org.firstinspires.ftc.teamcode
 
+import com.acmerobotics.dashboard.FtcDashboard
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltacommander.reset
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.utils.Invert
 import com.github.serivesmejia.deltaevent.gamepad.SuperGamepad
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.commander.subsystem.IntakeConveySubsystem
-import org.firstinspires.ftc.teamcode.commander.subsystem.MecanumDriveSubsystem
-import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterSubsystem
-import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
+import org.firstinspires.ftc.teamcode.commander.subsystem.*
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 import org.firstinspires.ftc.teamcode.vision.Vision
 
@@ -26,6 +25,7 @@ abstract class MechOpMode(
     lateinit var intakeConveySub: IntakeConveySubsystem
     lateinit var wobbleArmSub: WobbleArmSubsystem
     lateinit var shooterSub: ShooterSubsystem
+    lateinit var shooterFlickerSub: ShooterFlickerSubsystem
     lateinit var driveSub: MecanumDriveSubsystem
 
     lateinit var vision: Vision
@@ -34,6 +34,8 @@ abstract class MechOpMode(
     lateinit var superGamepad2: SuperGamepad
 
     override fun runOpMode() {
+        telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
+
         //reinicializar el scheduler
         deltaScheduler.reset()
 
@@ -62,7 +64,8 @@ abstract class MechOpMode(
         if(!onlyChassis) {
             intakeConveySub = IntakeConveySubsystem(hdw.motorIntakeConvey)
             wobbleArmSub = WobbleArmSubsystem(hdw.motorWobbleArm, hdw.servoWobbleClaw)
-            shooterSub = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight)
+            shooterSub = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight )
+            shooterFlickerSub = ShooterFlickerSubsystem(hdw.servoShooterFlicker)
         }
 
         run()

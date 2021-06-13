@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorEx
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
 import com.github.serivesmejia.deltadrive.motors.andymark.NeveRest_Classic_40
 import com.qualcomm.robotcore.hardware.Servo
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.CmdArmPositionStop
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionStopCmd
 import kotlin.math.round
 
 class WobbleArmSubsystem(val wobbleArmMotor: MotorEx, val wobbleClawServo: Servo) : DeltaSubsystem() {
@@ -18,7 +18,7 @@ class WobbleArmSubsystem(val wobbleArmMotor: MotorEx, val wobbleClawServo: Servo
     }
 
     init {
-        defaultCommand = CmdArmPositionStop()
+        defaultCommand = ArmPositionStopCmd()
     }
 
     override fun loop() {

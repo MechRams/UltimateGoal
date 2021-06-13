@@ -46,7 +46,7 @@ class RingPipeline2 : OpenCvPipeline() {
     private val detectedStacks: ArrayList<RingStack> = ArrayList()
     @Volatile private var latestMostLikelyStack: RingStack? = null
 
-    private var blobDet: NativeBlobDetector
+    private var blobDet = NativeBlobDetector(800.0, 0.7, 1.0)
     val ret = Mat()
 
     val ycbcrMat = Mat() // variable to store ycbcr mask in
@@ -62,13 +62,6 @@ class RingPipeline2 : OpenCvPipeline() {
 
     val erodeMat = Mat()
     val erodeDilateMask = Mat()
-
-    /**
-     * default init call, body of constructors
-     */
-    init {
-        blobDet = NativeBlobDetector(800.0, 0.7, 1.0)
-    }
 
     override fun processFrame(input: Mat): Mat {
 
@@ -172,9 +165,7 @@ class RingPipeline2 : OpenCvPipeline() {
 
                 val rectAspectRatio = rect.height.toDouble() / rect.width.toDouble()
 
-                var ringHeight: RingHeight
-
-                ringHeight = when {
+                val ringHeight = when {
                     rectAspectRatio >= 0.5 -> {
                         RingHeight.FOUR
                     }
@@ -268,12 +259,10 @@ class RingPipeline2 : OpenCvPipeline() {
             when(mostLikelyMode) {
 
                 MostLikelyMode.CENTER_ML -> {
-
                     val magCurrent = hypot(mlStack.distanceFromCenter.x, mlStack.distanceFromCenter.y)
                     val magNew = hypot(stack.distanceFromCenter.x, stack.distanceFromCenter.y)
 
                     if (magNew < magCurrent) mlStack = stack
-
                 }
 
                 MostLikelyMode.RIGHT_ML -> {

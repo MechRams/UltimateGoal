@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
 
-class CmdArmPositionStop : DeltaCommand() {
+class ArmPositionStopCmd : DeltaCommand() {
 
     val armSubsystem = require<WobbleArmSubsystem>()
 

@@ -28,6 +28,7 @@ class Hardware(val onlyDrive: Boolean) {
     lateinit var motorIntakeConvey: DcMotor
 
     //servos
+    lateinit var servoShooterFlicker: Servo
     lateinit var servoWobbleClaw: Servo
 
     //sensores
@@ -49,6 +50,7 @@ class Hardware(val onlyDrive: Boolean) {
             motorIntakeConvey = device("IN")
 
             servoWobbleClaw = device("WC")
+            servoShooterFlicker = device("FK")
 
             //La direccion de estos motores sera REVERSE
             motorShooterRight.inverted = true

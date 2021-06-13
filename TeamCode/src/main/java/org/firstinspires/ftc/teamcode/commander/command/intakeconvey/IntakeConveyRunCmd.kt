@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.commander.command.intakeconvey
 
 import com.github.serivesmejia.deltacommander.DeltaCommand
-import org.firstinspires.ftc.teamcode.commander.command.shooter.CmdShooterRun
 import org.firstinspires.ftc.teamcode.commander.subsystem.IntakeConveySubsystem
-import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterSubsystem
 
 open class CmdIntakeConveyRun(val power: Double) : DeltaCommand() {
 
@@ -21,8 +19,8 @@ open class CmdIntakeConveyRun(val power: Double) : DeltaCommand() {
 
 }
 
-class CmdIntakeConveyIn : CmdIntakeConveyRun(1.0)
+class IntakeConveyInCmd : CmdIntakeConveyRun(1.0)
 
-class CmdIntakeConveyOut : CmdIntakeConveyRun(-1.0)
+class IntakeConveyOutCmd : CmdIntakeConveyRun(-1.0)
 
-class CmdIntakeConveyStop : CmdIntakeConveyRun(0.0)
+class IntakeConveyStopCmd : CmdIntakeConveyRun(0.0)

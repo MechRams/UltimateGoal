@@ -4,7 +4,7 @@ import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterSubsystem
 
-open class CmdShooterRun(val powerSupplier: () -> Double) : DeltaCommand() {
+open class ShooterRunCmd(val powerSupplier: () -> Double) : DeltaCommand() {
 
     private val shooterSubsystem = require<ShooterSubsystem>()
 
@@ -24,4 +24,4 @@ open class CmdShooterRun(val powerSupplier: () -> Double) : DeltaCommand() {
 
 }
 
-class CmdShooterStop : CmdShooterRun(0.0)
+class ShooterStopCmd : ShooterRunCmd(0.0)

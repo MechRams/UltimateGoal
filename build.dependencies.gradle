@@ -24,4 +24,5 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-lite:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.acmerobotics.dashboard:dashboard:0.4.2'
+    implementation "com.github.NoahBres:jotai:1.0.3"
 }

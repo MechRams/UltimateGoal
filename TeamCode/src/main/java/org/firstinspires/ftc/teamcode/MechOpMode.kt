@@ -56,7 +56,7 @@ abstract class MechOpMode(
         )
 
         // crear subsistemas
-        driveSub = MecanumDriveSubsystem(deltaHdw, usingIMU)
+        driveSub = MecanumDriveSubsystem(deltaHdw, telemetry, usingIMU)
 
         // si queremos utilizar tambien los demas que no sean el drive...
         if(!onlyChassis) {

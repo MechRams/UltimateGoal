@@ -6,15 +6,13 @@ import com.github.serivesmejia.deltacontrol.PIDFCoefficients
 import com.github.serivesmejia.deltadrive.drivebase.DeltaMecanumDrive
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.parameters.IMUDriveParameters
+import org.firstinspires.ftc.robotcore.external.Telemetry
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.commander.command.drive.DriveStopCmd
 
 class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
+                            telemetry: Telemetry,
                             usingIMU: Boolean = true) : DeltaSubsystem() {
-
-    @Config
-    companion object {
-        @JvmField var rotatePIDF = com.qualcomm.robotcore.hardware.PIDFCoefficients(0.039, 0.0005, 0.005, 0.0028)
-    }
 
     val drive = DeltaMecanumDrive(deltaHdw)
 
@@ -22,11 +20,17 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
         defaultCommand = DriveStopCmd()
 
         if(usingIMU) {
+            telemetry.addData("[>]", "Inicializando IMU, espera...")
+            telemetry.update()
+
             drive.initIMU(IMUDriveParameters().apply {
                 TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
-                COEFFICIENTS = PIDFCoefficients(rotatePIDF.p, rotatePIDF.i, rotatePIDF.d, rotatePIDF.f)
+                COEFFICIENTS = Constants.rotatePIDFCoefficients
+
                 ERROR_TOLERANCE = 0.5
             })
+
+            telemetry.update()
         }
     }
 

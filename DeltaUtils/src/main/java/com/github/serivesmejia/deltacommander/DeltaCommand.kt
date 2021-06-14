@@ -56,20 +56,22 @@ abstract class DeltaCommand {
 
     fun schedule() = deltaScheduler.schedule(this)
 
-    fun stopAfter(seconds: Double): DeltaCommand {
+    fun stopAfter(timeSecs: Double): DeltaCommand {
         + deltaSequence {
-            DeltaWaitCmd(seconds) ()
+            DeltaWaitCmd(timeSecs) ()
             DeltaRunCmd(::finish) ()
         }
 
         return this
     }
 
-    fun stopOn(condition: () -> Boolean) {
+    fun stopOn(condition: () -> Boolean): DeltaCommand {
         + deltaSequence {
             DeltaWaitConditionCmd(condition) ()
             DeltaRunCmd(::finish) ()
         }
+
+        return this
     }
 
     operator fun unaryPlus() = schedule()

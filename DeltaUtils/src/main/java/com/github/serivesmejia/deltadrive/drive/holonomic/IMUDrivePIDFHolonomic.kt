@@ -22,7 +22,7 @@
 
 package com.github.serivesmejia.deltadrive.drive.holonomic
 
-import com.github.serivesmejia.deltadrive.drive.ExtendableIMUDrivePIDF
+import com.github.serivesmejia.deltadrive.drive.IMUDrivePIDFBase
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardware
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -30,10 +30,14 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 class IMUDrivePIDFHolonomic(
     private val hdw: DeltaHardwareHolonomic,
     telemetry: Telemetry? = null
-) : ExtendableIMUDrivePIDF(hdw, DeltaHardware.Type.HOLONOMIC, telemetry) {
+) : IMUDrivePIDFBase(hdw, DeltaHardware.Type.HOLONOMIC, telemetry) {
 
-    override fun setAllMotorPower(frontleftpower: Double, frontrightpower: Double, backleftpower: Double, backrightpower: Double) {
-        hdw.setMotorPowers(frontleftpower, frontrightpower, backleftpower, backrightpower)
-    }
+    override fun setAllMotorPower(
+        frontleftpower: Double, frontrightpower: Double,
+        backleftpower: Double, backrightpower: Double
+    ) = hdw.setMotorPowers(
+        frontleftpower, frontrightpower,
+        backleftpower, backrightpower
+    )
 
 }

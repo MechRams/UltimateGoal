@@ -27,6 +27,10 @@ class Twist2d (
         val rot: Rot2d
 ) {
 
+    companion object {
+        val empty = Twist2d()
+    }
+
     val x
         get() = vec.x
     val y

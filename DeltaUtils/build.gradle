@@ -24,4 +24,5 @@ apply from: '../build.dependencies.gradle'
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    testImplementation 'junit:junit:4.12'
 }

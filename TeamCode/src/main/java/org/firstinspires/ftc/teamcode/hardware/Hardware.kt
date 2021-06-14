@@ -2,56 +2,39 @@ package org.firstinspires.ftc.teamcode.hardware
 
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
-import com.qualcomm.hardware.lynx.LynxModule
+import com.github.serivesmejia.deltasimple.SimpleHardware
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.HardwareMap
 import com.qualcomm.robotcore.hardware.Servo
 
-class Hardware(val onlyDrive: Boolean) {
-
-    //hardwaremap que se obtuvo en el constructor
-    lateinit var hdwMap: HardwareMap
+class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
 
     //llantas
-    lateinit var wheelFrontRight: DcMotor
-    lateinit var wheelFrontLeft: DcMotor
-    lateinit var wheelBackRight: DcMotor
-    lateinit var wheelBackLeft: DcMotor
+    val wheelFrontLeft  by hardware<DcMotor>("FL")
+    val wheelFrontRight by hardware<DcMotor>("FR")
+    val wheelBackLeft   by hardware<DcMotor>("BL")
+    val wheelBackRight  by hardware<DcMotor>("BR")
 
     //otros motores
-    lateinit var motorWobbleArm: MotorEx
+    val motorWobbleArm by motorEx("WA")
 
-    lateinit var motorShooterLeft: MotorEx
-    lateinit var motorShooterRight: MotorEx
+    val motorShooterLeft  by motorEx("SL")
+    val motorShooterRight by motorEx("SR")
 
-    lateinit var motorIntakeConvey: DcMotor
+    val motorIntakeConvey by hardware<DcMotor>("IN")
 
     //servos
-    lateinit var servoShooterFlicker: Servo
-    lateinit var servoWobbleClaw: Servo
+    val servoShooterFlicker by hardware<Servo>("SF")
+    val servoWobbleClaw     by hardware<Servo>("WC")
 
     //sensores
     //public ColorSensor colorSensor = null; (ejemplo)
 
-    fun initHardware(hdwMap: HardwareMap) {
-        this.hdwMap = hdwMap
-
-        //se obtienen todos los motores, servos y sensores del hardwaremap dado
-        wheelFrontRight = device("FR")
-        wheelFrontLeft = device("FL")
-        wheelBackRight = device("BR")
-        wheelBackLeft = device("BL")
+    override fun initHardware(hardwareMap: HardwareMap) {
+        super.initHardware(hardwareMap)
 
         if(!onlyDrive) {
-            motorWobbleArm    = MotorEx(hdwMap, "WA")
-            motorShooterLeft  = MotorEx(hdwMap, "SL")
-            motorShooterRight = MotorEx(hdwMap, "SR")
-            motorIntakeConvey = device("IN")
-
-            servoWobbleClaw = device("WC")
-            servoShooterFlicker = device("FK")
-
             //La direccion de estos motores sera REVERSE
             motorShooterRight.inverted = true
             motorIntakeConvey.direction = DcMotorSimple.Direction.REVERSE
@@ -73,6 +56,6 @@ class Hardware(val onlyDrive: Boolean) {
         }
     }
 
-    private inline fun <reified T> device(name: String): T = hdwMap.get(T::class.java, name)
+    private fun motorEx(name: String) = lazy { MotorEx(hdwMap, name) }
 
 }

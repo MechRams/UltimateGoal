@@ -30,6 +30,7 @@ import com.github.serivesmejia.deltadrive.utils.task.Task
 import com.github.serivesmejia.deltamath.geometry.Rot2d
 import com.github.serivesmejia.deltamath.geometry.Twist2d
 import com.github.serivesmejia.deltasimple.sensor.SimpleBNO055IMU
+import com.noahbres.jotai.ActionCallback
 import com.noahbres.jotai.StateMachineBuilder
 import com.qualcomm.hardware.bosch.BNO055IMU
 import com.qualcomm.robotcore.util.ElapsedTime
@@ -37,7 +38,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import kotlin.math.abs
 
 @Suppress("UNUSED")
-abstract class ExtendableIMUDrivePIDF
+abstract class IMUDrivePIDFBase
 /**
  * Constructor for the IMU drive class
  * (Do not forget to call initIMU() before the OpMode starts!)
@@ -90,6 +91,8 @@ abstract class ExtendableIMUDrivePIDF
         return imu.cumulativeAngle
     }
 
+    val lastRobotAngle get() = imu.lastCumulativeAngle
+
     /**
      * Rotate by a Rot2d with a PID repeat.
      * @param rotation The Rot2d to rotate by (use Rot2d.fromDegrees() to create a new Rot2d from degrees)
@@ -107,14 +110,26 @@ abstract class ExtendableIMUDrivePIDF
 
         imuParameters.secureParameters()
 
-        if (!imu.initialized) {
-            telemetry?.addData("[/!\\]", "Call initIMU() method before rotating.")
-            telemetry?.update()
+        if (::imu.isInitialized || !imu.initialized) {
 
-            return Task { end(); Twist2d() }
+            return Task {
+                telemetry?.addData("[/!\\]", "Call initIMU() method before rotating.")
+                telemetry?.update()
+
+                markers.timeMarker(2.0) { end() }
+
+                Twist2d.empty
+            }
         }
 
-        if (!isIMUCalibrated) return Task { end(); Twist2d() }
+        if (!isIMUCalibrated) return Task {
+            telemetry?.addData("[/!\\]", "Calibrate IMU before rotating.")
+            telemetry?.update()
+
+            markers.timeMarker(2.0) { end() }
+
+            Twist2d.empty
+        }
 
         runtime.reset()
 
@@ -144,28 +159,34 @@ abstract class ExtendableIMUDrivePIDF
 
         val initialAngle = imu.lastCumulativeAngle
 
+        val commonTurnLoop = ActionCallback {
+            // calculate the out power from the controller
+            powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
+
+            // update the current angle twist
+            currentTwist = Twist2d(0.0, 0.0,
+                imu.lastCumulativeAngle - initialAngle
+            )
+        }
+
         if(setpoint < 0) { //rotating right
             builder.state(State.TURN_RIGHT)
-                    .loop {
-                        powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
-                        currentTwist = Twist2d(0.0, 0.0, imu.lastCumulativeAngle - initialAngle)
-
-                        backleftpower = powerF
-                        backrightpower = -powerF
-                        frontleftpower = powerF
-                        frontrightpower = -powerF
-                    }
+                .loop(commonTurnLoop)
+                .loop {
+                    backleftpower = powerF
+                    backrightpower = -powerF
+                    frontleftpower = powerF
+                    frontrightpower = -powerF
+                }
         } else { //rotating left
             builder.state(State.TURN_LEFT)
-                    .loop {
-                        powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
-                        currentTwist = Twist2d(0.0, 0.0,  imu.lastCumulativeAngle - initialAngle)
-
-                        backleftpower = powerF
-                        backrightpower = -powerF
-                        frontleftpower = powerF
-                        frontrightpower = -powerF
-                    }
+                .loop(commonTurnLoop)
+                .loop {
+                    backleftpower = powerF
+                    backrightpower = -powerF
+                    frontleftpower = powerF
+                    frontrightpower = -powerF
+                }
         }
 
         builder.transition { pidControllerRotate.onSetpoint() && System.currentTimeMillis() > maxMillis }

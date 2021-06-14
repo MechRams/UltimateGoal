@@ -16,7 +16,7 @@ class SimpleBNO055IMU(private val imu: BNO055IMU) {
     var initialized = false
         private set
 
-    private var lastAngles: Orientation = Orientation()
+    private var lastAngles = Orientation()
     private var globalAngle = 0.0
 
     var axis = Axis.Z

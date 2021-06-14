@@ -18,7 +18,7 @@ abstract class MechOpMode(
 ) : LinearOpMode() {
 
     val hdw = Hardware(onlyChassis)
-    lateinit var deltaHdw: DeltaHardwareHolonomic
+    val deltaHdw by lazy { DeltaHardwareHolonomic(hardwareMap, Invert.RIGHT_SIDE) }
 
     val drive get() = driveSub.drive
 
@@ -28,10 +28,12 @@ abstract class MechOpMode(
     lateinit var shooterFlickerSub: ShooterFlickerSubsystem
     lateinit var driveSub: MecanumDriveSubsystem
 
-    lateinit var vision: Vision
+    //crear el objeto vision por si se quiere usar en el autonomo
+    val vision by lazy { Vision(hardwareMap) }
 
-    lateinit var superGamepad1: SuperGamepad
-    lateinit var superGamepad2: SuperGamepad
+    //crear dos "super gamepads" con los gamepads originals
+    val superGamepad1 by lazy { SuperGamepad(gamepad1) }
+    val superGamepad2 by lazy { SuperGamepad(gamepad2)  }
 
     override fun runOpMode() {
         telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
@@ -39,22 +41,14 @@ abstract class MechOpMode(
         //reinicializar el scheduler
         deltaScheduler.reset()
 
-        superGamepad1 = SuperGamepad(gamepad1) //crear dos "super gamepads" con los gamepads originals
-        superGamepad2 = SuperGamepad(gamepad2)
-
-        //crear el objeto vision por si se quiere usar en el autonomo
-        vision = Vision(hardwareMap)
-
         hdw.initHardware(hardwareMap) //inicializamos el hardware
-        deltaHdw = DeltaHardwareHolonomic(hardwareMap, Invert.RIGHT_SIDE)
 
         // inicializar el delta hardware
         deltaHdw.initHardware(
-                hdw.wheelFrontLeft,
-                hdw.wheelFrontRight,
-                hdw.wheelBackLeft,
-                hdw.wheelBackRight,
-                true
+            hdw.wheelFrontLeft,
+            hdw.wheelFrontRight,
+            hdw.wheelBackLeft,
+            hdw.wheelBackRight, true
         )
 
         // crear subsistemas

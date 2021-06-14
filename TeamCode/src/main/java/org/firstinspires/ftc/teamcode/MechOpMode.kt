@@ -24,6 +24,7 @@ abstract class MechOpMode(
 
     lateinit var intakeConveySub: IntakeConveySubsystem
     lateinit var wobbleArmSub: WobbleArmSubsystem
+    lateinit var wobbleArmClawSubsystem: WobbleArmClawSubsystem
     lateinit var shooterSub: ShooterSubsystem
     lateinit var shooterFlickerSub: ShooterFlickerSubsystem
     lateinit var driveSub: MecanumDriveSubsystem
@@ -57,7 +58,8 @@ abstract class MechOpMode(
         // si queremos utilizar tambien los demas que no sean el drive...
         if(!onlyChassis) {
             intakeConveySub = IntakeConveySubsystem(hdw.motorIntakeConvey)
-            wobbleArmSub = WobbleArmSubsystem(hdw.motorWobbleArm, hdw.servoWobbleClaw)
+            wobbleArmSub = WobbleArmSubsystem(hdw.motorWobbleArm)
+            wobbleArmClawSubsystem = WobbleArmClawSubsystem(hdw.servoWobbleClaw)
             shooterSub = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight )
             shooterFlickerSub = ShooterFlickerSubsystem(hdw.servoShooterFlicker)
         }

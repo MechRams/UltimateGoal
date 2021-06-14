@@ -2,29 +2,36 @@ package org.firstinspires.ftc.teamcode.commander.subsystem
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
-import com.github.serivesmejia.deltadrive.motors.andymark.NeveRest_Classic_40
 import com.qualcomm.robotcore.hardware.Servo
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionStopCmd
-import kotlin.math.round
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 
-class WobbleArmSubsystem(val wobbleArmMotor: MotorEx, val wobbleClawServo: Servo) : DeltaSubsystem() {
+class WobbleArmSubsystem(val wobbleArmMotor: MotorEx) : DeltaSubsystem() {
 
     var armMoving = false
 
-    companion object {
-        val ARM_SAVE_POSITION = 0
-        val ARM_MIDDLE_POSITION = round(NeveRest_Classic_40.TICKS_PER_REVOLUTION / 4.0).toInt()
-        val ARM_UP_POSITION = round(NeveRest_Classic_40.TICKS_PER_REVOLUTION / 2.0).toInt()
-    }
-
     init {
         defaultCommand = ArmPositionStopCmd()
+        wobbleArmMotor.encoder.reset()
     }
 
     override fun loop() {
+        wobbleArmMotor.positionCoefficient = Constants.armP
+
         if(armMoving) {
-            wobbleArmMotor.set(0.8)
+            wobbleArmMotor.set(Constants.armPower)
         }
     }
+
+}
+
+class WobbleArmClawSubsystem(val wobbleClawServo: Servo) : DeltaSubsystem() {
+
+    init {
+        defaultCommand = ArmClawCloseCmd()
+    }
+
+    override fun loop() { }
 
 }

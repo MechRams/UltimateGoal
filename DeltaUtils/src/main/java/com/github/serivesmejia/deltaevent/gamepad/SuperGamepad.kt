@@ -117,16 +117,15 @@ class SuperGamepad (var gamepad: Gamepad) : Super {
             var toggleState = true
 
             override fun buttonsPressed(buttons: Buttons) {
-                if(toggleState) {
-                    + toggleOnCmd
-                    toggleOffCmd.finish()
-                } else {
-                    + toggleOffCmd
-                    toggleOnCmd.finish()
-                }
-
                 if(buttons.`is`(btt)) {
                     toggleState = !toggleState
+                    if(toggleState) {
+                        + toggleOnCmd
+                        toggleOffCmd.finish()
+                    } else {
+                        + toggleOffCmd
+                        toggleOnCmd.finish()
+                    }
                 }
             }
         })

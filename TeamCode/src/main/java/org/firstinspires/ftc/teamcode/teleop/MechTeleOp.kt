@@ -17,6 +17,8 @@ import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionMiddleCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionSaveCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionUpCmd
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawOpenCmd
 
 @TeleOp(name="TeleOp", group="Final")
 class MechTeleOp : MechOpMode(usingIMU = false) {
@@ -57,6 +59,10 @@ class MechTeleOp : MechOpMode(usingIMU = false) {
 
         //controlar el brazo para el wobble
 
+        //meter el brazo con el boton dpad down
+        superGamepad1.scheduleOnPress(Button.DPAD_LEFT,
+            ArmPositionSaveCmd()
+        )
         //mover el brazo arriba con el dpad up
         superGamepad1.scheduleOnPress(Button.DPAD_UP,
             ArmPositionUpCmd()
@@ -65,9 +71,11 @@ class MechTeleOp : MechOpMode(usingIMU = false) {
         superGamepad1.scheduleOnPress(Button.DPAD_RIGHT,
             ArmPositionMiddleCmd()
         )
-        //meter el brazo con el boton dpad down
-        superGamepad1.scheduleOnPress(Button.DPAD_DOWN,
-            ArmPositionSaveCmd()
+
+        // garra toggle con dpad
+        superGamepad1.toggleScheduleOn(Button.DPAD_DOWN,
+            ArmClawOpenCmd(),
+            ArmClawCloseCmd()
         )
 
         superGamepad1.attachToScheduler()
@@ -80,6 +88,8 @@ class MechTeleOp : MechOpMode(usingIMU = false) {
             telemetry.addData("bl", hdw.wheelBackLeft.power)
             telemetry.addData("br", hdw.wheelBackRight.power)
             telemetry.addData("in", hdw.motorIntakeConvey.power)
+            telemetry.addData("wa pos", hdw.motorWobbleArm.currentPosition)
+            telemetry.addData("wa claw pos", hdw.servoWobbleClaw.position)
             telemetry.update()
 
             deltaScheduler.update()

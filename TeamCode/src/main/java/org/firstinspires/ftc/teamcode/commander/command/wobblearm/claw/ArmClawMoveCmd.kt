@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw
 
 import com.github.serivesmejia.deltacommander.DeltaCommand
+import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmClawSubsystem
 import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
 
 open class ArmClawMoveCmd(private val clawPosition: Double) : DeltaCommand() {
 
-    val armSubsystem = require<WobbleArmSubsystem>()
+    val armSubsystem = require<WobbleArmClawSubsystem>()
 
     override fun run() {
         armSubsystem.wobbleClawServo.position = clawPosition
@@ -13,6 +14,6 @@ open class ArmClawMoveCmd(private val clawPosition: Double) : DeltaCommand() {
 
 }
 
-class ArmClawOpenCmd(armSubsystem: WobbleArmSubsystem) : ArmClawMoveCmd(1.0)
+class ArmClawOpenCmd : ArmClawMoveCmd(0.5)
 
-class ArmClawCloseCmd(armSubsystem: WobbleArmSubsystem) : ArmClawMoveCmd(0.0)
+class ArmClawCloseCmd : ArmClawMoveCmd(1.0)

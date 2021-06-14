@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode
 
 import com.acmerobotics.dashboard.config.Config
 import com.github.serivesmejia.deltacontrol.PIDFCoefficients
+import com.github.serivesmejia.deltadrive.motors.andymark.NeveRest_Classic_60
+import kotlin.math.roundToInt
 
 @Config
 object Constants {
@@ -15,5 +17,12 @@ object Constants {
         rotateP, rotateI,
         rotateD, rotateF
     )
+
+    @JvmField var armP = 0.008
+    @JvmField var armPower = 0.33
+
+    @JvmField var ARM_SAVE_POSITION = 0
+    @JvmField var ARM_MIDDLE_POSITION = -633
+    @JvmField var ARM_UP_POSITION = -297
 
 }

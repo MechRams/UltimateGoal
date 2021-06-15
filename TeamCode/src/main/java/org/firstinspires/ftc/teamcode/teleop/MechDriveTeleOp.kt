@@ -6,10 +6,11 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.commander.command.drive.DriveJoystickCmd
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.OpModeType
 
 @TeleOp(name="Drive Test TeleOp", group="Test")
 @Disabled
-class MechDriveTeleOp : MechOpMode(true, false) {
+class MechDriveTeleOp : MechOpMode(OpModeType.TELEOP, true, false) {
 
     override fun run() {
         telemetry.addData("[>]", "Listos!")

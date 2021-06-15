@@ -6,10 +6,11 @@ import com.github.serivesmejia.deltacommander.dsl.deltaSequence
 import com.github.serivesmejia.deltamath.geometry.Rot2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.MechOpMode
+import org.firstinspires.ftc.teamcode.OpModeType
 import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.IntakeConveyInCmd
 
 @Autonomous(name = "Drive Forward", group = "test", preselectTeleOp = "TeleOp")
-class AutonomoDriveForward : MechOpMode() {
+class AutonomoDriveForward : MechOpMode(OpModeType.AUTO) {
 
     override fun run() {
         waitForStart()

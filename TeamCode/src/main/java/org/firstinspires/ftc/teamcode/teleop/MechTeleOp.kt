@@ -6,6 +6,7 @@ import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltaevent.gamepad.button.Button
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.MechOpMode
+import org.firstinspires.ftc.teamcode.OpModeType
 import org.firstinspires.ftc.teamcode.commander.command.drive.DriveJoystickCmd
 import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.IntakeConveyInCmd
 import org.firstinspires.ftc.teamcode.commander.command.intakeconvey.IntakeConveyOutCmd
@@ -15,13 +16,14 @@ import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterFlickOutC
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterRunCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionMiddleCmd
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionResetCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionSaveCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionUpCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawOpenCmd
 
 @TeleOp(name="TeleOp", group="Final")
-class MechTeleOp : MechOpMode(usingIMU = false) {
+class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
 
     override fun run() {
         // programar el comando que controlara el chassis con el gamepad
@@ -77,6 +79,8 @@ class MechTeleOp : MechOpMode(usingIMU = false) {
             ArmClawOpenCmd(),
             ArmClawCloseCmd()
         )
+
+        ArmPositionResetCmd().schedule(false)
 
         superGamepad1.attachToScheduler()
 

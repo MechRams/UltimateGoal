@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.commander.command.wobblearm
 
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.github.serivesmejia.deltacommander.DeltaCommand
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.commander.subsystem.WobbleArmSubsystem
 
@@ -27,8 +28,32 @@ open class ArmPositionRunCmd(private val positionSupplier: () -> Int) : DeltaCom
 
 }
 
-class ArmPositionMiddleCmd : ArmPositionRunCmd({ Constants.ARM_MIDDLE_POSITION })
+class ArmPositionMiddleCmd : ArmPositionRunCmd({ Constants.armMiddlePosition })
 
-class ArmPositionUpCmd : ArmPositionRunCmd({ Constants.ARM_UP_POSITION })
+class ArmPositionUpCmd : ArmPositionRunCmd({ Constants.armUpPosition })
 
-class ArmPositionSaveCmd: ArmPositionRunCmd({ Constants.ARM_SAVE_POSITION })
+class ArmPositionSaveCmd : ArmPositionRunCmd({ Constants.armSavePosition })
+
+class ArmPositionResetCmd : DeltaCommand() {
+
+    val armSubsystem = require<WobbleArmSubsystem>()
+
+    private val timer = ElapsedTime()
+
+    override fun init() {
+        timer.reset()
+    }
+
+    override fun run() {
+        armSubsystem.wobbleArmMotor.set(-0.4)
+        if(timer.seconds() >= 5) {
+            armSubsystem.wobbleArmMotor.resetEncoder()
+            finish()
+        }
+    }
+
+    override fun end(interrupted: Boolean) {
+        armSubsystem.wobbleArmMotor.set(0.5)
+    }
+
+}

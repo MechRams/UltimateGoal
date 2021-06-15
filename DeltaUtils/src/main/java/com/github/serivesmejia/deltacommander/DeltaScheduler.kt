@@ -31,8 +31,8 @@ class DeltaScheduler internal constructor() {
      * @param cmd the command to be scheduled
      * @param isInterruptible whether the command can be interrupted
      */
-    fun schedule(cmd: DeltaCommand, isInterruptible: Boolean = true) {
-        if(!enabled) return
+    fun schedule(cmd: DeltaCommand, isInterruptible: Boolean = true): Boolean {
+        if(!enabled) return false
 
         val cmdReqs = cmd.requirements
         var reqsCurrentlyInUse = false
@@ -45,11 +45,12 @@ class DeltaScheduler internal constructor() {
 
         if(!reqsCurrentlyInUse) {
             addCommand(cmd, isInterruptible) //directly run it, if none of its requirements are in use
+            return true
         } else {
             //check if the commands requiring a specific subsystem are interruptible
             for(req in cmdReqs) {
                 if(requirements.containsKey(req) && !scheduledCommands[requirements[req]]!!.interruptible) {
-                    return //nope, one of the commands requiring the subsystem isn't interruptible. give up
+                    return false
                 }
             }
 
@@ -61,6 +62,7 @@ class DeltaScheduler internal constructor() {
             }
 
             addCommand(cmd, isInterruptible) //schedule the command once all the other requiring commands were cancelled
+            return true
         }
     }
 

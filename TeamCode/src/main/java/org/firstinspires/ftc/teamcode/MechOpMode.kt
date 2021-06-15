@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.hardware.Hardware
 import org.firstinspires.ftc.teamcode.vision.Vision
 
 abstract class MechOpMode(
+    val opModeType: OpModeType,
     private val onlyChassis: Boolean = false,
     private val usingIMU: Boolean = true
 ) : LinearOpMode() {
@@ -37,6 +38,9 @@ abstract class MechOpMode(
     val superGamepad2 by lazy { SuperGamepad(gamepad2)  }
 
     override fun runOpMode() {
+        var lastOpMode = Constants.lastOpMode
+        Constants.lastOpMode = opModeType
+
         telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)
 
         //reinicializar el scheduler
@@ -58,9 +62,12 @@ abstract class MechOpMode(
         // si queremos utilizar tambien los demas que no sean el drive...
         if(!onlyChassis) {
             intakeConveySub = IntakeConveySubsystem(hdw.motorIntakeConvey)
-            wobbleArmSub = WobbleArmSubsystem(hdw.motorWobbleArm)
+            wobbleArmSub = WobbleArmSubsystem(
+                hdw.motorWobbleArm,
+                opModeType == OpModeType.AUTO
+            )
             wobbleArmClawSubsystem = WobbleArmClawSubsystem(hdw.servoWobbleClaw)
-            shooterSub = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight )
+            shooterSub = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight)
             shooterFlickerSub = ShooterFlickerSubsystem(hdw.servoShooterFlicker)
         }
 
@@ -69,4 +76,8 @@ abstract class MechOpMode(
 
     abstract fun run()
 
+}
+
+enum class OpModeType {
+    AUTO, TELEOP
 }

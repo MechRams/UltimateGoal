@@ -54,7 +54,7 @@ abstract class DeltaCommand {
         finished = true
     }
 
-    fun schedule() = deltaScheduler.schedule(this)
+    fun schedule(isInterruptible: Boolean = true) = deltaScheduler.schedule(this, true)
 
     fun stopAfter(timeSecs: Double): DeltaCommand {
         + deltaSequence {

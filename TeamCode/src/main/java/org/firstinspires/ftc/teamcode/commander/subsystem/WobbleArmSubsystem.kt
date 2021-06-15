@@ -7,13 +7,19 @@ import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionStopCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 
-class WobbleArmSubsystem(val wobbleArmMotor: MotorEx) : DeltaSubsystem() {
+class WobbleArmSubsystem(
+    val wobbleArmMotor: MotorEx,
+    resetEncoder: Boolean = true
+) : DeltaSubsystem() {
 
     var armMoving = false
 
     init {
         defaultCommand = ArmPositionStopCmd()
-        wobbleArmMotor.encoder.reset()
+
+        if(resetEncoder) {
+            wobbleArmMotor.resetEncoder()
+        }
     }
 
     override fun loop() {
@@ -27,11 +33,9 @@ class WobbleArmSubsystem(val wobbleArmMotor: MotorEx) : DeltaSubsystem() {
 }
 
 class WobbleArmClawSubsystem(val wobbleClawServo: Servo) : DeltaSubsystem() {
-
     init {
         defaultCommand = ArmClawCloseCmd()
     }
 
     override fun loop() { }
-
 }

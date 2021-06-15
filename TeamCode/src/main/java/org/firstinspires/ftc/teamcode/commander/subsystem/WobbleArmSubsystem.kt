@@ -2,13 +2,16 @@ package org.firstinspires.ftc.teamcode.commander.subsystem
 
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
+import com.qualcomm.robotcore.hardware.DigitalChannel
 import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.TouchSensor
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionStopCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 
 class WobbleArmSubsystem(
     val wobbleArmMotor: MotorEx,
+    val wobbleTouchSensor: TouchSensor,
     resetEncoder: Boolean = true
 ) : DeltaSubsystem() {
 

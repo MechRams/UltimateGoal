@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.hardware
 import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.arcrobotics.ftclib.hardware.motors.MotorEx
 import com.github.serivesmejia.deltasimple.SimpleHardware
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.HardwareMap
-import com.qualcomm.robotcore.hardware.Servo
+import com.qualcomm.robotcore.hardware.*
 
 class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
 
@@ -30,6 +27,7 @@ class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
 
     //sensores
     //public ColorSensor colorSensor = null; (ejemplo)
+    val wobbleTouchSensor   by hardware<TouchSensor>("WT")
 
     override fun initHardware(hardwareMap: HardwareMap) {
         super.initHardware(hardwareMap)

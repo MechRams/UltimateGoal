@@ -38,22 +38,18 @@ class ArmPositionResetCmd : DeltaCommand() {
 
     val armSubsystem = require<WobbleArmSubsystem>()
 
-    private val timer = ElapsedTime()
-
-    override fun init() {
-        timer.reset()
-    }
-
     override fun run() {
-        armSubsystem.wobbleArmMotor.set(-0.4)
-        if(timer.seconds() >= 5) {
+        if(armSubsystem.wobbleTouchSensor.isPressed) {
             armSubsystem.wobbleArmMotor.resetEncoder()
             finish()
+            return
         }
+
+        armSubsystem.wobbleArmMotor.set(0.4)
     }
 
     override fun end(interrupted: Boolean) {
-        armSubsystem.wobbleArmMotor.set(0.5)
+        armSubsystem.wobbleArmMotor.set(0.0)
     }
 
 }

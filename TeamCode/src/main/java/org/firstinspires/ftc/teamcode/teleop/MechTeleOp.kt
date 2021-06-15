@@ -5,6 +5,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltaevent.gamepad.button.Button
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.OpModeType
 import org.firstinspires.ftc.teamcode.commander.command.drive.DriveJoystickCmd
@@ -15,15 +16,15 @@ import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterFlickCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterFlickOutCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterRunCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionMiddleCmd
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionResetCmd
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionSaveCmd
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionUpCmd
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.*
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawOpenCmd
+import kotlin.math.roundToInt
 
 @TeleOp(name="TeleOp", group="Final")
 class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
+
+    private var armPos = 0.0
 
     override fun run() {
         // programar el comando que controlara el chassis con el gamepad
@@ -60,19 +61,21 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
         )
 
         //controlar el brazo para el wobble
+        superGamepad1 {
+            Button.DPAD_LEFT {
+                pressing {
+                    armPos += Constants.armPositionIncrement
+                }
+            }
 
-        //meter el brazo con el boton dpad down
-        superGamepad1.scheduleOnPress(Button.DPAD_LEFT,
-            ArmPositionSaveCmd()
-        )
-        //mover el brazo arriba con el dpad up
-        superGamepad1.scheduleOnPress(Button.DPAD_UP,
-            ArmPositionUpCmd()
-        )
-        //mover el brazo enmedio con el boton dpad right
-        superGamepad1.scheduleOnPress(Button.DPAD_RIGHT,
-            ArmPositionMiddleCmd()
-        )
+            Button.DPAD_RIGHT {
+                pressing {
+                    armPos -= Constants.armPositionIncrement
+                }
+            }
+        }
+
+        + ArmPositionRunCmd { armPos.roundToInt() }
 
         // garra toggle con dpad
         superGamepad1.toggleScheduleOn(Button.DPAD_DOWN,
@@ -80,11 +83,11 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
             ArmClawCloseCmd()
         )
 
-        ArmPositionResetCmd().schedule(false)
-
         superGamepad1.attachToScheduler()
 
         waitForStart()
+
+        armPos = hdw.motorWobbleArm.currentPosition.toDouble()
 
         while(opModeIsActive()) {
             telemetry.addData("fl", hdw.wheelFrontLeft.power)
@@ -94,6 +97,7 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
             telemetry.addData("in", hdw.motorIntakeConvey.power)
             telemetry.addData("wa pos", hdw.motorWobbleArm.currentPosition)
             telemetry.addData("wa claw pos", hdw.servoWobbleClaw.position)
+            telemetry.addData("wa pressed", hdw.wobbleTouchSensor.isPressed)
             telemetry.update()
 
             deltaScheduler.update()

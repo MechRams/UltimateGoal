@@ -10,8 +10,7 @@ abstract class SimpleHardware {
         hdwMap = hardwareMap
     }
 
-    inline fun <reified T> hardware(name: String) = lazy { device<T>(name) }
+    inline fun <reified T> hardware(name: String): Lazy<T> = lazy { hdwMap.get(T::class.java, name)!! }
 
-    inline fun <reified T> device(name: String) = hdwMap.get(T::class.java, name)!!
 
 }

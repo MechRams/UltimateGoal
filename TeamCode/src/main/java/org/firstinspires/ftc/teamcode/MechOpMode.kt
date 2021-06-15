@@ -8,6 +8,7 @@ import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.utils.Invert
 import com.github.serivesmejia.deltaevent.gamepad.SuperGamepad
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionResetCmd
 import org.firstinspires.ftc.teamcode.commander.subsystem.*
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 import org.firstinspires.ftc.teamcode.vision.Vision
@@ -64,11 +65,14 @@ abstract class MechOpMode(
             intakeConveySub = IntakeConveySubsystem(hdw.motorIntakeConvey)
             wobbleArmSub = WobbleArmSubsystem(
                 hdw.motorWobbleArm,
+                hdw.wobbleTouchSensor,
                 opModeType == OpModeType.AUTO
             )
             wobbleArmClawSubsystem = WobbleArmClawSubsystem(hdw.servoWobbleClaw)
             shooterSub = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight)
             shooterFlickerSub = ShooterFlickerSubsystem(hdw.servoShooterFlicker)
+
+            //ArmPositionResetCmd().schedule(false)
         }
 
         run()

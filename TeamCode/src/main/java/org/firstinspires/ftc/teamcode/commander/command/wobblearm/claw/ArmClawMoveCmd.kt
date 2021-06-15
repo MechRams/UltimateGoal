@@ -14,6 +14,6 @@ open class ArmClawMoveCmd(private val clawPosition: Double) : DeltaCommand() {
 
 }
 
-class ArmClawOpenCmd : ArmClawMoveCmd(0.5)
+class ArmClawOpenCmd : ArmClawMoveCmd(0.1)
 
 class ArmClawCloseCmd : ArmClawMoveCmd(1.0)

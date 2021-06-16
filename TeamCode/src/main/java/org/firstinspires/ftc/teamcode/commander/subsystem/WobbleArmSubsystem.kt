@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCl
 
 class WobbleArmSubsystem(
     val wobbleArmMotor: MotorEx,
-    val wobbleTouchSensor: TouchSensor,
+    //val wobbleTouchSensor: TouchSensor,
     resetEncoder: Boolean = true
 ) : DeltaSubsystem() {
 

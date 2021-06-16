@@ -65,7 +65,6 @@ abstract class MechOpMode(
             intakeConveySub = IntakeConveySubsystem(hdw.motorIntakeConvey)
             wobbleArmSub = WobbleArmSubsystem(
                 hdw.motorWobbleArm,
-                hdw.wobbleTouchSensor,
                 opModeType == OpModeType.AUTO
             )
             wobbleArmClawSubsystem = WobbleArmClawSubsystem(hdw.servoWobbleClaw)

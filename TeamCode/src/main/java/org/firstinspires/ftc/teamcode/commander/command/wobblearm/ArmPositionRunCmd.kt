@@ -33,7 +33,7 @@ class ArmPositionMiddleCmd : ArmPositionRunCmd({ Constants.armMiddlePosition })
 class ArmPositionUpCmd : ArmPositionRunCmd({ Constants.armUpPosition })
 
 class ArmPositionSaveCmd : ArmPositionRunCmd({ Constants.armSavePosition })
-
+/*
 class ArmPositionResetCmd : DeltaCommand() {
 
     val armSubsystem = require<WobbleArmSubsystem>()
@@ -52,4 +52,4 @@ class ArmPositionResetCmd : DeltaCommand() {
         armSubsystem.wobbleArmMotor.set(0.0)
     }
 
-}
+}*/

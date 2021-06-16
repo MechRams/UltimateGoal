@@ -27,7 +27,6 @@ class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
 
     //sensores
     //public ColorSensor colorSensor = null; (ejemplo)
-    val wobbleTouchSensor   by hardware<TouchSensor>("WT")
 
     override fun initHardware(hardwareMap: HardwareMap) {
         super.initHardware(hardwareMap)

@@ -28,8 +28,8 @@ class Markers<T>(private val task: Task<T>) {
         }
     }
 
-    fun distanceMarker(distanceMarker: Double, marker: Marker<T>) {
-        distanceMarkers[marker] = distanceMarker
+    fun distanceMarker(distance: Double, marker: Marker<T>) {
+        distanceMarkers[marker] = distance
     }
 
     fun runDistanceMarkers(currentInches: Double) {

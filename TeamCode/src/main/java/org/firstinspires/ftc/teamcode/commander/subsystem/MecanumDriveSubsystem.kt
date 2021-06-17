@@ -34,7 +34,8 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
                 TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
                 COEFFICIENTS = Constants.rotatePIDFCoefficients
 
-                ERROR_TOLERANCE = 0.5
+                DEAD_ZONE = 0.08
+                ERROR_TOLERANCE = 3.0
             })
 
             telemetry.update()

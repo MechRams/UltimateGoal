@@ -77,24 +77,13 @@ class EncoderDriveHolonomic
         }
 
         // Determine new target position, and pass to motor controller
-        var ticksPerInch = calcTicksPerInch(0)
+        val ticksPerInch = calcTicksPerInch()
         val newFrontLeftTarget = (hdw.wheelFrontLeft.currentPosition + (fl * ticksPerInch)).roundToInt()
-
-        ticksPerInch = calcTicksPerInch(1)
         val newFrontRightTarget = (hdw.wheelFrontRight.currentPosition + (fr * ticksPerInch)).roundToInt()
-
-        ticksPerInch = calcTicksPerInch(2)
         val newBackLeftTarget = (hdw.wheelBackLeft.currentPosition + (bl * ticksPerInch)).roundToInt()
-
-        ticksPerInch = calcTicksPerInch(3)
         val newBackRightTarget = (hdw.wheelBackRight.currentPosition + (br * ticksPerInch)).roundToInt()
 
-        hdw.setTargetPositions(newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget)
-
         val beforeRunMode = hdw.runMode
-
-        // Turn On RUN_TO_POSITION
-        hdw.runMode = DcMotor.RunMode.RUN_TO_POSITION
 
         // reset the timeout time and start motion.
         runtime.reset()
@@ -104,16 +93,21 @@ class EncoderDriveHolonomic
 
         return Task(parameters.TASK_COMMAND_REQUIREMENTS) {
             first {
-                hdw.setMotorPowers(leftPower, rightPower, leftPower, rightPower)
+                hdw.setTargetPositions(newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget)
+
+                // Turn On RUN_TO_POSITION
+                hdw.runMode = DcMotor.RunMode.RUN_TO_POSITION
+
+                hdw.setMotorPowers(leftPower, rightPower, leftPower, rightPower, false)
             }
 
             var (dFl, dFr, dBl, dBr) = Distances(0, 0, 0, 0)
 
             if(parameters.SHOW_CURRENT_DISTANCE || markers.distanceMarkersCount > 0) {
-                dFl = hdw.wheelFrontLeft.currentPosition
-                dFr = hdw.wheelFrontRight.currentPosition
-                dBl = hdw.wheelBackLeft.currentPosition
-                dBr = hdw.wheelBackRight.currentPosition
+                dFl = abs(hdw.wheelFrontLeft.currentPosition)
+                dFr = abs(hdw.wheelFrontRight.currentPosition)
+                dBl = abs(hdw.wheelBackLeft.currentPosition)
+                dBr = abs(hdw.wheelBackRight.currentPosition)
 
                 markers.runDistanceMarkers((dFl + dFr + dBl + dBr).toDouble() / 4.0)
             }
@@ -218,14 +212,8 @@ class EncoderDriveHolonomic
         )
     }
 
-    private fun calcTicksPerInch(reductionI: Int) =
-        parameters.TICKS_PER_REV * getReduction(reductionI).ratioAsDecimal / (parameters.WHEEL_DIAMETER_INCHES * Math.PI)
-
-    private fun getReduction(reductionI: Int): GearRatio = parameters.DRIVE_GEAR_REDUCTIONS.run {
-        return if(size < reductionI && isNotEmpty())
-            this[reductionI]
-        else parameters.EMPTY_GEAR_REDUCTION
-    }
+    private fun calcTicksPerInch() =
+        parameters.TICKS_PER_REV * parameters.DRIVE_GEAR_REDUCTION.ratioAsDecimal / (parameters.WHEEL_DIAMETER_INCHES * Math.PI)
 
     data class Distances(var fl: Int, var fr: Int, var bl: Int, var br: Int)
 

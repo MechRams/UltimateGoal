@@ -94,6 +94,13 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
             telemetry.addData("fr", hdw.wheelFrontRight.power)
             telemetry.addData("bl", hdw.wheelBackLeft.power)
             telemetry.addData("br", hdw.wheelBackRight.power)
+
+
+            telemetry.addData("fl pos", hdw.wheelFrontLeft.currentPosition)
+            telemetry.addData("fr pos", hdw.wheelFrontRight.currentPosition)
+            telemetry.addData("bl pos", hdw.wheelBackLeft.currentPosition)
+            telemetry.addData("br pos", hdw.wheelBackRight.currentPosition)
+
             telemetry.addData("in", hdw.motorIntakeConvey.power)
             telemetry.addData("wa pos", hdw.motorWobbleArm.currentPosition)
             telemetry.addData("wa claw pos", hdw.servoWobbleClaw.position)

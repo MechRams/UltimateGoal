@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.vision
 
+import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.hardware.HardwareMap
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.openftc.easyopencv.OpenCvCamera
 import org.openftc.easyopencv.OpenCvCameraFactory
 import org.openftc.easyopencv.OpenCvCameraRotation
@@ -15,7 +17,8 @@ open class Vision(private val hardwareMap: HardwareMap) {
 
     private fun initVision() {
         val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName)
-        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId)
+        phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "Webcam 1"), cameraMonitorViewId)
+        FtcDashboard.getInstance().startCameraStream(phoneCam!!, 0.0)
     }
 
     fun initRingVision() {

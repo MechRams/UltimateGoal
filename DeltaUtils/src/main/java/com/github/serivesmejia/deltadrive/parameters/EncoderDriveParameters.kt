@@ -42,10 +42,7 @@ class EncoderDriveParameters {
     /**
      * This is < 1.0 and > 0 if geared UP
      */
-    var DRIVE_GEAR_REDUCTIONS = mutableListOf(
-        EMPTY_GEAR_REDUCTION, EMPTY_GEAR_REDUCTION,
-        EMPTY_GEAR_REDUCTION, EMPTY_GEAR_REDUCTION
-    )
+    var DRIVE_GEAR_REDUCTION = EMPTY_GEAR_REDUCTION
 
     /**
      * The wheels diameter, in inches
@@ -85,7 +82,7 @@ class EncoderDriveParameters {
     /**
      * Show current distance in telemetry (might slow down loop times)
      */
-    val SHOW_CURRENT_DISTANCE = false
+    var SHOW_CURRENT_DISTANCE = false
 
     /**
      * Requirements to be required by the DeltaCommand

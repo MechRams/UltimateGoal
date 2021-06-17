@@ -97,15 +97,17 @@ class DeltaHardwareHolonomic(hardwareMap: HardwareMap, invert: Invert) : DeltaHa
         chassisMotorsArray = arrayOf(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight)
     }
 
-    fun setMotorPowers(frontleft: Double, frontright: Double, backleft: Double, backright: Double) {
+    fun setMotorPowers(frontleft: Double, frontright: Double, backleft: Double, backright: Double, applyInvert: Boolean = true) {
         var leftMultiplier = 1
         var rightMultiplier = 1
 
-        when (invert) {
-            Invert.RIGHT_SIDE -> rightMultiplier = -1
-            Invert.LEFT_SIDE ->  leftMultiplier = 1
-            Invert.BOTH_SIDES -> { rightMultiplier = -1; leftMultiplier = -1 }
-            else -> {}
+        if(applyInvert) {
+            when (invert) {
+                Invert.RIGHT_SIDE -> rightMultiplier = -1
+                Invert.LEFT_SIDE -> leftMultiplier = -1
+                Invert.BOTH_SIDES -> { rightMultiplier = -1; leftMultiplier = -1 }
+                else -> { }
+            }
         }
 
         super.setMotorPowers(
@@ -122,7 +124,7 @@ class DeltaHardwareHolonomic(hardwareMap: HardwareMap, invert: Invert) : DeltaHa
 
         when (invert) {
             Invert.RIGHT_SIDE -> rightMultiplier = -1
-            Invert.LEFT_SIDE ->  leftMultiplier = 1
+            Invert.LEFT_SIDE ->  leftMultiplier = -1
             Invert.BOTH_SIDES -> { rightMultiplier = -1; leftMultiplier = -1 }
             else -> {}
         }

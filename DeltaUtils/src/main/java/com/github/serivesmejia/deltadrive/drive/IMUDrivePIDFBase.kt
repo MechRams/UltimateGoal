@@ -59,7 +59,7 @@ abstract class IMUDrivePIDFBase
     }
 
     fun initIMU(parameters: IMUDriveParameters) {
-        if(imu.initialized) return
+        if(::imu.isInitialized) return
 
         require(hdw.type === allowedDeltaHardwareType) {
             "Given DeltaHardware is not the expected type ($allowedDeltaHardwareType)"
@@ -110,7 +110,7 @@ abstract class IMUDrivePIDFBase
 
         imuParameters.secureParameters()
 
-        if (::imu.isInitialized || !imu.initialized) {
+        if (!::imu.isInitialized || !imu.initialized) {
 
             return Task {
                 telemetry?.addData("[/!\\]", "Call initIMU() method before rotating.")
@@ -182,14 +182,14 @@ abstract class IMUDrivePIDFBase
             builder.state(State.TURN_LEFT)
                 .loop(commonTurnLoop)
                 .loop {
-                    backleftpower = powerF
-                    backrightpower = -powerF
-                    frontleftpower = powerF
-                    frontrightpower = -powerF
+                    backleftpower = -powerF
+                    backrightpower = powerF
+                    frontleftpower = -powerF
+                    frontrightpower = powerF
                 }
         }
 
-        builder.transition { pidControllerRotate.onSetpoint() && System.currentTimeMillis() > maxMillis }
+        builder.transition { pidControllerRotate.onSetpoint() || System.currentTimeMillis() > maxMillis }
                 .state(State.STOP) //stopping
                 .onEnter {
                     // stop the movement

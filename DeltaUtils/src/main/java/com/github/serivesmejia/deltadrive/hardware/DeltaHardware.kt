@@ -22,7 +22,6 @@
 
 package com.github.serivesmejia.deltadrive.hardware
 
-import com.github.serivesmejia.deltadrive.utils.Invert
 import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotor.RunMode
@@ -37,7 +36,7 @@ abstract class DeltaHardware
  * @param hardwareMap The current OpMode hardware map
  * @param invert Enum specifying which side will be inverted (motors), most of the time you need to invert the right side.
  */
-(val hardwareMap: HardwareMap, var invert: Invert) {
+(val hardwareMap: HardwareMap) {
 
     lateinit var chassisMotorsArray: Array<DcMotorEx>
         internal set

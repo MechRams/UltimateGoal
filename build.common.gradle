@@ -129,7 +129,7 @@ android {
     }
 
     packagingOptions {
-        exclude 'doc/libOpenCvNative.so'
+        exclude 'lib/armeabi-v7a/libOpenCvNative.so'
         exclude("META-INF/*.kotlin_module")
     }
 

@@ -26,6 +26,8 @@ object Constants {
     @JvmField var armMiddlePosition = -633
     @JvmField var armUpPosition = -297
 
+    @JvmField var shooterPower = 0.8
+
     var lastOpMode = OpModeType.TELEOP
 
 }

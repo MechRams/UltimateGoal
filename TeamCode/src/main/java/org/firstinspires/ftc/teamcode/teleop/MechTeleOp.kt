@@ -47,7 +47,7 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
         superGamepad1.toggleScheduleOn(Button.X,
             // encender el shooter cuando se presiona X
             // usar los triggers para desacelerar
-            ShooterRunCmd(1.0),
+            ShooterRunCmd { Constants.shooterPower },
             //comando para cuando se vuelva a presionar X
             ShooterStopCmd()
         )
@@ -95,16 +95,8 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
             telemetry.addData("bl", hdw.wheelBackLeft.power)
             telemetry.addData("br", hdw.wheelBackRight.power)
 
-
-            telemetry.addData("fl pos", hdw.wheelFrontLeft.currentPosition)
-            telemetry.addData("fr pos", hdw.wheelFrontRight.currentPosition)
-            telemetry.addData("bl pos", hdw.wheelBackLeft.currentPosition)
-            telemetry.addData("br pos", hdw.wheelBackRight.currentPosition)
-
             telemetry.addData("in", hdw.motorIntakeConvey.power)
-            telemetry.addData("wa pos", hdw.motorWobbleArm.currentPosition)
             telemetry.addData("wa claw pos", hdw.servoWobbleClaw.position)
-            telemetry.addData("wa pressed", hdw.wobbleTouchSensor.isPressed)
             telemetry.update()
 
             deltaScheduler.update()

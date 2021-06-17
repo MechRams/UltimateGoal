@@ -22,14 +22,13 @@
 
 package com.github.serivesmejia.deltadrive.hardware
 
-import com.github.serivesmejia.deltadrive.utils.Invert
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction
 import com.qualcomm.robotcore.hardware.HardwareMap
 
 @Suppress("UNUSED")
-class DeltaHardwareHolonomic(hardwareMap: HardwareMap, invert: Invert) : DeltaHardware(hardwareMap, invert) {
+class DeltaHardwareHolonomic(hardwareMap: HardwareMap) : DeltaHardware(hardwareMap) {
 
     lateinit var wheelFrontLeft: DcMotorEx
         private set
@@ -65,11 +64,6 @@ class DeltaHardwareHolonomic(hardwareMap: HardwareMap, invert: Invert) : DeltaHa
         wheelBackLeft = backleft as DcMotorEx
         wheelBackRight = backright as DcMotorEx
 
-        wheelFrontLeft.direction = Direction.FORWARD //all motors need to be ALWAYS FORWARD for the drive classes to work correctly
-        wheelFrontRight.direction = Direction.FORWARD
-        wheelBackLeft.direction = Direction.FORWARD
-        wheelBackRight.direction = Direction.FORWARD
-
         updateChassisMotorsArray()
          
         internalInit(brake)
@@ -97,43 +91,21 @@ class DeltaHardwareHolonomic(hardwareMap: HardwareMap, invert: Invert) : DeltaHa
         chassisMotorsArray = arrayOf(wheelFrontLeft, wheelFrontRight, wheelBackLeft, wheelBackRight)
     }
 
-    fun setMotorPowers(frontleft: Double, frontright: Double, backleft: Double, backright: Double, applyInvert: Boolean = true) {
-        var leftMultiplier = 1
-        var rightMultiplier = 1
-
-        if(applyInvert) {
-            when (invert) {
-                Invert.RIGHT_SIDE -> rightMultiplier = -1
-                Invert.LEFT_SIDE -> leftMultiplier = -1
-                Invert.BOTH_SIDES -> { rightMultiplier = -1; leftMultiplier = -1 }
-                else -> { }
-            }
-        }
-
+    fun setMotorPowers(frontleft: Double, frontright: Double, backleft: Double, backright: Double) {
         super.setMotorPowers(
-                frontleft * leftMultiplier,
-                frontright * rightMultiplier,
-                backleft * leftMultiplier,
-                backright * rightMultiplier
+                frontleft,
+                frontright,
+                backleft,
+                backright
         )
     }
 
      fun setTargetPositions(frontleft: Int, frontright: Int, backleft: Int, backright: Int) {
-        var leftMultiplier = 1
-        var rightMultiplier = 1
-
-        when (invert) {
-            Invert.RIGHT_SIDE -> rightMultiplier = -1
-            Invert.LEFT_SIDE ->  leftMultiplier = -1
-            Invert.BOTH_SIDES -> { rightMultiplier = -1; leftMultiplier = -1 }
-            else -> {}
-        }
-
          super.setTargetPositions(
-                 frontleft * leftMultiplier,
-                 frontright * rightMultiplier,
-                 backleft * leftMultiplier,
-                 backright * rightMultiplier
+                 frontleft,
+                 frontright,
+                 backleft,
+                 backright
          )
     }
 

@@ -98,7 +98,7 @@ class EncoderDriveHolonomic
                 // Turn On RUN_TO_POSITION
                 hdw.runMode = DcMotor.RunMode.RUN_TO_POSITION
 
-                hdw.setMotorPowers(leftPower, rightPower, leftPower, rightPower, false)
+                hdw.setMotorPowers(leftPower, rightPower, leftPower, rightPower)
             }
 
             var (dFl, dFr, dBl, dBr) = Distances(0, 0, 0, 0)

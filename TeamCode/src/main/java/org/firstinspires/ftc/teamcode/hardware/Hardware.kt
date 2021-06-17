@@ -33,6 +33,9 @@ class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
 
         if(!onlyDrive) {
             //La direccion de estos motores sera REVERSE
+            wheelFrontRight.direction = DcMotorSimple.Direction.REVERSE
+            wheelBackRight.direction = DcMotorSimple.Direction.REVERSE
+
             motorShooterRight.inverted = true
             motorIntakeConvey.direction = DcMotorSimple.Direction.REVERSE
 

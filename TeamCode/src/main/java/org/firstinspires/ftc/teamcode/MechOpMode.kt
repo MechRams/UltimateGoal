@@ -5,10 +5,8 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltacommander.reset
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
-import com.github.serivesmejia.deltadrive.utils.Invert
 import com.github.serivesmejia.deltaevent.gamepad.SuperGamepad
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionResetCmd
 import org.firstinspires.ftc.teamcode.commander.subsystem.*
 import org.firstinspires.ftc.teamcode.hardware.Hardware
 import org.firstinspires.ftc.teamcode.vision.Vision
@@ -20,7 +18,7 @@ abstract class MechOpMode(
 ) : LinearOpMode() {
 
     val hdw = Hardware(onlyChassis)
-    val deltaHdw by lazy { DeltaHardwareHolonomic(hardwareMap, Invert.RIGHT_SIDE) }
+    val deltaHdw by lazy { DeltaHardwareHolonomic(hardwareMap) }
 
     val drive get() = driveSub.drive
 

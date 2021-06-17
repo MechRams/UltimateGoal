@@ -85,9 +85,6 @@ class EncoderDriveHolonomic
 
         val beforeRunMode = hdw.runMode
 
-        // reset the timeout time and start motion.
-        runtime.reset()
-
         val leftPower = abs(speed) * leftTurbo
         val rightPower = abs(speed) * rightTurbo
 
@@ -99,6 +96,9 @@ class EncoderDriveHolonomic
                 hdw.runMode = DcMotor.RunMode.RUN_TO_POSITION
 
                 hdw.setMotorPowers(leftPower, rightPower, leftPower, rightPower)
+
+                // reset the timeout time and start motion.
+                runtime.reset()
             }
 
             var (dFl, dFr, dBl, dBr) = Distances(0, 0, 0, 0)

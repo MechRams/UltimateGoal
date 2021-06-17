@@ -151,7 +151,7 @@ abstract class IMUDrivePIDFBase
         var frontrightpower = 0.0
         var frontleftpower = 0.0
 
-        val maxMillis = System.currentTimeMillis() + timeout * 1000
+        val timer = ElapsedTime()
 
         val builder = StateMachineBuilder<State>()
         var currentTwist = Twist2d()
@@ -159,20 +159,17 @@ abstract class IMUDrivePIDFBase
 
         val initialAngle = imu.lastCumulativeAngle
 
-        val commonTurnLoop = ActionCallback {
-            // calculate the out power from the controller
-            powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
-
-            // update the current angle twist
-            currentTwist = Twist2d(0.0, 0.0,
-                imu.lastCumulativeAngle - initialAngle
-            )
-        }
-
         if(setpoint < 0) { //rotating right
             builder.state(State.TURN_RIGHT)
-                .loop(commonTurnLoop)
                 .loop {
+                    // calculate the out power from the controller
+                    powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
+
+                    // update the current angle twist
+                    currentTwist = Twist2d(0.0, 0.0,
+                        imu.lastCumulativeAngle - initialAngle
+                    )
+
                     backleftpower = powerF
                     backrightpower = -powerF
                     frontleftpower = powerF
@@ -180,8 +177,15 @@ abstract class IMUDrivePIDFBase
                 }
         } else { //rotating left
             builder.state(State.TURN_LEFT)
-                .loop(commonTurnLoop)
                 .loop {
+                    // calculate the out power from the controller
+                    powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
+
+                    // update the current angle twist
+                    currentTwist = Twist2d(0.0, 0.0,
+                        imu.lastCumulativeAngle - initialAngle
+                    )
+
                     backleftpower = -powerF
                     backrightpower = powerF
                     frontleftpower = -powerF
@@ -189,7 +193,7 @@ abstract class IMUDrivePIDFBase
                 }
         }
 
-        builder.transition { pidControllerRotate.onSetpoint() || System.currentTimeMillis() > maxMillis }
+        builder.transition { pidControllerRotate.onSetpoint() || System.currentTimeMillis() > timeout }
                 .state(State.STOP) //stopping
                 .onEnter {
                     // stop the movement
@@ -206,6 +210,10 @@ abstract class IMUDrivePIDFBase
 
         return Task(imuParameters.TASK_COMMAND_REQUIREMENTS) {
             if(!stateMachine.running) stateMachine.start()
+
+            first {
+                timer.reset()
+            }
 
             stateMachine.update()
 

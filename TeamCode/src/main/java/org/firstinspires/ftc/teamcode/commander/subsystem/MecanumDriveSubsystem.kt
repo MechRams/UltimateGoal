@@ -14,7 +14,7 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
                             telemetry: Telemetry,
                             usingIMU: Boolean = true) : DeltaSubsystem() {
 
-    val drive = DeltaMecanumDrive(deltaHdw)
+    val drive = DeltaMecanumDrive(deltaHdw, telemetry)
 
     init {
         defaultCommand = DriveStopCmd()

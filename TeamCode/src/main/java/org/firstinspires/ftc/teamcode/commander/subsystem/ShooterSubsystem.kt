@@ -29,8 +29,8 @@ class ShooterFlickerSubsystem(
 ) : DeltaSubsystem() {
 
     companion object {
-        const val FLICKER_IN_POS = 1.0
-        const val FLICKER_OUT_POS = 0.0
+        const val FLICKER_IN_POS = 0.0
+        const val FLICKER_OUT_POS = 1.0
     }
 
     init {

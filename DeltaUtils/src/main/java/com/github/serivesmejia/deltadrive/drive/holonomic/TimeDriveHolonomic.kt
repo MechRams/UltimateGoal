@@ -48,6 +48,7 @@ class TimeDriveHolonomic
         return Task {
                 first {
                     hdw.setMotorPowers(frontleft, frontright, backleft, backright)
+                    runtime.reset()
                 }
 
                 telemetry?.addData("[Movement]", movementDescription)

@@ -13,6 +13,8 @@ class DeltaScheduler internal constructor() {
     //hashmap containing the currently scheduled commands and their state
     private val scheduledCommands = mutableMapOf<DeltaCommand, DeltaCommand.State>()
 
+    private val commandScheduleQueue = mutableListOf<QueuedCommand>()
+    
     val commands get() = scheduledCommands.keys.toTypedArray()
     val commandsAmount get() = scheduledCommands.size
 
@@ -47,17 +49,38 @@ class DeltaScheduler internal constructor() {
             addCommand(cmd, isInterruptible) //directly run it, if none of its requirements are in use
             return true
         } else {
+            val waitingCommands = mutableListOf<DeltaCommand>()
+
             //check if the commands requiring a specific subsystem are interruptible
             for(req in cmdReqs) {
-                if(requirements.containsKey(req) && !scheduledCommands[requirements[req]]!!.interruptible) {
-                    return false
+                if(requirements.containsKey(req)) {
+                    val command = requirements[req]!!
+
+                    if(!scheduledCommands[command]!!.interruptible) {
+                        return false
+                    } else {
+                        if(!command.endCondition()) {
+                            if(!command.endingCalled) {
+                                command.ending()
+                                command.endingCalled = true
+                            }
+                            command.finishRequested = true
+
+                            waitingCommands.add(command)
+                        }
+                    }
                 }
+            }
+
+            if(waitingCommands.isNotEmpty()) {
+                commandScheduleQueue.add(QueuedCommand(cmd, isInterruptible, waitingCommands))
+                return true
             }
 
             //cancel all the commands that require a subsystem
             for(req in cmdReqs) {
                 if(requirements.containsKey(req)) {
-                    requirements[req]?.let { stop(it) }
+                    stop(requirements[req]!!)
                 }
             }
 
@@ -67,7 +90,8 @@ class DeltaScheduler internal constructor() {
     }
 
     private fun addCommand(cmd: DeltaCommand, isInterruptible: Boolean) {
-        cmd.finished = false
+        cmd.finishRequested = false
+        cmd.endingCalled = false
         cmd.allowRequire = false
         cmd.init()
 
@@ -121,18 +145,24 @@ class DeltaScheduler internal constructor() {
 
         for(subsystem in addedSubsystems.keys) { subsystem.loop() } //run the loop method of all the subsystems
 
+        queuedCommandsLoop@
+        for(queuedCommand in commandScheduleQueue.toTypedArray()) {
+            for(waitingCommand in queuedCommand.waitingCommands) {
+                if(!waitingCommand.endCondition() && !waitingCommand.finishRequested)
+                    continue@queuedCommandsLoop
+            }
+
+            addCommand(queuedCommand.queuedCommand, queuedCommand.isInterruptible)
+            commandScheduleQueue.remove(queuedCommand)
+        }
+
         for((cmd, _) in scheduledCommands.entries.toTypedArray()) { //iterate through the scheduled commands
             cmd.run() //actually run the command
 
             for(evt in runEvents) { evt.run(cmd) } //execute the user events
 
-            if(cmd.finished) { //end and remove the command if it's finished
-                cmd.end(false)
-
-                for(evt in endEvents) { evt.run(cmd) }
-
-                scheduledCommands.remove(cmd)
-                requirements.keys.removeAll(cmd.requirements)
+            if(cmd.endCondition() && cmd.finishRequested) { //end and remove the command if it's finished
+                stop(cmd)
             }
         }
 
@@ -163,7 +193,7 @@ class DeltaScheduler internal constructor() {
             throw IllegalArgumentException("Default command \"${command.name}\" does not require its subsystem \"${subsystem.name}\"")
         }
 
-        if(command.finished) {
+        if(command.finishRequested) {
             throw IllegalArgumentException("Default command \"${command.name}\" is finished")
         }
 
@@ -188,6 +218,10 @@ class DeltaScheduler internal constructor() {
     fun stop(vararg cmds: DeltaCommand) {
         for(cmd in cmds) {
             if(!scheduledCommands.containsKey(cmd)) continue
+            if(!cmd.endingCalled) {
+                cmd.endingCalled = true
+                cmd.ending()
+            }
 
             cmd.end(true)
 
@@ -234,6 +268,10 @@ class DeltaScheduler internal constructor() {
     fun onEndCommand(event: DeltaSchedulerEvent) = endEvents.add(event)
 
     fun onRunScheduler(event: Runnable) = runSchedulerEvents.add(event)
+
+    private data class QueuedCommand(val queuedCommand: DeltaCommand,
+                                     val isInterruptible: Boolean,
+                                     val waitingCommands: MutableList<DeltaCommand>)
 
 }
 

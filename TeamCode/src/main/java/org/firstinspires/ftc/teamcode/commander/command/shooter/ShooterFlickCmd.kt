@@ -39,8 +39,14 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
         stateMachine.update()
 
         if(!stateMachine.running)
-            finish()
+            requestFinish()
     }
+
+    override fun ending() {
+        stateMachine.looping = false
+    }
+
+    override fun endCondition() = !stateMachine.running
 
 }
 

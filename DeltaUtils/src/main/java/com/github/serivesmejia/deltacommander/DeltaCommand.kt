@@ -1,7 +1,6 @@
 package com.github.serivesmejia.deltacommander
 
 import com.github.serivesmejia.deltacommander.command.DeltaRunCmd
-import com.github.serivesmejia.deltacommander.command.DeltaSequentialCmd
 import com.github.serivesmejia.deltacommander.command.DeltaWaitCmd
 import com.github.serivesmejia.deltacommander.command.DeltaWaitConditionCmd
 import com.github.serivesmejia.deltacommander.dsl.deltaSequence
@@ -14,7 +13,10 @@ abstract class DeltaCommand {
     val name = this.javaClass.simpleName
     val requirements = mutableListOf<DeltaSubsystem>()
 
-    var finished = false
+    var finishRequested = false
+        internal set
+    internal var endingCalled = false
+
     var blockParallelCommand = true
 
     internal var allowRequire = true
@@ -22,6 +24,8 @@ abstract class DeltaCommand {
     open fun init() {}
 
     abstract fun run()
+
+    open fun ending() { }
 
     open fun end(interrupted: Boolean) {}
 
@@ -35,6 +39,8 @@ abstract class DeltaCommand {
                 requirements.add(it)
         }
     }
+
+    open fun endCondition() = true
 
     inline fun <reified S : DeltaSubsystem> require() = require(S::class)
 
@@ -50,16 +56,16 @@ abstract class DeltaCommand {
         throw IllegalArgumentException("Unable to find subsystem ${clazz::class.simpleName} in DeltaScheduler")
     }
 
-    fun finish() {
-        finished = true
+    fun requestFinish() {
+        finishRequested = true
     }
 
-    fun schedule(isInterruptible: Boolean = true) = deltaScheduler.schedule(this, true)
+    fun schedule(isInterruptible: Boolean = true) = deltaScheduler.schedule(this, isInterruptible)
 
     fun stopAfter(timeSecs: Double): DeltaCommand {
         + deltaSequence {
             DeltaWaitCmd(timeSecs) ()
-            DeltaRunCmd(::finish) ()
+            DeltaRunCmd(::requestFinish) ()
         }
 
         return this
@@ -68,7 +74,7 @@ abstract class DeltaCommand {
     fun stopOn(condition: () -> Boolean): DeltaCommand {
         + deltaSequence {
             DeltaWaitConditionCmd(condition) ()
-            DeltaRunCmd(::finish) ()
+            DeltaRunCmd(::requestFinish) ()
         }
 
         return this

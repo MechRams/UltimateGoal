@@ -20,14 +20,18 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
                 shooterSub.flickerServo.position = ShooterFlickerSubsystem.FLICKER_IN_POS
             }
 
-            .transitionTimed(0.8)
             .state(State.OUT)
+            .transitionTimed(0.8)
             .onEnter {
                 shooterSub.flickerServo.position = ShooterFlickerSubsystem.FLICKER_OUT_POS
             }
 
-            .transitionTimed(0.8)
             .state(State.FINISHED)
+            .transitionTimed(0.8)
+
+            .apply {
+                if(isInfinite) exit(State.IN)
+            }
 
             .build()
 

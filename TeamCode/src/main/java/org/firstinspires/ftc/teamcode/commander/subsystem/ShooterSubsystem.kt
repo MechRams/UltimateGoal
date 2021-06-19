@@ -5,6 +5,7 @@ import com.arcrobotics.ftclib.hardware.motors.MotorGroup
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
 import com.github.serivesmejia.deltadrive.motors.revrobotics.HDHex_Motor_Only
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.PIDFCoefficients
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Constants
@@ -12,27 +13,47 @@ import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterFlickOutC
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
 
 class ShooterSubsystem(
-    val leftMotor: MotorEx,
-    val rightMotor: MotorEx
+    val leftMotor: DcMotorEx,
+    val rightMotor: DcMotorEx
 ) : DeltaSubsystem()  {
 
-    var motorType = HDHex_Motor_Only
-    var shooterMotors = MotorGroup(leftMotor, rightMotor)
+    val motorType = HDHex_Motor_Only
+    val maxRpm = motorType.GEAR_RATIO.inputRPM
+    val maxTps = maxRpm * motorType.TICKS_PER_REVOLUTION
+
+    private var beforeP = 0.0
+    private var beforeI = 0.0
+    private var beforeD = 0.0
+    private var beforeF = 0.0
 
     init {
         defaultCommand = ShooterStopCmd()
     }
 
     override fun loop() {
-        leftMotor.motorEx.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER,
-            PIDFCoefficients(Constants.shooterP, Constants.shooterI, Constants.shooterD, Constants.shooterF)
-        )
+        //coefficient update on change
+        Constants.run {
+            if(beforeP != shooterP || beforeI != shooterI || beforeD != shooterD || beforeF != shooterF) {
+                leftMotor.setPIDFCoefficients(
+                    DcMotor.RunMode.RUN_USING_ENCODER,
+                    PIDFCoefficients(
+                        shooterP, shooterI, shooterD, shooterF
+                    )
+                )
 
-        rightMotor.motorEx.setPIDFCoefficients(
-            DcMotor.RunMode.RUN_USING_ENCODER,
-            PIDFCoefficients(Constants.shooterP, Constants.shooterI, Constants.shooterD, Constants.shooterF)
-        )
+                rightMotor.setPIDFCoefficients(
+                    DcMotor.RunMode.RUN_USING_ENCODER,
+                    PIDFCoefficients(
+                        shooterP, shooterI, shooterD, shooterF
+                    )
+                )
+            }
+
+            beforeP = shooterP
+            beforeI = shooterI
+            beforeD = shooterD
+            beforeF = shooterF
+        }
     }
 
 }

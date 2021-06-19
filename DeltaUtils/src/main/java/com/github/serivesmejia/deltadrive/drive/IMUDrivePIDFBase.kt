@@ -193,18 +193,19 @@ abstract class IMUDrivePIDFBase
                 }
         }
 
-        builder.transition { pidControllerRotate.onSetpoint() || System.currentTimeMillis() > timeout }
-                .state(State.STOP) //stopping
-                .onEnter {
-                    // stop the movement
-                    backleftpower = 0.0
-                    backrightpower = 0.0
-                    frontleftpower = 0.0
-                    frontrightpower = 0.0
-                }
+        builder
+            .state(State.STOP) //stopping
+            .transition { pidControllerRotate.onSetpoint() || System.currentTimeMillis() > timeout }
+            .onEnter {
+                // stop the movement
+                backleftpower = 0.0
+                backrightpower = 0.0
+                frontleftpower = 0.0
+                frontrightpower = 0.0
+            }
 
-                .transitionTimed(0.2)
-                .state(State.END_TASK)
+            .state(State.END_TASK)
+            .transitionTimed(0.2)
 
         val stateMachine = builder.build()
 

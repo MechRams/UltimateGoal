@@ -16,6 +16,24 @@ class SuperGamepadDslBuilder(
         buttons[this] = SuperGamepadDslButtonBuilder(block)
     }
 
+    fun Button.pressed(callback: () -> Unit) {
+        buttons[this] = SuperGamepadDslButtonBuilder {
+            pressed(callback)
+        }
+    }
+
+    fun Button.pressing(callback: () -> Unit) {
+        buttons[this] = SuperGamepadDslButtonBuilder {
+            pressing(callback)
+        }
+    }
+
+    fun Button.released(callback: () -> Unit) {
+        buttons[this] = SuperGamepadDslButtonBuilder  {
+            pressed(callback)
+        }
+    }
+
     fun build() {
         block()
 

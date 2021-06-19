@@ -16,8 +16,8 @@ class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
     //otros motores
     val motorWobbleArm by motorEx("WA")
 
-    val motorShooterLeft  by motorEx("SL")
-    val motorShooterRight by motorEx("SR")
+    val motorShooterLeft  by hardware<DcMotorEx>("SL")
+    val motorShooterRight by hardware<DcMotorEx>("SR")
 
     val motorIntakeConvey by hardware<DcMotor>("IN")
 
@@ -36,7 +36,7 @@ class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
             wheelFrontRight.direction = DcMotorSimple.Direction.REVERSE
             wheelBackRight.direction = DcMotorSimple.Direction.REVERSE
 
-            motorShooterRight.inverted = true
+            motorShooterRight.direction = DcMotorSimple.Direction.REVERSE
             motorIntakeConvey.direction = DcMotorSimple.Direction.REVERSE
 
             //estos motores frenaran si su power es 0

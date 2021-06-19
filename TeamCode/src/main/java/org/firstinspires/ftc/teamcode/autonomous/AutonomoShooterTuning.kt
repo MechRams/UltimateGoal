@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
-import com.noahbres.jotai.StateMachineBuilder
 import com.github.serivesmejia.deltacommander.deltaScheduler
+import com.noahbres.jotai.StateMachineBuilder
 import com.qualcomm.hardware.lynx.LynxModule
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.OpModeType
@@ -20,21 +19,21 @@ class AutonomoShooterTuning : MechOpMode(OpModeType.AUTO) {
         var shooterPower = 1.0
 
         var targetVelo = 0.0
-        val maxVelo = hdw.motorShooterLeft.ACHIEVABLE_MAX_TICKS_PER_SECOND
+        val maxVelo = shooterSub.maxTps
 
         val stateMachine = StateMachineBuilder<State>()
             .state(State.RAMPING_UP)
             .transitionTimed(8.0)
             .onEnter { shooterPower = 0.0 }
             .loop {
-                if(shooterPower <= 0.5)
+                if (shooterPower <= 0.5)
                     shooterPower += 0.005
             }
 
             .state(State.RAMPING_DOWN)
             .transitionTimed(8.0)
             .loop {
-                if(shooterPower > 0)
+                if (shooterPower > 0)
                     shooterPower -= 0.005
             }
 
@@ -60,6 +59,8 @@ class AutonomoShooterTuning : MechOpMode(OpModeType.AUTO) {
 
         stateMachine.looping = true
 
+        + ShooterRunCmd({ targetVelo }, true)
+
         waitForStart()
 
         stateMachine.start()
@@ -71,15 +72,14 @@ class AutonomoShooterTuning : MechOpMode(OpModeType.AUTO) {
 
             targetVelo = maxVelo * shooterPower * 0.8
 
-            shooterSub.leftMotor.motorEx.velocity = targetVelo
-            shooterSub.rightMotor.motorEx.velocity = targetVelo
+            deltaScheduler.update()
 
             telemetry.addData("bottom limit", "0")
             telemetry.addData("bottom upper limit", maxVelo)
             telemetry.addData("state", stateMachine.getState().name)
             telemetry.addData("power", shooterPower)
-            telemetry.addData("left velo", shooterSub.leftMotor.motorEx.velocity)
-            telemetry.addData("right velo", shooterSub.rightMotor.motorEx.velocity)
+            telemetry.addData("left velo", shooterSub.leftMotor.velocity)
+            telemetry.addData("right velo", shooterSub.rightMotor.velocity)
             telemetry.addData("target velo", targetVelo)
             telemetry.addData("power", shooterPower)
             telemetry.update()

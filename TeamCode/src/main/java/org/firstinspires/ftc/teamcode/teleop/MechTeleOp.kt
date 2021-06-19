@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.teleop
 
-import com.acmerobotics.dashboard.FtcDashboard
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltaevent.gamepad.button.Button
+import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.MechOpMode
@@ -62,19 +61,16 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
 
         //controlar el brazo para el wobble
         superGamepad1 {
-            Button.DPAD_LEFT {
-                pressing {
-                    armPos += Constants.armPositionIncrement
-                }
+            Button.DPAD_LEFT.pressing {
+                armPos += Constants.armPositionStep
             }
 
-            Button.DPAD_RIGHT {
-                pressing {
-                    armPos -= Constants.armPositionIncrement
-                }
+            Button.DPAD_RIGHT.pressing {
+                armPos -= Constants.armPositionStep
             }
         }
 
+        // agregar comando que constantemente definira la posicion actual del brazo
         + ArmPositionRunCmd { armPos.roundToInt() }
 
         // garra toggle con dpad
@@ -87,9 +83,17 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
 
         waitForStart()
 
+        // get the initial arm position from the current pos (after starting the opmode)
         armPos = hdw.motorWobbleArm.currentPosition.toDouble()
 
+        // bulk reads
+        deltaHdw.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+
         while(opModeIsActive()) {
+            deltaHdw.clearBulkCache()
+
+            deltaScheduler.update()
+
             telemetry.addData("fl", hdw.wheelFrontLeft.power)
             telemetry.addData("fr", hdw.wheelFrontRight.power)
             telemetry.addData("bl", hdw.wheelBackLeft.power)
@@ -98,8 +102,6 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
             telemetry.addData("in", hdw.motorIntakeConvey.power)
             telemetry.addData("wa claw pos", hdw.servoWobbleClaw.position)
             telemetry.update()
-
-            deltaScheduler.update()
         }
     }
 

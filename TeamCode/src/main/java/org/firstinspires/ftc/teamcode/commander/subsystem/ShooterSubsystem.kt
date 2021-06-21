@@ -21,40 +21,28 @@ class ShooterSubsystem(
     val maxRpm = motorType.GEAR_RATIO.inputRPM
     val maxTps = maxRpm * motorType.TICKS_PER_REVOLUTION
 
-    private var beforeP = 0.0
-    private var beforeI = 0.0
-    private var beforeD = 0.0
-    private var beforeF = 0.0
-
     init {
         defaultCommand = ShooterStopCmd()
+        updateCoefficients()
     }
 
-    override fun loop() {
-        //coefficient update on change
-        Constants.run {
-            if(beforeP != shooterP || beforeI != shooterI || beforeD != shooterD || beforeF != shooterF) {
-                leftMotor.setPIDFCoefficients(
-                    DcMotor.RunMode.RUN_USING_ENCODER,
-                    PIDFCoefficients(
-                        shooterP, shooterI, shooterD, shooterF
-                    )
-                )
+    fun updateCoefficients() = Constants.run{
+        leftMotor.setPIDFCoefficients(
+            DcMotor.RunMode.RUN_USING_ENCODER,
+            PIDFCoefficients(
+                shooterP, shooterI, shooterD, shooterF
+            )
+        )
 
-                rightMotor.setPIDFCoefficients(
-                    DcMotor.RunMode.RUN_USING_ENCODER,
-                    PIDFCoefficients(
-                        shooterP, shooterI, shooterD, shooterF
-                    )
-                )
-            }
-
-            beforeP = shooterP
-            beforeI = shooterI
-            beforeD = shooterD
-            beforeF = shooterF
-        }
+        rightMotor.setPIDFCoefficients(
+            DcMotor.RunMode.RUN_USING_ENCODER,
+            PIDFCoefficients(
+                shooterP, shooterI, shooterD, shooterF
+            )
+        )
     }
+
+    override fun loop() { }
 
 }
 

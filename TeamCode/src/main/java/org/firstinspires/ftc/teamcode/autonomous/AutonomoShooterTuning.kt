@@ -68,6 +68,8 @@ class AutonomoShooterTuning : MechOpMode(OpModeType.AUTO) {
         while (opModeIsActive()) {
             deltaHdw.clearBulkCache()
 
+            shooterSub.updateCoefficients()
+
             stateMachine.update()
 
             targetVelo = maxVelo * shooterPower * 0.8

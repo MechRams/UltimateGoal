@@ -16,6 +16,7 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
     override fun init() {
         stateMachine = StateMachineBuilder<State>()
             .state(State.IN)
+            .transitionTimed(0.8)
             .onEnter {
                 shooterSub.flickerServo.position = ShooterFlickerSubsystem.FLICKER_IN_POS
             }
@@ -29,20 +30,18 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
             .state(State.FINISHED)
             .transitionTimed(0.8)
 
-            .apply {
-                if(isInfinite) exit(State.IN)
-            }
+            .exit(State.IN)
 
             .build()
 
-        stateMachine.looping = isInfinite
+        stateMachine.looping = true
         stateMachine.start()
     }
 
     override fun run() {
         stateMachine.update()
 
-        if(!stateMachine.running)
+        if(!isInfinite && stateMachine.getState() == State.FINISHED)
             requestFinish()
     }
 
@@ -50,7 +49,7 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
         stateMachine.looping = false
     }
 
-    override fun endCondition() = !stateMachine.running
+    override fun endCondition() = stateMachine.getState() == State.FINISHED
 
 }
 

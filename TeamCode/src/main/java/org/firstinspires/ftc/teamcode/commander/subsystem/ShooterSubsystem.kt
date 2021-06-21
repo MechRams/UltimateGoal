@@ -31,7 +31,8 @@ class ShooterSubsystem(
     }
 
     override fun loop() {
-        //coefficient update on change
+        //coefficient update on change}
+        /*
         Constants.run {
             if(beforeP != shooterP || beforeI != shooterI || beforeD != shooterD || beforeF != shooterF) {
                 leftMotor.setPIDFCoefficients(
@@ -53,7 +54,7 @@ class ShooterSubsystem(
             beforeI = shooterI
             beforeD = shooterD
             beforeF = shooterF
-        }
+        }*/
     }
 
 }

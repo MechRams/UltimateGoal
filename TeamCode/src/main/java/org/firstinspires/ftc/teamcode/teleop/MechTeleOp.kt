@@ -26,6 +26,8 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
     private var armPos = 0.0
 
     override fun run() {
+        telemetry.msTransmissionInterval = 5
+
         // programar el comando que controlara el chassis con el gamepad
         + DriveJoystickCmd(gamepad1)
 
@@ -98,6 +100,7 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
             telemetry.addData("fr", hdw.wheelFrontRight.power)
             telemetry.addData("bl", hdw.wheelBackLeft.power)
             telemetry.addData("br", hdw.wheelBackRight.power)
+            telemetry.addData("flick", hdw.servoShooterFlicker.position)
 
             telemetry.addData("in", hdw.motorIntakeConvey.power)
             telemetry.addData("wa claw pos", hdw.servoWobbleClaw.position)

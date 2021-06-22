@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.commander.command.shooter
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import com.noahbres.jotai.StateMachine
 import com.noahbres.jotai.StateMachineBuilder
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterFlickerSubsystem
 
 class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
@@ -16,19 +17,19 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
     override fun init() {
         stateMachine = StateMachineBuilder<State>()
             .state(State.IN)
-            .transitionTimed(0.8)
-            .onEnter {
-                shooterSub.flickerServo.position = ShooterFlickerSubsystem.FLICKER_IN_POS
+            .transitionTimed(0.4)
+            .loop {
+                shooterSub.flickerServo.position = Constants.flickerInPos
             }
 
             .state(State.OUT)
-            .transitionTimed(0.8)
-            .onEnter {
-                shooterSub.flickerServo.position = ShooterFlickerSubsystem.FLICKER_OUT_POS
+            .transitionTimed(0.4)
+            .loop {
+                shooterSub.flickerServo.position = Constants.flickerOutPos
             }
 
             .state(State.FINISHED)
-            .transitionTimed(0.8)
+            .transitionTimed(0.2)
 
             .exit(State.IN)
 
@@ -45,10 +46,6 @@ class ShooterFlickCmd(val isInfinite: Boolean = true) : DeltaCommand() {
             requestFinish()
     }
 
-    override fun ending() {
-        stateMachine.looping = false
-    }
-
     override fun endCondition() = stateMachine.getState() == State.FINISHED
 
 }
@@ -58,7 +55,7 @@ class ShooterFlickOutCmd : DeltaCommand() {
     val shooterSub = require<ShooterFlickerSubsystem>()
 
     override fun run() {
-        shooterSub.flickerServo.position = ShooterFlickerSubsystem.FLICKER_OUT_POS
+        shooterSub.flickerServo.position = Constants.flickerOutPos
     }
 
 }

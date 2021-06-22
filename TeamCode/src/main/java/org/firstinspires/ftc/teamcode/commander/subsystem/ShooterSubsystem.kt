@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
 class ShooterSubsystem(
     val leftMotor: DcMotorEx,
     val rightMotor: DcMotorEx
-) : DeltaSubsystem()  {
+) : DeltaSubsystem() {
 
     val motorType = HDHex_Motor_Only
     val maxRpm = motorType.GEAR_RATIO.inputRPM
@@ -23,6 +23,16 @@ class ShooterSubsystem(
 
     init {
         defaultCommand = ShooterStopCmd()
+
+        val coeffs = leftMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER)
+
+        Constants.run {
+            shooterP = coeffs.p
+            shooterI = coeffs.i
+            shooterD = coeffs.d
+            shooterF = coeffs.f
+        }
+
         updateCoefficients()
     }
 
@@ -49,11 +59,6 @@ class ShooterSubsystem(
 class ShooterFlickerSubsystem(
     val flickerServo: Servo
 ) : DeltaSubsystem() {
-
-    companion object {
-        const val FLICKER_IN_POS = 0.3
-        const val FLICKER_OUT_POS = 1.0
-    }
 
     init {
         defaultCommand = ShooterFlickOutCmd()

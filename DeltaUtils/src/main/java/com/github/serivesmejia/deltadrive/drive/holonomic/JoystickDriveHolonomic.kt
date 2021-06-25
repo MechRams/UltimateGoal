@@ -23,6 +23,8 @@
 package com.github.serivesmejia.deltadrive.drive.holonomic
 
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
+import com.github.serivesmejia.deltamath.geometry.Rot2d
+import com.github.serivesmejia.deltamath.geometry.Vec2d
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.Range
 import kotlin.math.abs
@@ -103,6 +105,13 @@ class JoystickDriveHolonomic
         wheelBackLeftPower *= lt
 
         hdw.setMotorPowers(wheelFrontLeftPower, wheelFrontRightPower, wheelBackLeftPower, wheelBackRightPower)
+    }
+
+    fun update(y1: Double, x1: Double, x2: Double,
+               rightTurbo: Double, leftTurbo: Double, angle: Rot2d
+    ) {
+        val rotated = Vec2d(x1, y1).rotate(angle.invert())
+
     }
 
 }

@@ -23,8 +23,8 @@
 package com.github.serivesmejia.deltamath.geometry
 
 class Pose2d (
-        val vec: Vec2d,
-        val th: Rot2d
+    val vec: Vec2d,
+    val th: Rot2d
 ) {
 
     val x
@@ -35,73 +35,16 @@ class Pose2d (
     val theta
         get() = th.radians
 
-    constructor (x: Double, y: Double, theta: Rot2d) : this(Vec2d(x, y), theta)
+    constructor(x: Double, y: Double, theta: Double) : this(Vec2d(x, y), Rot2d(theta))
 
-    constructor (other: Pose2d) : this(Vec2d(other.vec), Rot2d(other.th))
+    constructor(other: Pose2d) : this(Vec2d(other.vec), Rot2d(other.th))
 
-    operator fun plus(o: Pose2d): Pose2d {
+    operator fun plus(o: Pose2d) = Pose2d(vec + o.vec, th + o.th)
 
-        val newPose = Pose2d(this)
+    operator fun minus(o: Pose2d) = Pose2d(vec - o.vec, th - o.th)
 
-        newPose.vec += o.vec
-        newPose.th += o.th
+    operator fun div(o: Pose2d) = Pose2d(vec / o.vec, th / o.th)
 
-        return newPose
-
-    }
-
-    operator fun plusAssign(o: Pose2d) {
-        vec += o.vec
-        th += o.th
-    }
-
-    operator fun minus(o: Pose2d): Pose2d {
-
-        val newPose = Pose2d(this)
-
-        newPose.vec -= o.vec
-        newPose.th -= o.th
-
-        return newPose
-
-    }
-
-    operator fun minusAssign(o: Pose2d) {
-        vec -= o.vec
-        th -= o.th
-    }
-
-    operator fun div(o: Pose2d): Pose2d {
-
-        val newPose = Pose2d(this)
-
-        newPose.vec /= o.vec
-        newPose.th /= o.th
-
-        return newPose
-
-    }
-
-    operator fun divAssign(o: Pose2d) {
-        vec /= o.vec
-        th /= o.th
-    }
-
-    operator fun times(o: Pose2d): Pose2d {
-
-        val newPose = Pose2d(this)
-
-        newPose.vec *= o.vec
-        newPose.th *= o.th
-
-        return newPose
-
-    }
-
-    operator fun timesAssign(o: Pose2d) {
-        vec *= o.vec
-        th *= o.th
-    }
-
+    operator fun times(o: Pose2d) = Pose2d(vec * o.vec, th * o.th)
 
 }

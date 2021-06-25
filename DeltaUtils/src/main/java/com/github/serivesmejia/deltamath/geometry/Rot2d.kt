@@ -27,7 +27,7 @@ import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
 
-class Rot2d() {
+class Rot2d(val radians: Double) {
 
     companion object {
         /**
@@ -35,83 +35,29 @@ class Rot2d() {
          * @param degrees degrees to set to the new Rot2d
          * @return new Rot2d from degrees
          */
-        fun degrees(degrees: Double): Rot2d {
-            return Rot2d(Math.toRadians(degrees))
+        fun degrees(degrees: Double) = Rot2d(Math.toRadians(degrees))
+        
+        fun vector(x: Double, y: Double): Rot2d {
+            val hy = hypot(x, y)
+
+            if (hy > 0.00001) {
+                sin = y / hy
+                cos = x / hy
+            } else {
+                sin = 0.0
+                cos = 1.0
+            }
+
+            return Rot2d(atan2(sin, cos))
         }
+        
+        fun vector(vec: Vec2d) = vector(vec.x, vec.y)
     }
 
-    var radians
-        get() = i_radians
-        set(value) {
-            cos = cos(value)
-            sin = sin(value)
-            i_radians = value
-        }
-
-
-    var degrees: Double
-        get() = Math.toDegrees(radians)
-        set(value) { radians = Math.toRadians(value) }
-
-    var cos
-        get() = i_cos
-        private set(value) {
-            i_cos = value
-        }
-
-    var sin
-        get() = i_sin
-        private set(value) {
-            i_sin = value
-        }
-
-    private var i_radians = 0.0
-    private var i_cos = 0.0
-    private var i_sin = 0.0
-
-    /**
-     * Constructor for Rot2d
-     */
-    init {
-        radians = 0.0
-        cos = 1.0
-        sin = 0.0
-    }
-
-    /**
-     * Constructor for Rot2d
-     * @param rad Radians
-     */
-    constructor (rad: Double): this() {
-        radians = rad
-        cos = cos(radians)
-        sin = sin(radians)
-    }
-
-    constructor (o : Rot2d): this() {
-        radians = o.radians
-        cos = cos(radians)
-        sin = sin(radians)
-    }
-
-    /**
-     * Constructor for Rot2d using x and y values
-     * @param x
-     * @param y
-     */
-    constructor (x: Double, y: Double): this() {
-        val hy = hypot(x, y)
-
-        if (hy > 0.00001) {
-            sin = y / hy
-            cos = x / hy
-        } else {
-            sin = 0.0
-            cos = 1.0
-        }
-
-        radians = atan2(sin, cos)
-    }
+    val cos = cos(radians)
+    val sin = sin(radians)
+    
+    val degrees = Math.toDegrees(radians)
 
     /**
      * @param other Other Rot2d
@@ -140,88 +86,26 @@ class Rot2d() {
      * @param o the Rot2d to rotate by
      * @return Result Rot2d
      */
-    fun rotate(o: Rot2d): Rot2d {
+    fun rotate(o: Rot2d) = Rot2d.vector(
+        cos * o.cos - o.sin * o.cos,
+        cos * o.sin + o.sin * o.cos
+    )
 
-        val x = cos * o.cos - o.sin * o.cos
-        val y = cos * o.sin + o.sin * o.cos
+    operator fun plus(o: Rot2d) = rotate(o)
 
-        val hy = hypot(x, y)
+    operator fun minus(o: Rot2d) = rotate(o.invert())
+    
+    operator fun div(o: Rot2d) = Rot2d(radians / o.radians)
 
-        if (hy > 0.00001) {
-            sin = y / hy
-            cos = x / hy
-        } else {
-            sin = 0.0
-            cos = 1.0
-        }
+    operator fun times(o: Rot2d) = Rot2d(radians * o.radians)
 
-        radians = atan2(sin, cos)
-
-        return Rot2d(x, y)
-
-    }
-
-    operator fun plus(o: Rot2d): Rot2d {
-
-        val newRot = Rot2d(this)
-
-        return newRot.rotate(o)
-
-    }
-
-    operator fun plusAssign(o: Rot2d) {
-        this.rotate(o)
-    }
-
-    operator fun minus(o: Rot2d): Rot2d {
-        val newRot = Rot2d(this)
-        return newRot.rotate(Rot2d(o).invert())
-    }
-
-    operator fun minusAssign(o: Rot2d) {
-        this.rotate(Rot2d(o).invert())
-    }
-
-
-    operator fun div(o: Rot2d): Rot2d {
-
-        val newRot = Rot2d(this)
-
-        newRot.radians /= o.radians
-
-        return newRot
-
-    }
-
-    operator fun divAssign(o: Rot2d) {
-        radians /= o.radians
-    }
-
-    operator fun times(o: Rot2d): Rot2d {
-
-        val newRot = Rot2d(this)
-
-        newRot.radians *= o.radians
-
-        return newRot
-
-    }
-
-    operator fun timesAssign(o: Rot2d) {
-        radians *= o.radians
-    }
 
     /**
      * Inverts the radians and returns a new Rot2d
      * @return Result Rot2d
      */
-    fun invert(): Rot2d {
-        radians = -radians
-        return Rot2d(radians)
-    }
-
-    override fun toString(): String {
-        return "Rot2d(rad ${radians}, deg ${Math.toDegrees(radians)})"
-    }
+    fun invert() = Rot2d(-radians)
+    
+    override fun toString"Rot2d(rad ${radians}, deg ${Math.toDegrees(radians)})"
 
 }

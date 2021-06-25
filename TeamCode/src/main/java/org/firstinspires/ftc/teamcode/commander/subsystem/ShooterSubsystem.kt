@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.commander.subsystem
 
-import com.arcrobotics.ftclib.hardware.motors.MotorEx
-import com.arcrobotics.ftclib.hardware.motors.MotorGroup
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
 import com.github.serivesmejia.deltadrive.motors.revrobotics.HDHex_Motor_Only
 import com.qualcomm.robotcore.hardware.DcMotor

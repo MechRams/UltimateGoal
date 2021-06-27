@@ -47,7 +47,8 @@ abstract class IMUDrivePIDFBase
  */
 (private val hdw: DeltaHardware, deltaHardwareType: DeltaHardware.Type, private val telemetry: Telemetry? = null) {
 
-    private lateinit var imu: SimpleBNO055IMU
+    lateinit var imu: SimpleBNO055IMU
+        private set
 
     private val runtime = ElapsedTime()
 

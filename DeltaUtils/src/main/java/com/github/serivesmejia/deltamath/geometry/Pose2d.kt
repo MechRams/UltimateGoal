@@ -37,7 +37,7 @@ class Pose2d (
 
     constructor(x: Double, y: Double, theta: Double) : this(Vec2d(x, y), Rot2d(theta))
 
-    constructor(other: Pose2d) : this(Vec2d(other.vec), Rot2d(other.th))
+    constructor(other: Pose2d) : this(other.vec, other.th)
 
     operator fun plus(o: Pose2d) = Pose2d(vec + o.vec, th + o.th)
 

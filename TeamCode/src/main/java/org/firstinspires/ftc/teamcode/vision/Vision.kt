@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.vision
 import com.acmerobotics.dashboard.FtcDashboard
 import com.qualcomm.robotcore.hardware.HardwareMap
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
-import org.openftc.easyopencv.OpenCvCamera
-import org.openftc.easyopencv.OpenCvCameraFactory
-import org.openftc.easyopencv.OpenCvCameraRotation
-import org.openftc.easyopencv.OpenCvInternalCamera
+import org.openftc.easyopencv.*
 
 open class Vision(private val hardwareMap: HardwareMap) {
 
@@ -15,14 +12,28 @@ open class Vision(private val hardwareMap: HardwareMap) {
     var ringPipeline: RingPipeline? = null
     var ringPipeline2: RingPipeline2? = null
 
-    private fun initVision() {
-        val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.packageName)
-        phoneCam = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName::class.java, "Webcam 1"), cameraMonitorViewId)
+    val cameraMonitorViewId = hardwareMap.appContext.resources.getIdentifier(
+            "cameraMonitorViewId", "id", hardwareMap.appContext.packageName
+    )
+
+    fun initWebcamVision() {
+        phoneCam = OpenCvCameraFactory.getInstance().createWebcam(
+                hardwareMap.get(WebcamName::class.java, "Webcam 1"),
+                cameraMonitorViewId
+        )
+
+        FtcDashboard.getInstance().startCameraStream(phoneCam!!, 0.0)
+    }
+
+    fun initInternalCamVision() {
+        phoneCam = OpenCvCameraFactory.getInstance().createInternalCamera2(
+                OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId
+        )
+
         FtcDashboard.getInstance().startCameraStream(phoneCam!!, 0.0)
     }
 
     fun initRingVision() {
-        initVision()
         ringPipeline = RingPipeline()
 
         phoneCam?.setPipeline(ringPipeline)
@@ -32,7 +43,6 @@ open class Vision(private val hardwareMap: HardwareMap) {
     }
 
     fun initRingVision2() {
-        initVision()
         ringPipeline2 = RingPipeline2()
 
         phoneCam?.setPipeline(ringPipeline2)

@@ -22,9 +22,10 @@
 
 package com.github.serivesmejia.deltamath.geometry
 
+import kotlin.math.atan2
 import kotlin.math.hypot
 
-class Vec2d(val x: Double, val y: Double) {
+class Vec2d(val x: Double = 0.0, val y: Double = 0.0) {
 
     /**
      * Constructor for Vec2d using another Vec2d
@@ -32,10 +33,12 @@ class Vec2d(val x: Double, val y: Double) {
      */
     constructor (o: Vec2d) : this(o.x, o.y)
 
+    val radians = atan2(y, x)
+
     /**
-     * @return the magnitude of the vector
+     * the magnitude of the vector
      */
-    fun mag() = hypot(x, y)
+    val mag = hypot(x, y)
 
     operator fun plus(o: Vec2d): Vec2d {
         val newX = x + o.x
@@ -71,12 +74,10 @@ class Vec2d(val x: Double, val y: Double) {
      * Rotate this Vec2d by a Rot2d
      * @param by the Rot2d to rotate by
      */
-    fun rotate(by: Rot2d): Vec2d {
-        val newX = x * by.cos - y * by.sin
-        val newY = x * by.sin + y * by.cos
-
-        return Vec2d(newX, newY)
-    }
+    fun rotate(by: Rot2d) = Vec2d(
+            x * by.cos - y * by.sin,
+            x * by.sin + y * by.cos
+    )
 
     /**
      * Inverts current Vec2d values to negative/positive

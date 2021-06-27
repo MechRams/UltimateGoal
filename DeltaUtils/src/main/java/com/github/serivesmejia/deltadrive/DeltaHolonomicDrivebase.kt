@@ -1,6 +1,7 @@
 package com.github.serivesmejia.deltadrive
 
 import com.github.serivesmejia.deltadrive.utils.task.Task
+import com.qualcomm.robotcore.hardware.Gamepad
 
 interface DeltaHolonomicDrivebase : DeltaDrivebase {
 
@@ -9,6 +10,12 @@ interface DeltaHolonomicDrivebase : DeltaDrivebase {
 
     fun joystickRobotCentric(forwardSpeed: Double, strafeSpeed: Double, turnSpeed: Double, turbo: Double)
 
+    fun joystickFieldCentric(forwardSpeed: Double, strafeSpeed: Double, turnSpeed: Double, turbo: Double)
+
+    fun joystickFieldCentric(gamepad: Gamepad, turbo: Double = 1.0)
+
+    fun joystickFieldCentric(gamepad: Gamepad, controlSpeedWithTriggers: Boolean, maxMinusTurbo: Double = 0.8)
+    
     fun timeStrafeLeft(power: Double, timeSecs: Double): Task<Unit>
     fun timeStrafeRight(power: Double, timeSecs: Double): Task<Unit>
 

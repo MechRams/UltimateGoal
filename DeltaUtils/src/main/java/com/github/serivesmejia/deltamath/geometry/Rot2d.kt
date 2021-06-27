@@ -27,9 +27,11 @@ import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
 
-class Rot2d(val radians: Double) {
+class Rot2d(val radians: Double = 0.0) {
 
     companion object {
+        val zero = Rot2d()
+
         /**
          * Creates a new Rot2d from degrees
          * @param degrees degrees to set to the new Rot2d
@@ -40,12 +42,10 @@ class Rot2d(val radians: Double) {
         fun vector(x: Double, y: Double): Rot2d {
             val hy = hypot(x, y)
 
-            if (hy > 0.00001) {
-                sin = y / hy
-                cos = x / hy
+            val (sin, cos)=  if (hy > 0.00001) {
+                Pair(y / hy, x / hy)
             } else {
-                sin = 0.0
-                cos = 1.0
+                Pair(0.0, 1.0)
             }
 
             return Rot2d(atan2(sin, cos))
@@ -106,6 +106,6 @@ class Rot2d(val radians: Double) {
      */
     fun invert() = Rot2d(-radians)
     
-    override fun toString"Rot2d(rad ${radians}, deg ${Math.toDegrees(radians)})"
+    override fun toString() = "Rot2d(rad ${radians}, deg ${Math.toDegrees(radians)})"
 
 }

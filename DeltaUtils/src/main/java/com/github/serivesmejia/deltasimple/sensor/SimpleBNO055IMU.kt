@@ -8,7 +8,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 
 @Suppress("UNUSED")
 class SimpleBNO055IMU(private val imu: BNO055IMU) {
@@ -16,8 +15,10 @@ class SimpleBNO055IMU(private val imu: BNO055IMU) {
     var initialized = false
         private set
 
-    private var lastAngles = Orientation()
+    private var lastIMUAngle = Rot2d.zero
     private var globalAngle = 0.0
+
+    private var angleOffset = 0.0
 
     var axis = Axis.Z
 
@@ -66,13 +67,8 @@ class SimpleBNO055IMU(private val imu: BNO055IMU) {
         // We have to process the angle because the imu works in euler angles so the axis is
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
         // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
-        val angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
 
-        var deltaAngle = when (axis) {
-            Axis.X -> angles.thirdAngle - lastAngles.thirdAngle
-            Axis.Y -> angles.secondAngle - lastAngles.secondAngle
-            else -> angles.firstAngle - lastAngles.firstAngle
-        }
+        var deltaAngle = angle.degrees - lastIMUAngle.degrees
 
         if (deltaAngle < -180)
             deltaAngle += 360
@@ -80,18 +76,35 @@ class SimpleBNO055IMU(private val imu: BNO055IMU) {
             deltaAngle -= 360
 
         globalAngle += deltaAngle
-        lastAngles = angles
+        lastIMUAngle = angle
 
         lastCumulativeAngle = Rot2d.degrees(globalAngle)
 
         return lastCumulativeAngle
     }
 
-    var lastCumulativeAngle = Rot2d()
+    var lastCumulativeAngle = Rot2d.zero
+        private set
+
+    val angle: Rot2d get() {
+        val angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
+
+        lastAngle = Rot2d(when (axis) {
+            Axis.X -> angles.thirdAngle
+            Axis.Y -> angles.secondAngle
+            else -> angles.firstAngle
+        }.toDouble() - angleOffset)
+
+        return lastAngle
+    }
+
+    var lastAngle = Rot2d.zero
+        private set
 
     fun resetAngle() {
-        lastAngles =  imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
         globalAngle = 0.0
+        angleOffset = angle.degrees
+        lastIMUAngle = Rot2d.zero
     }
 
 }

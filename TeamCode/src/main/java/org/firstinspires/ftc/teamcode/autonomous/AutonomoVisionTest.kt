@@ -15,6 +15,13 @@ class AutonomoVisionTest : LinearOpMode() {
         telemetry = FtcDashboard.getInstance().telemetry
 
         vision = Vision(hardwareMap)
+
+        try {
+            vision.initWebcamVision()
+        } catch(ignored: Exception) {
+            vision.initInternalCamVision()
+        }
+
         vision.initRingVision2()
 
         waitForStart()

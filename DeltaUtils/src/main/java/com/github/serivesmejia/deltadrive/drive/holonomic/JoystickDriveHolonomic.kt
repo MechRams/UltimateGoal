@@ -27,7 +27,9 @@ import com.github.serivesmejia.deltamath.geometry.Rot2d
 import com.github.serivesmejia.deltamath.geometry.Vec2d
 import com.qualcomm.robotcore.hardware.Gamepad
 import com.qualcomm.robotcore.util.Range
+import kotlin.math.PI
 import kotlin.math.abs
+import kotlin.math.sin
 
 /**
  * Class to control an holonomic chan ssis during teleop using a gamepad's joysticks.
@@ -107,11 +109,71 @@ class JoystickDriveHolonomic
         hdw.setMotorPowers(wheelFrontLeftPower, wheelFrontRightPower, wheelBackLeftPower, wheelBackRightPower)
     }
 
-    fun update(y1: Double, x1: Double, x2: Double,
-               rightTurbo: Double, leftTurbo: Double, angle: Rot2d
+    fun update(
+            y1: Double, x1: Double, x2: Double,
+            rightTurbo: Double, leftTurbo: Double, angle: Rot2d
     ) {
-        val rotated = Vec2d(x1, y1).rotate(angle.invert())
+        val input = Vec2d(clip(x1), clip(y1))
+        val rotated = input.rotate(angle.invert())
+        val theta = rotated.radians
 
+        var fl = sin(theta + PI / 4)
+        var fr = sin(theta - PI / 4)
+        var bl = sin(theta - PI / 4)
+        var br = sin(theta + PI / 4)
+
+        val maxMag = abs(fl).coerceAtLeast(abs(fr).coerceAtLeast(abs(bl).coerceAtLeast(abs(br))))
+        val mag = input.mag
+
+        fl = ((fl / mag) * maxMag) + x2
+        fr = ((fr / mag) * maxMag) - x2
+        bl = ((bl / mag) * maxMag) + x2
+        br = ((br / mag) * maxMag) - x2
+
+        val max = abs(fl).coerceAtLeast(abs(fr).coerceAtLeast(abs(bl).coerceAtLeast(abs(br))))
+
+        if (max > 1.0) {
+            wheelFrontRightPower /= max
+            wheelBackRightPower /= max
+            wheelFrontLeftPower /= max
+            wheelBackLeftPower /= max
+        }
+
+        val rt = abs(rightTurbo)
+        val lt = abs(leftTurbo)
+
+        wheelFrontRightPower *= rt
+        wheelBackRightPower *= rt
+        wheelFrontLeftPower *= lt
+        wheelBackLeftPower *= lt
+
+        hdw.setMotorPowers(fl, fr, bl, br)
     }
+
+    /**
+     * Control a mecanum chassis using a gamepad's joysticks.
+     * Use left stick to go forward, backwards and strafe, and right stick to turn
+     * This method should be called constantly in the teleop loop to update the motor powers
+     * @param rightTurbo the chassis right side % of speed, from 0 to 1
+     * @param leftTurbo the chassis left side % of speed, from 0 to 1
+     */
+    fun update(rightTurbo: Double, leftTurbo: Double, angle: Rot2d) {
+        val y1 = -gamepad!!.left_stick_y.toDouble()
+        val x1 = gamepad!!.left_stick_x.toDouble()
+        val x2 = gamepad!!.right_stick_x.toDouble()
+
+        update(y1, x1, x2, rightTurbo, leftTurbo, angle)
+    }
+
+    /**
+     * Control a mecanum chassis using a gamepad's joysticks.
+     * Use left stick to go forward, backwards and strafe, and right stick to turn
+     * This method should be called constantly in the teleop loop to update the motor powers
+     * @param rightTurbo the chassis right side % of speed, from 0 to 1
+     * @param leftTurbo the chassis left side % of speed, from 0 to 1
+     */
+    fun update(turbo: Double, angle: Rot2d) = update(turbo, turbo, angle)
+
+    private fun clip(number: Double) = Range.clip(abs(number), 0.0, 1.0)
 
 }

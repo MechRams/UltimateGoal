@@ -86,25 +86,36 @@ class SimpleBNO055IMU(private val imu: BNO055IMU) {
     var lastCumulativeAngle = Rot2d.zero
         private set
 
-    val angle: Rot2d get() {
-        val angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
+    var angle: Rot2d
+        get() {
+            val angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
 
-        lastAngle = Rot2d(when (axis) {
-            Axis.X -> angles.thirdAngle
-            Axis.Y -> angles.secondAngle
-            else -> angles.firstAngle
-        }.toDouble() - angleOffset)
+            val a = when (axis) {
+                Axis.X -> angles.thirdAngle
+                Axis.Y -> angles.secondAngle
+                else -> angles.firstAngle
+            }.toDouble() + angleOffset
 
-        return lastAngle
-    }
+            lastAngle = Rot2d.degrees(a)
+
+            return lastAngle
+        }
+
+        set(value) {
+            angleOffset = value.degrees
+        }
 
     var lastAngle = Rot2d.zero
         private set
 
     fun resetAngle() {
         globalAngle = 0.0
-        angleOffset = angle.degrees
+        angleOffset -= angle.degrees
         lastIMUAngle = Rot2d.zero
+    }
+
+    fun addOffset(plusOffset: Double) {
+        angleOffset += plusOffset
     }
 
 }

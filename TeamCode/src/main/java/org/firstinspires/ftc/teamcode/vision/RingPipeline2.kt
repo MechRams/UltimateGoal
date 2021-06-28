@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.vision
 
+import com.acmerobotics.dashboard.config.Config
 import org.firstinspires.ftc.teamcode.vision.cv.CvUtils
 import org.firstinspires.ftc.teamcode.vision.cv.NativeBlobDetector
 import org.opencv.core.*
@@ -24,22 +25,37 @@ class RingPipeline2 : OpenCvPipeline() {
     data class RingStack(val rect: Rect, val ringHeight: RingHeight, val aspectRatio: Double, val distanceFromCenter: Point)
 
     /** companion object to store all static variables needed **/
-    companion object Config {
 
+    companion object Config {
         /** values used for inRange calculation
          * set to var in-case user wants to use their own tuned values
          * stored in YCrCb format **/
-        var lowerYCrCb = Scalar(0.0, 141.0, 0.0)
-        var upperYCrCb = Scalar(255.0, 230.0, 150.0)
+        val lowerYCrCb get() = Scalar(
+                RingPipeline2Config.A_lowerY,
+                RingPipeline2Config.B_lowerCr,
+                RingPipeline2Config.C_lowerCb
+        )
+        val upperYCrCb get() = Scalar(
+                RingPipeline2Config.D_upperY,
+                RingPipeline2Config.E_upperCr,
+                RingPipeline2Config.F_upperCb
+        )
 
         /** values used for inRange calculation
          * set to var in-case user wants to use their own tuned values
          * stored in HSV format **/
-        var lowerHsv = Scalar(8.44, 181.003, 115.0406)
-        var upperHsv = Scalar(43.74, 253.1601, 247.4508)
+        val lowerHsv get() = Scalar(
+                RingPipeline2Config.G_lowerH,
+                RingPipeline2Config.H_lowerS,
+                RingPipeline2Config.I_lowerV
+        )
+        val upperHsv get() = Scalar(
+                RingPipeline2Config.J_upperH,
+                RingPipeline2Config.K_upperS,
+                RingPipeline2Config.L_upperV
+        )
 
-        var mostLikelyMode = MostLikelyMode.CENTER_ML
-
+        val mostLikelyMode get() = RingPipeline2Config.Z_mostLikelyMode
     }
 
     /** variable to store the detected stacks **/
@@ -295,4 +311,26 @@ class RingPipeline2 : OpenCvPipeline() {
         blobDet.release()
     }
 
+}
+
+@Config
+object RingPipeline2Config {
+
+    @JvmField var A_lowerY = 0.0
+    @JvmField var B_lowerCr = 141.0
+    @JvmField var C_lowerCb = 0.0
+
+    @JvmField var D_upperY  = 255.0
+    @JvmField var E_upperCr = 230.0
+    @JvmField var F_upperCb = 150.0
+
+    @JvmField var G_lowerH = 8.44
+    @JvmField var H_lowerS = 181.003
+    @JvmField var I_lowerV = 115.0406
+
+    @JvmField var J_upperH  = 43.74
+    @JvmField var K_upperS = 253.1601
+    @JvmField var L_upperV = 247.4508
+
+    @JvmField var Z_mostLikelyMode = RingPipeline2.MostLikelyMode.CENTER_ML
 }

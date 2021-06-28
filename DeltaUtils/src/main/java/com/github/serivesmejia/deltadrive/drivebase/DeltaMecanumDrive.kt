@@ -25,6 +25,8 @@ class DeltaMecanumDrive(
     private lateinit var encoderDrive: EncoderDriveHolonomic
     private val timeDrive = TimeDriveHolonomic(hdw, telemetry)
 
+    val imu get() = imuDrive.imu
+
     override fun joystickRobotCentric(
         forwardSpeed: Double,
         strafeSpeed: Double,
@@ -90,7 +92,7 @@ class DeltaMecanumDrive(
 
     fun initIMU(params: IMUDriveParameters) = imuDrive.initIMU(params)
 
-    fun resetIMU() = imuDrive.imu.resetAngle()
+    fun resetIMU() = imu.resetAngle()
 
     override fun rotate(angle: Rot2d, power: Double, timeoutSecs: Double) =
         imuDrive.rotate(angle, power, timeoutSecs)

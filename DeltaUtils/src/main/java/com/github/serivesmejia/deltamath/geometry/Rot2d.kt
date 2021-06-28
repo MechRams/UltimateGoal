@@ -77,9 +77,9 @@ class Rot2d(val radians: Double = 0.0) {
     }
 
     /**
-     * @return the calculated tan
+     * the calculated tangent
      */
-    fun calculateTan(): Double = sin / cos
+    val tan = sin / cos
 
     /**
      * Rotate by another Rot2d and returns a new one

@@ -19,6 +19,8 @@ class ShooterSubsystem(
     val maxRpm = motorType.GEAR_RATIO.inputRPM
     val maxTps = maxRpm * motorType.TICKS_PER_REVOLUTION
 
+    val avgVelocity get() = (leftMotor.velocity + rightMotor.velocity) / 2
+
     init {
         defaultCommand = ShooterStopCmd()
 

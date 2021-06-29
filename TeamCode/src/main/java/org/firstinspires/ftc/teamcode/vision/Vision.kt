@@ -33,6 +33,14 @@ open class Vision(private val hardwareMap: HardwareMap) {
         FtcDashboard.getInstance().startCameraStream(phoneCam!!, 0.0)
     }
 
+    fun initCamVision() {
+        try {
+            initWebcamVision()
+        } catch(ignored: Exception) {
+            initInternalCamVision()
+        }
+    }
+
     fun initRingVision() {
         ringPipeline = RingPipeline()
 

@@ -1,0 +1,64 @@
+package org.firstinspires.ftc.teamcode.autonomous
+
+import com.github.serivesmejia.deltacommander.command.DeltaParallelCmd
+import com.github.serivesmejia.deltacommander.command.DeltaWaitConditionCmd
+import com.github.serivesmejia.deltacommander.deltaScheduler
+import com.github.serivesmejia.deltacommander.dsl.deltaSequence
+import com.qualcomm.hardware.lynx.LynxModule
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import org.firstinspires.ftc.teamcode.MechOpMode
+import org.firstinspires.ftc.teamcode.OpModeType
+import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterAutoFlick
+import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterRunCmd
+import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
+import org.firstinspires.ftc.teamcode.vision.RingPipeline2
+
+@Autonomous(name = "Rojo Completo", group = "final", preselectTeleop = "TeleOp")
+class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
+
+    override fun run() {
+        deltaHdw.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
+
+        vision.initCamVision()
+        vision.initRingVision2()
+
+        waitForStart()
+
+        when(vision.ringPipeline2!!.getLatestMostLikelyHeight()) {
+            RingPipeline2.RingHeight.ZERO -> stackA()
+            RingPipeline2.RingHeight.ONE ->  stackB()
+            RingPipeline2.RingHeight.FOUR -> stackC()
+        }.schedule()
+
+        while(opModeIsActive()) {
+            deltaHdw.clearBulkCache()
+            deltaScheduler.update()
+        }
+    }
+
+    fun shootRings() = deltaSequence {
+        // start running the shooter (non-blocking)
+        - ShooterRunCmd(1.0).dontBlock()
+
+        // wait until the shooter reaches a certain velocity
+        - DeltaWaitConditionCmd { shooterSub.avgVelocity >= 30000 }
+
+        // shoot the rings! the servo will move in and out 3 times
+        - ShooterAutoFlick(3)
+        // stop the shooter after the servo finishes flicking (zero velocity)
+        - ShooterStopCmd()
+    }
+
+    fun stackA() = deltaSequence {
+
+    }
+
+    fun stackB() = deltaSequence {
+
+    }
+
+    fun stackC() = deltaSequence {
+
+    }
+
+}

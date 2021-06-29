@@ -3,6 +3,7 @@ package com.github.serivesmejia.deltacommander.dsl
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import com.github.serivesmejia.deltacommander.command.DeltaRunCmd
 import com.github.serivesmejia.deltacommander.command.DeltaSequentialCmd
+import com.github.serivesmejia.deltadrive.utils.task.Task
 
 class DeltaSequenceBuilder(private val block: DeltaSequenceBuilder.() -> Unit) {
 
@@ -13,7 +14,14 @@ class DeltaSequenceBuilder(private val block: DeltaSequenceBuilder.() -> Unit) {
         return this
     }
 
+    operator fun <T : Task<*>> T.unaryMinus(): T {
+        commands.add(this.command)
+        return this
+    }
+
     fun DeltaCommand.dontBlock() = DeltaRunCmd(this::schedule)
+
+    fun Task<*>.dontBlock() = DeltaRunCmd(this.command::schedule)
 
     fun build(): DeltaSequentialCmd {
         block()

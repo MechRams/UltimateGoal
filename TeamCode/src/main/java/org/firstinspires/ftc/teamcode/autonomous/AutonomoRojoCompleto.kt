@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterRunCmd
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterStopCmd
 import org.firstinspires.ftc.teamcode.vision.RingPipeline2
 
-@Autonomous(name = "Rojo Completo", group = "final", preselectTeleop = "TeleOp")
+@Autonomous(name = "Rojo Completo", group = "final", preselectTeleOp = "TeleOp")
 class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
     override fun run() {
@@ -26,7 +26,7 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         when(vision.ringPipeline2!!.getLatestMostLikelyHeight()) {
             RingPipeline2.RingHeight.ZERO -> stackA()
-            RingPipeline2.RingHeight.ONE ->  stackB()
+            RingPipeline2.RingHeight.ONE  -> stackB()
             RingPipeline2.RingHeight.FOUR -> stackC()
         }.schedule()
 
@@ -50,15 +50,15 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     }
 
     fun stackA() = deltaSequence {
-
+        - shootRings()
     }
 
     fun stackB() = deltaSequence {
-
+        - shootRings()
     }
 
     fun stackC() = deltaSequence {
-
+        - shootRings()
     }
 
 }

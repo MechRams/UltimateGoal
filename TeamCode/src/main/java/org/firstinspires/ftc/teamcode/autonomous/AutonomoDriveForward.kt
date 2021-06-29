@@ -36,21 +36,21 @@ class AutonomoDriveForward : MechOpMode(OpModeType.AUTO) {
     }
 
     fun autoA() = deltaSequence {
-        drive.encoderForward(50.0, 0.2).markers {
+        - drive.encoderForward(50.0, 0.2).markers {
             distanceMarker(20.0) {
                 + IntakeConveyInCmd()
             }
-        }.command()
+        }
 
-        drive.rotate(Rot2d.degrees(90.0), 0.5).markers {
+        - drive.rotate(Rot2d.degrees(90.0), 0.5).markers {
             rotationMarker(Rot2d.degrees(30.0)) {
                 + IntakeConveyStopCmd()
             }
-        }.command()
+        }
 
-        drive.encoderStrafeLeft(20.0, 0.3).command()
+        - drive.encoderStrafeLeft(20.0, 0.3)
 
-        drive.rotate(Rot2d.degrees(-180.0), 0.5).command()
+        - drive.rotate(Rot2d.degrees(-180.0), 0.5)
     }
 
 }

@@ -85,11 +85,8 @@ Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeDetectBlo
 extern "C"
 JNIEXPORT void JNICALL
 Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeReleaseBlobDetector(JNIEnv *env, jobject thiz, jlong blob_det_ptr) {
-
     auto* blobDetCtx = (SimpleBlobDetector_Context*) blob_det_ptr;
 
     blobDetCtx->detector->clear();
-    delete blobDetCtx->detector;
     delete blobDetCtx;
-
 }

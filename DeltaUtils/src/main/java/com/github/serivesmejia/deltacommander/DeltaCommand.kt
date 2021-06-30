@@ -64,8 +64,8 @@ abstract class DeltaCommand {
 
     fun stopAfter(timeSecs: Double): DeltaCommand {
         + deltaSequence {
-            DeltaWaitCmd(timeSecs) ()
-            DeltaRunCmd(::requestFinish) ()
+            - DeltaWaitCmd(timeSecs)
+            - DeltaRunCmd(::requestFinish)
         }
 
         return this
@@ -73,8 +73,8 @@ abstract class DeltaCommand {
 
     fun stopOn(condition: () -> Boolean): DeltaCommand {
         + deltaSequence {
-            DeltaWaitConditionCmd(condition) ()
-            DeltaRunCmd(::requestFinish) ()
+            - DeltaWaitConditionCmd(condition)
+            - DeltaRunCmd(::requestFinish)
         }
 
         return this

@@ -7,6 +7,7 @@ import com.qualcomm.hardware.lynx.LynxModule
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.OpModeType
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionMiddleCmd
 import org.firstinspires.ftc.teamcode.vision.RingPipeline2
 
 @Autonomous(name = "Rojo Completo", group = "final", preselectTeleOp = "TeleOp")
@@ -15,12 +16,12 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     override fun run() {
         deltaHdw.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
 
-        vision.initCamVision()
-        vision.initRingVision2()
+        //vision.initCamVision()
+        //vision.initRingVision2()
 
         waitForStart()
 
-        when(vision.ringPipeline2!!.getLatestMostLikelyHeight()) {
+        when(vision.ringPipeline2?.getLatestMostLikelyHeight() ?: RingPipeline2.RingHeight.ZERO) {
             RingPipeline2.RingHeight.ZERO -> stackA()
             RingPipeline2.RingHeight.ONE  -> stackB()
             RingPipeline2.RingHeight.FOUR -> stackC()
@@ -33,11 +34,17 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     }
 
     fun stackA() = deltaSequence {
-        - drive.encoderForward(50.5, 0.2, 4.0)
-        - drive.encoderStrafeRight(10.0, 0.1, 4.0)
+        - drive.encoderStrafeRight(18.0, 0.2, 4.0)
+        //- drive.encoderBackwards(3.0, 0.3, 4.0)
+
+        - drive.encoderForward(50.5, 0.3, 4.0).markers {
+            distanceMarker(40.5) {
+                + ArmPositionMiddleCmd()
+            }
+        }
         - dropWobble()
 
-        - drive.encoderStrafeLeft(30.0, 0.1, 4.0)
+        - drive.encoderStrafeLeft(30.0, 0.3, 4.0)
         - drive.rotate(Rot2d.degrees(180.0), 0.3, 3.0)
         - shootRings()
 

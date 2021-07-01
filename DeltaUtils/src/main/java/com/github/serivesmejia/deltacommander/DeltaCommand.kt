@@ -17,8 +17,6 @@ abstract class DeltaCommand {
         internal set
     internal var endingCalled = false
 
-    var blockParallelCommand = true
-
     internal var allowRequire = true
 
     open fun init() {}
@@ -79,6 +77,8 @@ abstract class DeltaCommand {
 
         return this
     }
+
+    val isScheduled get() = deltaScheduler.commands.contains(this)
 
     operator fun unaryPlus() = schedule()
 

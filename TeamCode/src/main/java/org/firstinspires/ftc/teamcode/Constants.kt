@@ -32,7 +32,6 @@ object Constants {
     @JvmField var shooterF = 0.0
     @JvmField var shooterPower = 0.38
 
-
     @JvmField var flickerInPos = 0.86
     @JvmField var flickerOutPos = 0.98
 

@@ -15,36 +15,35 @@ open class DeltaGroupCmd(private val executionMode: ExecutionMode = ExecutionMod
             throw IllegalArgumentException("You should provide one or more commands to the GroupedCommand")
         }
 
-        //Require all the subcommands requirements
         //and add all the commands from the vararg to the arraylist
         for(cmd in commands) {
-            for(req in cmd.requirements) {
-                require(req)
-            }
             this.commands.add(cmd)
         }
 
+        if(executionMode == ExecutionMode.PARALLEL) {
+            for(cmd in commands) {
+                cmd.schedule()
+            }
+        }
     }
 
-    override fun init() {
-        for(cmd in commands) { cmd.init() }
-    }
+    private var currentCommand: DeltaCommand? = null
 
     override fun run() {
         when(executionMode) {
             //execute commands in linear mode, which will run one command at a time sequentially until
             //all the commands are finished, which the grouped command (this) will also be finished
             ExecutionMode.LINEAR -> {
-                val command = commands[currentCommandIndex]
-                command.run()
-
-                if(command.finishRequested) {
-                    command.end(false)
+                if(!commands[currentCommandIndex].isScheduled) {
                     currentCommandIndex++
 
                     if(currentCommandIndex >= commands.size) {
                         requestFinish()
+                        return
                     }
+
+                    currentCommand = commands[currentCommandIndex]
+                    currentCommand!!.schedule()
                 }
             }
 
@@ -52,20 +51,14 @@ open class DeltaGroupCmd(private val executionMode: ExecutionMode = ExecutionMod
             //if all the subcommands are finished, the grouped command (this) will also finish
             ExecutionMode.PARALLEL -> {
                 var finishedCount = 0
-                var nonBlockingCmdsCount = 0
 
                 for(cmd in commands) {
-                    if(!cmd.finishRequested) {
-                        cmd.run()
-                        if(cmd.finishRequested) cmd.end(false)
-                    } else {
+                    if(!cmd.isScheduled) {
                         finishedCount++
                     }
-
-                    if(!cmd.blockParallelCommand) nonBlockingCmdsCount++
                 }
 
-                if(finishedCount >= commands.size - nonBlockingCmdsCount) {
+                if(finishedCount >= commands.size) {
                     requestFinish()
                 }
             }

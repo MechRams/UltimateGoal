@@ -20,9 +20,7 @@ class WobbleArmSubsystem(
     init {
         defaultCommand = ArmPositionStopCmd()
 
-        if(resetEncoder) {
-            wobbleArmMotor.resetEncoder()
-        }
+        wobbleArmMotor.resetEncoder()
     }
 
     override fun loop() {

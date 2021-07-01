@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous
 import com.github.serivesmejia.deltacommander.command.DeltaWaitCmd
 import com.github.serivesmejia.deltacommander.command.DeltaWaitConditionCmd
 import com.github.serivesmejia.deltacommander.dsl.deltaSequence
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterAutoFlick
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterRunCmd
@@ -12,19 +13,22 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionSav
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawOpenCmd
 
-fun dropWobble() = deltaSequence {
-    // move the arm out
-    - ArmPositionMiddleCmd()
+fun MechOpMode.dropWobble() = deltaSequence {
+/*
+    - DeltaWaitConditionCmd {
+        wobbleArmSub.wobbleArmMotor.currentPosition >= Constants.armMiddlePosition - 15.0
+    }*/
+    - DeltaWaitCmd(2.0)
 
     // open the claw
-    - ArmClawOpenCmd()
+    - ArmClawOpenCmd().dontBlock()
     // wait a little for the wobble goal to fall
-    - DeltaWaitCmd(1.0)
+    - DeltaWaitCmd(3.0)
     // close the claw
-    - ArmClawCloseCmd()
+    - ArmClawCloseCmd().dontBlock()
 
     // move the arm back to save (in) position
-    - ArmPositionSaveCmd()
+    - ArmPositionSaveCmd().dontBlock()
 }
 
 fun MechOpMode.shootRings() = deltaSequence {
@@ -37,5 +41,5 @@ fun MechOpMode.shootRings() = deltaSequence {
     // shoot the rings! the servo will move in and out 3 times
     - ShooterAutoFlick(3)
     // stop the shooter after the servo finishes flicking (zero velocity)
-    - ShooterStopCmd()
+    - ShooterStopCmd().dontBlock()
 }

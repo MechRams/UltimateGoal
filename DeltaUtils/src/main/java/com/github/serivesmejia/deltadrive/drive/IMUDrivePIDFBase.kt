@@ -27,6 +27,7 @@ import com.github.serivesmejia.deltacontrol.PIDFCoefficients
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardware
 import com.github.serivesmejia.deltadrive.parameters.IMUDriveParameters
 import com.github.serivesmejia.deltadrive.utils.task.Task
+import com.github.serivesmejia.deltamath.DeltaMathUtil
 import com.github.serivesmejia.deltamath.geometry.Rot2d
 import com.github.serivesmejia.deltamath.geometry.Twist2d
 import com.github.serivesmejia.deltasimple.sensor.SimpleBNO055IMU
@@ -85,7 +86,7 @@ abstract class IMUDrivePIDFBase
      */
     val imuCalibrationStatus get() = imu.imuCalibrationStatus
 
-    val isIMUCalibrated get() = imu.isImuCalibrated
+    val isIMUCalibrated get() = ::imu.isInitialized && imu.isImuCalibrated
 
     val robotAngle get(): Rot2d {
         imu.axis = imuParameters.IMU_AXIS
@@ -171,10 +172,10 @@ abstract class IMUDrivePIDFBase
                         imu.lastCumulativeAngle - initialAngle
                     )
 
-                    backleftpower = powerF
-                    backrightpower = -powerF
-                    frontleftpower = powerF
-                    frontrightpower = -powerF
+                    backleftpower = -powerF
+                    backrightpower = powerF
+                    frontleftpower = -powerF
+                    frontrightpower = powerF
                 }
         } else { //rotating left
             builder.state(State.TURN_LEFT)
@@ -199,9 +200,9 @@ abstract class IMUDrivePIDFBase
             .transition { pidControllerRotate.onSetpoint() || System.currentTimeMillis() > timeout }
             .onEnter {
                 // stop the movement
-                backleftpower = 0.0
-                backrightpower = 0.0
-                frontleftpower = 0.0
+                backleftpower   = 0.0
+                backrightpower  = 0.0
+                frontleftpower  = 0.0
                 frontrightpower = 0.0
             }
 
@@ -218,6 +219,11 @@ abstract class IMUDrivePIDFBase
             }
 
             stateMachine.update()
+
+            frontleftpower = clamp(frontleftpower)
+            frontrightpower = clamp(frontrightpower)
+            backleftpower = clamp(backleftpower)
+            backrightpower = clamp(backrightpower)
 
             setAllMotorPower(frontleftpower, frontrightpower, backleftpower, backrightpower)
 
@@ -240,5 +246,7 @@ abstract class IMUDrivePIDFBase
         frontleftpower: Double, frontrightpower: Double,
         backleftpower: Double, backrightpower: Double
     )
+
+    private fun clamp(power: Double) = DeltaMathUtil.clamp(power, -imuParameters.DEAD_ZONE, imuParameters.DEAD_ZONE)
 
 }

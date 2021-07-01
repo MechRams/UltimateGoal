@@ -22,7 +22,7 @@ open class Vision(private val hardwareMap: HardwareMap) {
                 cameraMonitorViewId
         )
 
-        FtcDashboard.getInstance().startCameraStream(phoneCam!!, 0.0)
+        //FtcDashboard.getInstance().startCameraStream(phoneCam!!, 0.0)
     }
 
     fun initInternalCamVision() {

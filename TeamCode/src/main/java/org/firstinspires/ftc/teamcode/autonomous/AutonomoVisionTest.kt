@@ -16,12 +16,7 @@ class AutonomoVisionTest : LinearOpMode() {
 
         vision = Vision(hardwareMap)
 
-        try {
-            vision.initWebcamVision()
-        } catch(ignored: Exception) {
-            vision.initInternalCamVision()
-        }
-
+        vision.initCamVision()
         vision.initRingVision2()
 
         waitForStart()
@@ -42,7 +37,6 @@ class AutonomoVisionTest : LinearOpMode() {
         }
 
         vision.ringPipeline2?.destroy()
-
     }
 
 }

@@ -114,7 +114,7 @@ class SuperGamepad (var gamepad: Gamepad) : Super {
 
     fun toggleScheduleOn(btt: Button, toggleOnCmd: DeltaCommand, toggleOffCmd: DeltaCommand) {
         registerEvent(object: SuperGamepadEvent() {
-            var toggleState = true
+            var toggleState = false
 
             override fun buttonsPressed(buttons: Buttons) {
                 if(buttons.`is`(btt)) {

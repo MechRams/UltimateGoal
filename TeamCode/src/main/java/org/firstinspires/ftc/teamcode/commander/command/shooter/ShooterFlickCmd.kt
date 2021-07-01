@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.commander.subsystem.ShooterFlickerSubsystem
 
-class ShooterFlickCmd() : DeltaCommand() {
+class ShooterFlickCmd : DeltaCommand() {
 
     val shooterSub = require<ShooterFlickerSubsystem>()
 

@@ -27,6 +27,7 @@ import com.github.serivesmejia.deltadrive.parameters.EncoderDriveParameters
 import com.github.serivesmejia.deltadrive.utils.DistanceUnit
 import com.github.serivesmejia.deltadrive.utils.gear.GearRatio
 import com.github.serivesmejia.deltadrive.utils.task.Task
+import com.github.serivesmejia.deltasimple.sensor.SimpleBNO055IMU
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.robotcore.external.Telemetry
@@ -43,7 +44,8 @@ class EncoderDriveHolonomic
  */
 (private val hdw: DeltaHardwareHolonomic,
  private var parameters: EncoderDriveParameters,
- private val telemetry: Telemetry? = null) {
+ private val telemetry: Telemetry? = null,
+ var imu: SimpleBNO055IMU? = null) {
 
     private val runtime = ElapsedTime()
 
@@ -52,15 +54,13 @@ class EncoderDriveHolonomic
         hdw.runMode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
     }
 
-    private fun encoderDrive(speed: Double,
-                             frontleft: Double,
-                             frontright: Double,
-                             backleft: Double,
-                             backright: Double,
-                             timeoutS: Double,
-                             rightTurbo: Double,
-                             leftTurbo: Double,
-                             movementDescription: String) : Task<Unit> {
+    private fun encoderDrive(
+            speed: Double,
+            frontleft: Double, frontright: Double,  backleft: Double, backright: Double,
+            timeoutS: Double,
+            rightTurbo: Double, leftTurbo: Double,
+            movementDescription: String,
+            correctMovement: Boolean = false) : Task<Unit> {
 
         var fl = frontleft
         var fr = frontright

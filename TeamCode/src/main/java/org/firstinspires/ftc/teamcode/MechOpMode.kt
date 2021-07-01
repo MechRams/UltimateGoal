@@ -32,12 +32,11 @@ abstract class MechOpMode(
     //crear el objeto vision por si se quiere usar en el autonomo
     val vision by lazy { Vision(hardwareMap) }
 
-    //crear dos "super gamepads" con los gamepads originals
+    //crear dos "super gamepads" con los gamepads originales
     val superGamepad1 by lazy { SuperGamepad(gamepad1) }
     val superGamepad2 by lazy { SuperGamepad(gamepad2)  }
 
     override fun runOpMode() {
-        var lastOpMode = Constants.lastOpMode
         Constants.lastOpMode = opModeType
 
         telemetry = MultipleTelemetry(FtcDashboard.getInstance().telemetry, telemetry)

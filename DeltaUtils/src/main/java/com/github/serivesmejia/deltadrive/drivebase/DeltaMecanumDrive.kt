@@ -90,7 +90,12 @@ class DeltaMecanumDrive(
         }
     }
 
-    fun initIMU(params: IMUDriveParameters) = imuDrive.initIMU(params)
+    fun initIMU(params: IMUDriveParameters) {
+        imuDrive.initIMU(params)
+
+        if(::encoderDrive.isInitialized)
+            encoderDrive.imu = imuDrive.imu
+    }
 
     fun resetIMU() = imu.resetAngle()
 
@@ -113,7 +118,9 @@ class DeltaMecanumDrive(
         timeDrive.strafeRight(power, timeSecs)
 
     fun initEncoders(parameters: EncoderDriveParameters) {
-        encoderDrive = EncoderDriveHolonomic(hdw, parameters, telemetry)
+        encoderDrive = EncoderDriveHolonomic(
+                hdw, parameters, telemetry, if(imuDrive.isIMUCalibrated) imu else null
+        )
     }
 
     override fun encoderForward(distance: Double, power: Double, timeoutSecs: Double) =

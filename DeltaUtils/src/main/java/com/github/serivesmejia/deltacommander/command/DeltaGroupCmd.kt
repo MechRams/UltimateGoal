@@ -35,7 +35,7 @@ open class DeltaGroupCmd(private val executionMode: ExecutionMode = ExecutionMod
             //all the commands are finished, which the grouped command (this) will also be finished
             ExecutionMode.LINEAR -> {
                 if(!commands[currentCommandIndex].isScheduled) {
-                    currentCommandIndex++
+                    if(currentCommand != null) currentCommandIndex++
 
                     if(currentCommandIndex >= commands.size) {
                         requestFinish()

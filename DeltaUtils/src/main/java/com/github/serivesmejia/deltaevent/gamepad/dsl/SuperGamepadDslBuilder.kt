@@ -40,21 +40,21 @@ class SuperGamepadDslBuilder(
         superGamepad.registerEvent(object: SuperGamepadEvent() {
             override fun buttonsPressed(buttons: Buttons) {
                 this@SuperGamepadDslBuilder.buttons.forEach {
-                    if(buttons.`is`(it.key))
+                    if(buttons(it.key))
                         it.value.pressedCallback?.invoke()
                 }
             }
 
             override fun buttonsBeingPressed(buttons: Buttons) {
                 this@SuperGamepadDslBuilder.buttons.forEach {
-                    if(buttons.`is`(it.key))
+                    if(buttons(it.key))
                         it.value.pressingCallback?.invoke()
                 }
             }
 
             override fun buttonsReleased(buttons: Buttons) {
                 this@SuperGamepadDslBuilder.buttons.forEach {
-                    if(buttons.`is`(it.key))
+                    if(buttons(it.key))
                         it.value.releasedCallback?.invoke()
                 }
             }

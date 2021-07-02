@@ -26,8 +26,8 @@ open class Task<T>(
 
     val command get() = DeltaTaskCmd(this, *commandRequirements)
 
-    @Suppress("LeakingThis")
-    val markers = Markers(this)
+    //@Suppress("LeakingThis")
+    val markers by lazy { Markers(this) }
 
     private var hasRan = false
 

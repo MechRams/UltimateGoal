@@ -95,7 +95,10 @@ class EncoderDriveHolonomic
                 // Turn On RUN_TO_POSITION
                 hdw.runMode = DcMotor.RunMode.RUN_TO_POSITION
 
-                hdw.setMotorPowers(leftPower, rightPower, leftPower, rightPower)
+                hdw.setMotorPowers(
+                    if(fl != 0.0) leftPower else 0.0, if(fr != 0.0) rightPower else 0.0,
+                    if(bl != 0.0) leftPower else 0.0, if(br != 0.0) rightPower else 0.0
+                )
 
                 // reset the timeout time and start motion.
                 runtime.reset()
@@ -129,21 +132,28 @@ class EncoderDriveHolonomic
 
             telemetry?.update()
 
+            val flBusy = if(fl != 0.0) hdw.wheelFrontLeft.isBusy else true
+            val frBusy = if(fr != 0.0) hdw.wheelFrontRight.isBusy else true
+            val blBusy = if(bl != 0.0) hdw.wheelBackLeft.isBusy else true
+            val brBusy = if(br != 0.0) hdw.wheelBackRight.isBusy else true
+
             // finish task until there's is no time left or no motors are running.
             // Note: We use (isBusy() && isBusy()) in the repeat test, which means that when EITHER motor hits
             // its target position, the motion will stop.  This is "safer" in the event that the robot will
             // always end the motion as soon as possible.
             if(runtime.seconds() >= timeoutS ||
-                !hdw.wheelFrontRight.isBusy ||
-                !hdw.wheelFrontLeft.isBusy ||
-                !hdw.wheelBackLeft.isBusy ||
-                !hdw.wheelBackRight.isBusy
+                (!flBusy ||
+                !frBusy ||
+                !blBusy ||
+                !brBusy)
             ) { //when it's finished
+                println("helo ending $fl $fr $bl $br")
                 telemetry?.update() //clear telemetry
 
                 // Stop all motion
                 hdw.setMotorPowers(0.0, 0.0, 0.0, 0.0)
                 // Turn off RUN_TO_POSITION
+                hdw.runMode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
                 hdw.runMode = beforeRunMode
 
                 end() //end the task

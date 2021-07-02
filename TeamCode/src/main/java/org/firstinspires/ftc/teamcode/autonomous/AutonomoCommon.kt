@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.autonomous
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import com.github.serivesmejia.deltacommander.command.DeltaWaitConditionCmd
 import com.github.serivesmejia.deltacommander.dsl.deltaSequence
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterAutoFlick
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterRunCmd
@@ -11,17 +12,15 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionSav
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawOpenCmd
 
-fun MechOpMode.dropWobble(armMiddleCommand: DeltaCommand) = deltaSequence {
+fun MechOpMode.dropWobble() = deltaSequence {
     /*
     - DeltaWaitConditionCmd {
         wobbleArmSub.wobbleArmMotor.currentPosition >= Constants.armMiddlePosition - 15.0
     }*/
-    - armMiddleCommand.waitFor()
-
     // open the claw
     - ArmClawOpenCmd().dontBlock()
     // wait a little for the wobble goal to fall
-    - waitForSeconds(2.0)
+    - waitForSeconds(0.4)
     // close the claw
     - ArmClawCloseCmd().dontBlock()
 
@@ -31,7 +30,7 @@ fun MechOpMode.dropWobble(armMiddleCommand: DeltaCommand) = deltaSequence {
 
 fun MechOpMode.shootRings() = deltaSequence {
     // start running the shooter (non-blocking)
-    - ShooterRunCmd(1.0).dontBlock()
+    - ShooterRunCmd(Constants.shooterPower).dontBlock()
 
     // wait until the shooter reaches a certain velocity
     - waitFor { shooterSub.avgVelocity >= 30000 }

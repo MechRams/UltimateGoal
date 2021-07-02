@@ -133,8 +133,6 @@ abstract class IMUDrivePIDFBase
             Twist2d.empty
         }
 
-        runtime.reset()
-
         val pidControllerRotate = MotorPIDFController(imuParameters.COEFFICIENTS)
 
         imu.axis = imuParameters.IMU_AXIS
@@ -155,70 +153,49 @@ abstract class IMUDrivePIDFBase
 
         val timer = ElapsedTime()
 
-        val builder = StateMachineBuilder<State>()
         var currentTwist = Twist2d()
         var powerF = 0.0
 
         val initialAngle = imu.lastCumulativeAngle
 
-        if(setpoint < 0) { //rotating right
-            builder.state(State.TURN_RIGHT)
-                .loop {
-                    // calculate the out power from the controller
-                    powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
+        return Task(imuParameters.TASK_COMMAND_REQUIREMENTS) {
+            first {
+                timer.reset()
+            }
 
-                    // update the current angle twist
-                    currentTwist = Twist2d(0.0, 0.0,
-                        imu.lastCumulativeAngle - initialAngle
-                    )
+            powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
 
-                    backleftpower = powerF
-                    backrightpower = -powerF
-                    frontleftpower = powerF
-                    frontrightpower = -powerF
-                }
-        } else { //rotating left
-            builder.state(State.TURN_LEFT)
-                .loop {
-                    // calculate the out power from the controller
-                    powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
+            if(setpoint < 0) { //rotating right
+                // update the current angle twist
+                currentTwist = Twist2d(0.0, 0.0,
+                    imu.lastCumulativeAngle - initialAngle
+                )
 
-                    // update the current angle twist
-                    currentTwist = Twist2d(0.0, 0.0,
-                        imu.lastCumulativeAngle - initialAngle
-                    )
+                backleftpower   = powerF
+                backrightpower  = -powerF
+                frontleftpower  = powerF
+                frontrightpower = -powerF
+            } else { //rotating left
+                // update the current angle twist
+                currentTwist = Twist2d(
+                    0.0, 0.0,
+                    imu.lastCumulativeAngle - initialAngle
+                )
 
-                    backleftpower = -powerF
-                    backrightpower = powerF
-                    frontleftpower = -powerF
-                    frontrightpower = powerF
-                }
-        }
+                backleftpower   = -powerF
+                backrightpower  = powerF
+                frontleftpower  = -powerF
+                frontrightpower = powerF
+            }
 
-        builder
-            .state(State.STOP) //stopping
-            .transition { pidControllerRotate.onSetpoint() || System.currentTimeMillis() > timeout }
-            .onEnter {
+            if(pidControllerRotate.onSetpoint() || runtime.seconds() >= timeoutS) {
                 // stop the movement
                 backleftpower   = 0.0
                 backrightpower  = 0.0
                 frontleftpower  = 0.0
                 frontrightpower = 0.0
+                end()
             }
-
-            .state(State.END_TASK)
-            .transitionTimed(0.2)
-
-        val stateMachine = builder.build()
-
-        return Task(imuParameters.TASK_COMMAND_REQUIREMENTS) {
-            if(!stateMachine.running) stateMachine.start()
-
-            first {
-                timer.reset()
-            }
-
-            stateMachine.update()
 
             frontleftpower = clamp(frontleftpower)
             frontrightpower = clamp(frontrightpower)
@@ -233,8 +210,6 @@ abstract class IMUDrivePIDFBase
             telemetry?.addData("[Power]", powerF)
             telemetry?.update()
 
-            if(stateMachine.getState() == State.END_TASK) end()
-
             markers.runRotationMarkers(currentTwist.rot)
 
             currentTwist
@@ -247,6 +222,10 @@ abstract class IMUDrivePIDFBase
         backleftpower: Double, backrightpower: Double
     )
 
-    private fun clamp(power: Double) = DeltaMathUtil.clamp(power, -imuParameters.DEAD_ZONE, imuParameters.DEAD_ZONE)
+    private fun clamp(power: Double) =
+        if(power < 0)
+            DeltaMathUtil.clamp(power, -1.0, -imuParameters.DEAD_ZONE)
+        else
+            DeltaMathUtil.clamp(power, imuParameters.DEAD_ZONE, 1.0)
 
 }

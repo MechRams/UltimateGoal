@@ -33,18 +33,16 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     }
 
     fun stackA() = deltaSequence {
-        val armMiddle = ArmPositionMiddleCmd()
+        - drive.encoderTiltForwardRight(50.0, 0.9, 4.0)
 
-        - drive.encoderTiltForwardRight(20.0, 0.3, 4.0).markers {
-            distanceMarker(10.0) { + armMiddle }
-        }
+        - ArmPositionMiddleCmd().dontBlock()
 
-        - drive.encoderForward(10.0, 0.4, 4.0)
+        - drive.encoderForward(25.0, 0.9, 4.0)
 
-        - dropWobble(armMiddle)
+        - dropWobble()
 
         - drive.encoderStrafeLeft(30.0, 0.3, 4.0)
-        - drive.rotate(Rot2d.degrees(-180.0), 0.3, 4.0)
+        - drive.rotate(Rot2d.degrees(180.0), 0.4, 4.0)
         - shootRings()
 
         - drive.encoderForward(30.0, 0.2, 4.0)

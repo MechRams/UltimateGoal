@@ -98,6 +98,8 @@ class DeltaMecanumDrive(
             encoderDrive.imu = imuDrive.imu
     }
 
+    fun waitForIMUCalibration() = imuDrive.waitForIMUCalibration()
+
     fun resetIMU() = imu.resetAngle()
 
     override fun rotate(angle: Rot2d, power: Double, timeoutSecs: Double) =

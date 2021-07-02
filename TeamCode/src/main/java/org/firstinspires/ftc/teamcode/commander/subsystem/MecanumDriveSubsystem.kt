@@ -24,19 +24,19 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
 
             TICKS_PER_REV = NeveRest_Orbital_20.TICKS_PER_REVOLUTION
             WHEEL_DIAMETER_INCHES = 4.0
+            SHOW_CURRENT_DISTANCE = true
         })
 
         if(usingIMU) {
-            telemetry.addData("[>]", "Inicializando IMU, espera...")
-            telemetry.update()
-
             drive.initIMU(IMUDriveParameters().apply {
                 TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
                 COEFFICIENTS = Constants.rotatePIDFCoefficients
 
-                DEAD_ZONE = 0.08
-                ERROR_TOLERANCE = 3.0
+                DEAD_ZONE = 0.1
+                ERROR_TOLERANCE = 4.0
             })
+
+            drive.waitForIMUCalibration()
 
             telemetry.clearAll()
             telemetry.update()

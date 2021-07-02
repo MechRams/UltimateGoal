@@ -212,6 +212,47 @@ class EncoderDriveHolonomic
         )
     }
 
+    fun tiltForwardsLeft(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
+        val d = abs(distance)
+        return encoderDrive(
+                speed, 0.0, d, d, 0.0,
+                timeoutS,
+                parameters.RIGHT_WHEELS_TURBO, parameters.LEFT_WHEELS_TURBO,
+                "tiltForwardsLeft"
+        )
+    }
+
+    fun tiltForwardsRight(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
+        val d = abs(distance)
+        return encoderDrive(
+                speed, d, 0.0, 0.0, d,
+                timeoutS,
+                parameters.RIGHT_WHEELS_TURBO, parameters.LEFT_WHEELS_TURBO,
+                "tiltForwardsRight"
+        )
+    }
+
+
+    fun tiltBackwardsLeft(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
+        val d = abs(distance)
+        return encoderDrive(
+                speed, -d, 0.0, 0.0, -d,
+                timeoutS,
+                parameters.RIGHT_WHEELS_TURBO, parameters.LEFT_WHEELS_TURBO,
+                "tiltBackwardsLeft"
+        )
+    }
+
+    fun tiltBackwardsRight(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
+        val d = abs(distance)
+        return encoderDrive(
+                speed, 0.0, -d, -d, 0.0,
+                timeoutS,
+                parameters.RIGHT_WHEELS_TURBO, parameters.LEFT_WHEELS_TURBO,
+                "tiltBackwardsRight"
+        )
+    }
+
     private fun calcTicksPerInch() =
         parameters.TICKS_PER_REV * parameters.DRIVE_GEAR_REDUCTION.ratioAsDecimal / (parameters.WHEEL_DIAMETER_INCHES * Math.PI)
 

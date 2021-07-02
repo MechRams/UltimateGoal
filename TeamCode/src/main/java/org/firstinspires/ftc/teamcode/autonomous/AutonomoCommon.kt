@@ -34,7 +34,7 @@ fun MechOpMode.shootRings() = deltaSequence {
     - ShooterRunCmd(1.0).dontBlock()
 
     // wait until the shooter reaches a certain velocity
-    - DeltaWaitConditionCmd { shooterSub.avgVelocity >= 30000 }
+    - waitFor { shooterSub.avgVelocity >= 30000 }
 
     // shoot the rings! the servo will move in and out 3 times
     - ShooterAutoFlick(3)

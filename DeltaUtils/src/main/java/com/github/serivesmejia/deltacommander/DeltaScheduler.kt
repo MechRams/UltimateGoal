@@ -176,8 +176,9 @@ class DeltaScheduler internal constructor() {
         for(evt in runSchedulerEvents) { evt.run() }
     }
 
-    fun updateUntilNoCommands() {
+    fun updateUntilNoCommands(updateCallback: () -> Unit = { }) {
         while(scheduledCommands.isNotEmpty() && !Thread.currentThread().isInterrupted) {
+            updateCallback()
             update()
         }
     }

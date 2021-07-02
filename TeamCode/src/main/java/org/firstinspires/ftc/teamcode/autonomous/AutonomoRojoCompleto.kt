@@ -27,26 +27,24 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
             RingPipeline2.RingHeight.FOUR -> stackC()
         }.schedule()
 
-        while(opModeIsActive()) {
+        deltaScheduler.updateUntilNoCommands {
             deltaHdw.clearBulkCache()
-            deltaScheduler.update()
         }
     }
 
     fun stackA() = deltaSequence {
-        - drive.encoderTiltForwardRight(30.0, 0.3, 4.0)
-        - drive.encoderForward(10.0, 0.3, 4.0)
-
         val armMiddle = ArmPositionMiddleCmd()
 
-        - drive.encoderForward(50.5, 0.3, 4.0).markers {
+        - drive.encoderTiltForwardRight(20.0, 0.3, 4.0).markers {
             distanceMarker(10.0) { + armMiddle }
         }
+
+        - drive.encoderForward(10.0, 0.4, 4.0)
 
         - dropWobble(armMiddle)
 
         - drive.encoderStrafeLeft(30.0, 0.3, 4.0)
-        - drive.rotate(Rot2d.degrees(180.0), 0.3, 3.0)
+        - drive.rotate(Rot2d.degrees(-180.0), 0.3, 4.0)
         - shootRings()
 
         - drive.encoderForward(30.0, 0.2, 4.0)

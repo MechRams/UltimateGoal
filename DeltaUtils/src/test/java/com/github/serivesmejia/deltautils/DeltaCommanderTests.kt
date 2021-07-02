@@ -53,7 +53,7 @@ class DeltaCommanderTests {
         deltaScheduler.reset()
     }
 
-    //@Test
+    @Test
     fun `Test Scheduler Waiting Commands`() {
         resetScheduler()
 

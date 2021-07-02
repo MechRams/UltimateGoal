@@ -20,12 +20,11 @@ fun MechOpMode.dropWobble(armMiddleCommand: DeltaCommand) = deltaSequence {
         wobbleArmSub.wobbleArmMotor.currentPosition >= Constants.armMiddlePosition - 15.0
     }*/
     - armMiddleCommand.waitFor()
-    - DeltaWaitCmd(2.0)
 
     // open the claw
     - ArmClawOpenCmd().dontBlock()
     // wait a little for the wobble goal to fall
-    - DeltaWaitCmd(3.0)
+    - waitForSeconds(2.0)
     // close the claw
     - ArmClawCloseCmd().dontBlock()
 

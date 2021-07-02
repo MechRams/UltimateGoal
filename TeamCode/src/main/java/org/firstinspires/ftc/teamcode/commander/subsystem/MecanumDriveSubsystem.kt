@@ -38,6 +38,7 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
                 ERROR_TOLERANCE = 3.0
             })
 
+            telemetry.clearAll()
             telemetry.update()
         }
     }

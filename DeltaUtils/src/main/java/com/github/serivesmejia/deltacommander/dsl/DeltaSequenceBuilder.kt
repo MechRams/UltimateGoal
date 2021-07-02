@@ -3,6 +3,8 @@ package com.github.serivesmejia.deltacommander.dsl
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import com.github.serivesmejia.deltacommander.command.DeltaRunCmd
 import com.github.serivesmejia.deltacommander.command.DeltaSequentialCmd
+import com.github.serivesmejia.deltacommander.command.DeltaWaitCmd
+import com.github.serivesmejia.deltacommander.command.DeltaWaitConditionCmd
 import com.github.serivesmejia.deltadrive.utils.task.Task
 
 class DeltaSequenceBuilder(private val block: DeltaSequenceBuilder.() -> Unit) {
@@ -22,6 +24,10 @@ class DeltaSequenceBuilder(private val block: DeltaSequenceBuilder.() -> Unit) {
     fun DeltaCommand.dontBlock() = DeltaRunCmd(this::schedule)
 
     fun Task<*>.dontBlock() = DeltaRunCmd(this.command::schedule)
+
+    fun waitFor(condition: () -> Boolean) = DeltaWaitConditionCmd(condition)
+
+    fun waitForSeconds(seconds: Double) = DeltaWaitCmd(seconds)
 
     fun build(): DeltaSequentialCmd {
         block()

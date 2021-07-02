@@ -12,14 +12,13 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCl
 class WobbleArmSubsystem(
     val wobbleArmMotor: MotorEx,
     //val wobbleTouchSensor: TouchSensor,
-    resetEncoder: Boolean = true
+    val isAutonomous: Boolean
 ) : DeltaSubsystem() {
 
     var armMoving = false
 
     init {
         defaultCommand = ArmPositionStopCmd()
-
         wobbleArmMotor.resetEncoder()
     }
 
@@ -28,6 +27,8 @@ class WobbleArmSubsystem(
 
         if(armMoving) {
             wobbleArmMotor.set(Constants.armPower)
+        } else {
+            wobbleArmMotor.set(0.0)
         }
     }
 

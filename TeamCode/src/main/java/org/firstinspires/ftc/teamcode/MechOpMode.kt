@@ -60,11 +60,13 @@ abstract class MechOpMode(
         // si queremos utilizar tambien los demas que no sean el drive...
         if(!onlyChassis) {
             intakeConveySub = IntakeConveySubsystem(hdw.motorIntakeConvey)
+
             wobbleArmSub = WobbleArmSubsystem(
                 hdw.motorWobbleArm,
                 opModeType == OpModeType.AUTO
             )
             wobbleArmClawSubsystem = WobbleArmClawSubsystem(hdw.servoWobbleClaw)
+
             shooterSub = ShooterSubsystem(hdw.motorShooterLeft, hdw.motorShooterRight)
             shooterFlickerSub = ShooterFlickerSubsystem(hdw.servoShooterFlicker)
 

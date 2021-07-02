@@ -19,6 +19,10 @@ open class ArmPositionRunCmd(private val positionSupplier: () -> Int) : DeltaCom
 
     override fun run() {
         armSubsystem.wobbleArmMotor.setTargetPosition(positionSupplier())
+
+        if(armSubsystem.isAutonomous && armSubsystem.wobbleArmMotor.atTargetPosition()) {
+            requestFinish()
+        }
     }
 
     override fun end(interrupted: Boolean) {

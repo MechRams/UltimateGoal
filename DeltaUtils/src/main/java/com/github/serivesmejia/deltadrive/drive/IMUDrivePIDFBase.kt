@@ -51,8 +51,6 @@ abstract class IMUDrivePIDFBase
     lateinit var imu: SimpleBNO055IMU
         private set
 
-    private val runtime = ElapsedTime()
-
     private var imuParameters = IMUDriveParameters()
     private var allowedDeltaHardwareType = deltaHardwareType
 
@@ -164,31 +162,24 @@ abstract class IMUDrivePIDFBase
             }
 
             powerF = pidControllerRotate.calculate(imu.cumulativeAngle.degrees)
+            currentTwist = Twist2d(
+                0.0, 0.0,
+                imu.lastCumulativeAngle - initialAngle
+            )
 
             if(setpoint < 0) { //rotating right
-                // update the current angle twist
-                currentTwist = Twist2d(0.0, 0.0,
-                    imu.lastCumulativeAngle - initialAngle
-                )
-
                 backleftpower   = powerF
                 backrightpower  = -powerF
                 frontleftpower  = powerF
                 frontrightpower = -powerF
             } else { //rotating left
-                // update the current angle twist
-                currentTwist = Twist2d(
-                    0.0, 0.0,
-                    imu.lastCumulativeAngle - initialAngle
-                )
-
                 backleftpower   = -powerF
                 backrightpower  = powerF
                 frontleftpower  = -powerF
                 frontrightpower = powerF
             }
 
-            if(pidControllerRotate.onSetpoint() || runtime.seconds() >= timeoutS) {
+            if(pidControllerRotate.onSetpoint() || timer.seconds() >= timeoutS) {
                 // stop the movement
                 backleftpower   = 0.0
                 backrightpower  = 0.0

@@ -212,7 +212,7 @@ class EncoderDriveHolonomic
         )
     }
 
-    fun tiltForwardsLeft(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
+    fun tiltForwardLeft(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
         val d = abs(distance)
         return encoderDrive(
                 speed, 0.0, d, d, 0.0,
@@ -222,7 +222,7 @@ class EncoderDriveHolonomic
         )
     }
 
-    fun tiltForwardsRight(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
+    fun tiltForwardRight(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
         val d = abs(distance)
         return encoderDrive(
                 speed, d, 0.0, 0.0, d,

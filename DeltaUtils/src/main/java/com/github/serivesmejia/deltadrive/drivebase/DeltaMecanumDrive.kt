@@ -8,6 +8,7 @@ import com.github.serivesmejia.deltadrive.drive.holonomic.TimeDriveHolonomic
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.parameters.EncoderDriveParameters
 import com.github.serivesmejia.deltadrive.parameters.IMUDriveParameters
+import com.github.serivesmejia.deltadrive.utils.task.Task
 import com.github.serivesmejia.deltamath.DeltaMathUtil
 import com.github.serivesmejia.deltamath.geometry.Rot2d
 import com.qualcomm.robotcore.hardware.Gamepad
@@ -137,5 +138,17 @@ class DeltaMecanumDrive(
         encoderDrive.strafeLeft(distance, power, timeoutSecs)
     override fun encoderStrafeRight(distance: Double, power: Double, timeoutSecs: Double) =
         encoderDrive.strafeRight(distance, power, timeoutSecs)
+
+    override fun encoderTiltForwardLeft(distance: Double, power: Double, timeoutSecs: Double) =
+        encoderDrive.tiltForwardLeft(distance, power, timeoutSecs)
+
+    override fun encoderTiltForwardRight(distance: Double, power: Double, timeoutSecs: Double) =
+            encoderDrive.tiltForwardRight(distance, power, timeoutSecs)
+
+    override fun encoderTiltBackwardsLeft(distance: Double, power: Double, timeoutSecs: Double) =
+            encoderDrive.tiltBackwardsLeft(distance, power, timeoutSecs)
+
+    override fun encoderTiltBackwardsRight(distance: Double, power: Double, timeoutSecs: Double) =
+            encoderDrive.tiltBackwardsRight(distance, power, timeoutSecs)
 
 }

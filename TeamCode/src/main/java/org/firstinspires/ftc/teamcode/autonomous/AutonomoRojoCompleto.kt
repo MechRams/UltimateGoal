@@ -34,8 +34,8 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     }
 
     fun stackA() = deltaSequence {
-        - drive.encoderStrafeRight(18.0, 0.2, 4.0)
-        //- drive.encoderBackwards(3.0, 0.3, 4.0)
+        - drive.encoderTiltForwardRight(30.0, 0.3, 4.0)
+        - drive.encoderForward(10.0, 0.3, 4.0)
 
         val armMiddle = ArmPositionMiddleCmd()
 

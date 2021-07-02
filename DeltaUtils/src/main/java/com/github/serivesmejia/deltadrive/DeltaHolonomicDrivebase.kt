@@ -22,4 +22,10 @@ interface DeltaHolonomicDrivebase : DeltaDrivebase {
     fun encoderStrafeLeft(distance: Double, power: Double, timeoutSecs: Double = 5.0): Task<Unit>
     fun encoderStrafeRight(distance: Double, power: Double, timeoutSecs: Double = 5.0): Task<Unit>
 
+    fun encoderTiltForwardLeft(distance: Double, power: Double, timeoutSecs: Double = 5.0): Task<Unit>
+    fun encoderTiltForwardRight(distance: Double, power: Double, timeoutSecs: Double = 5.0): Task<Unit>
+
+    fun encoderTiltBackwardsLeft(distance: Double, power: Double, timeoutSecs: Double = 5.0): Task<Unit>
+    fun encoderTiltBackwardsRight(distance: Double, power: Double, timeoutSecs: Double = 5.0): Task<Unit>
+
 }

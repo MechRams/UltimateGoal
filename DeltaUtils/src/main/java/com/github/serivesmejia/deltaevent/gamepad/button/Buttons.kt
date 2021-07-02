@@ -30,10 +30,10 @@ class Buttons(private var buttons: HashMap<Button, Int>, type: Type) {
         private set
 
     enum class Type {
-        BUTTONS_PRESSED, BUTTONS_RELEASED, BUTTONS_BEING_PRESSED, UNKNOWN
+        BUTTONS_PRESSED, BUTTONS_RELEASED, BUTTONS_BEING_PRESSED
     }
 
-    fun `is`(btt: Button): Boolean = buttons.containsKey(btt)
+    operator fun invoke(btt: Button): Boolean = buttons.containsKey(btt)
 
     fun ticks(btt: Button): Int {
         return if (buttons.containsKey(btt)) {

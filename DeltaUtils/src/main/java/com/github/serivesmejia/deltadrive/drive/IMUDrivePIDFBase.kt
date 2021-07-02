@@ -172,10 +172,10 @@ abstract class IMUDrivePIDFBase
                         imu.lastCumulativeAngle - initialAngle
                     )
 
-                    backleftpower = -powerF
-                    backrightpower = powerF
-                    frontleftpower = -powerF
-                    frontrightpower = powerF
+                    backleftpower = powerF
+                    backrightpower = -powerF
+                    frontleftpower = powerF
+                    frontrightpower = -powerF
                 }
         } else { //rotating left
             builder.state(State.TURN_LEFT)

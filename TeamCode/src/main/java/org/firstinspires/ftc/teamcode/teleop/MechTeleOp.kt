@@ -47,7 +47,6 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
 
         superGamepad1.toggleScheduleOn(Button.X,
             // encender el shooter cuando se presiona X
-            // usar los triggers para desacelerar
             ShooterRunCmd { Constants.shooterPower },
             //comando para cuando se vuelva a presionar X
             ShooterStopCmd()

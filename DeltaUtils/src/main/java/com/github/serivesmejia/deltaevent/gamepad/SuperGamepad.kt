@@ -73,7 +73,7 @@ class SuperGamepad (var gamepad: Gamepad) : Super {
     fun scheduleOnPress(btt: Button, cmd: DeltaCommand) {
         registerEvent(object: SuperGamepadEvent() {
             override fun buttonsPressed(buttons: Buttons) {
-                if(buttons.`is`(btt)) deltaScheduler.schedule(cmd)
+                if(buttons(btt)) deltaScheduler.schedule(cmd)
             }
         })
     }
@@ -86,7 +86,7 @@ class SuperGamepad (var gamepad: Gamepad) : Super {
     fun scheduleOnRelease(btt: Button, cmd: DeltaCommand) {
         registerEvent(object: SuperGamepadEvent() {
             override fun buttonsReleased(buttons: Buttons) {
-                if(buttons.`is`(btt)) deltaScheduler.schedule(cmd)
+                if(buttons(btt)) deltaScheduler.schedule(cmd)
             }
         })
     }
@@ -117,7 +117,7 @@ class SuperGamepad (var gamepad: Gamepad) : Super {
             var toggleState = false
 
             override fun buttonsPressed(buttons: Buttons) {
-                if(buttons.`is`(btt)) {
+                if(buttons(btt)) {
                     toggleState = !toggleState
                     if(toggleState) {
                         + toggleOnCmd

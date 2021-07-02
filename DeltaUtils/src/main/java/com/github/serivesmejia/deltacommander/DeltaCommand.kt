@@ -78,6 +78,8 @@ abstract class DeltaCommand {
         return this
     }
 
+    fun waitFor() = DeltaWaitConditionCmd(this::isScheduled)
+
     val isScheduled get() = deltaScheduler.commands.contains(this)
 
     operator fun unaryPlus() = schedule()

@@ -37,12 +37,13 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         - drive.encoderStrafeRight(18.0, 0.2, 4.0)
         //- drive.encoderBackwards(3.0, 0.3, 4.0)
 
+        val armMiddle = ArmPositionMiddleCmd()
+
         - drive.encoderForward(50.5, 0.3, 4.0).markers {
-            distanceMarker(40.5) {
-                + ArmPositionMiddleCmd()
-            }
+            distanceMarker(10.0) { + armMiddle }
         }
-        - dropWobble()
+
+        - dropWobble(armMiddle)
 
         - drive.encoderStrafeLeft(30.0, 0.3, 4.0)
         - drive.rotate(Rot2d.degrees(180.0), 0.3, 3.0)

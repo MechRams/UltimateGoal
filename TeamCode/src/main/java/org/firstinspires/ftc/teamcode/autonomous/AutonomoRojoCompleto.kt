@@ -29,23 +29,40 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         deltaScheduler.updateUntilNoCommands {
             deltaHdw.clearBulkCache()
+
+            telemetry.addData("shooter avg velocity", shooterSub.avgVelocity)
+            telemetry.update()
         }
     }
 
     fun stackA() = deltaSequence {
-        - drive.encoderTiltForwardRight(50.0, 0.9, 4.0)
+        - drive.encoderTiltForwardRight(50.0, 1.0, 4.0)
 
         - ArmPositionMiddleCmd().dontBlock()
 
-        - drive.encoderForward(25.0, 0.9, 4.0)
+        - drive.encoderForward(25.0, 1.0, 4.0)
 
         - dropWobble()
 
-        - drive.encoderStrafeLeft(30.0, 0.3, 4.0)
-        - drive.rotate(Rot2d.degrees(180.0), 0.4, 4.0)
+        //- drive.encoderStrafeLeft(30.0, 0.3, 4.0)
+        - drive.rotate(Rot2d.degrees(200.0), 0.7)
         - shootRings()
 
-        - drive.encoderForward(30.0, 0.2, 4.0)
+        - drive.rotate(Rot2d.degrees(-40.0), 0.7)
+
+        val driveForwardCmd = drive.encoderForward(30.0, 0.5, 4.0).command
+        val grabWobbleCmd = grabWobble(driveForwardCmd)
+
+        - grabWobbleCmd.dontBlock()
+        - driveForwardCmd
+        - grabWobbleCmd.waitFor()
+
+        - drive.rotate(Rot2d.degrees(90.0), 0.6)
+
+        - ArmPositionMiddleCmd().dontBlock()
+
+        - drive.encoderForward(30.0, 1.0)
+        - dropWobble()
     }
 
     fun stackB() = deltaSequence {

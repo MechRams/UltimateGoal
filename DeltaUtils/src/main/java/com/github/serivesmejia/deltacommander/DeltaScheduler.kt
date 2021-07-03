@@ -14,6 +14,7 @@ class DeltaScheduler internal constructor() {
     private val scheduledCommands = mutableMapOf<DeltaCommand, DeltaCommand.State>()
 
     private val commandScheduleQueue = mutableListOf<QueuedCommand>()
+    val queuedCommands get() = commandScheduleQueue.map { it.queuedCommand }.toTypedArray()
     
     val commands get() = scheduledCommands.keys.toTypedArray()
     val commandsAmount get() = scheduledCommands.size

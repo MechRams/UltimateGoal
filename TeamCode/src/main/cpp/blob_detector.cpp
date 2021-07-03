@@ -30,7 +30,9 @@ void vecKeyPointToMat(vector<KeyPoint>& v_kp, Mat& mat) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeCreateBlobDetector(JNIEnv *env, jobject thiz, jdouble minArea, jdouble minCircularity, jdouble maxCircularity) {
+Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeCreateBlobDetector(
+        JNIEnv *env, jobject thiz, jdouble minArea, jdouble minCircularity, jdouble maxCircularity
+) {
 
     SimpleBlobDetector::Params params;
 
@@ -67,7 +69,9 @@ Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeCreateBlo
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeDetectBlobs(JNIEnv *env, jobject thiz, jlong blob_det_ptr, jlong input_ptr, jlong output_ptr) {
+Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeDetectBlobs(
+        JNIEnv *env, jobject thiz, jlong blob_det_ptr, jlong input_ptr, jlong output_ptr
+) {
 
     auto* blobDetCtx = (SimpleBlobDetector_Context*) blob_det_ptr;
 
@@ -84,7 +88,9 @@ Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeDetectBlo
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeReleaseBlobDetector(JNIEnv *env, jobject thiz, jlong blob_det_ptr) {
+Java_org_firstinspires_ftc_teamcode_vision_cv_NativeBlobDetector_nativeReleaseBlobDetector(
+        JNIEnv *env, jobject thiz, jlong blob_det_ptr
+) {
     auto* blobDetCtx = (SimpleBlobDetector_Context*) blob_det_ptr;
 
     blobDetCtx->detector->clear();

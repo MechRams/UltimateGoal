@@ -33,7 +33,7 @@ fun MechOpMode.shootRings() = deltaSequence {
     // wait until the shooter reaches a certain velocity
     // TODO test avg velocity to put correct thing here and use this instead of waitForSeconds
     //- waitFor { shooterSub.avgVelocity >= 30000 }
-    - waitForSeconds(3.0)
+    - waitForSeconds(2.2)
 
     // shoot the rings! the servo will move in and out 3 times
     - ShooterAutoFlick(3)
@@ -41,13 +41,19 @@ fun MechOpMode.shootRings() = deltaSequence {
     - ShooterStopCmd().dontBlock()
 }
 
-fun grabWobble(waitForToGrab: DeltaCommand) = deltaSequence {
+fun grabWobble(waitForToGrab: DeltaCommand? = null) = deltaSequence {
+    //move the arm to the middle
     - ArmPositionMiddleCmd().dontBlock()
+    // open the claw at the same time
     - ArmClawOpenCmd().dontBlock()
 
-    waitForToGrab.waitFor()
+    if(waitForToGrab != null)
+        - waitForToGrab.waitFor()
 
+    // close the claw once the wobble goal is in
     - ArmClawCloseCmd().dontBlock()
+    // wait a little for the claw to close
     - waitForSeconds(0.8)
+    // move the arm up
     - ArmPositionUpCmd().dontBlock()
 }

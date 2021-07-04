@@ -19,7 +19,7 @@ class DeltaScheduler internal constructor() {
     val commands get() = scheduledCommands.keys.toTypedArray()
     val commandsAmount get() = scheduledCommands.size
 
-     //hashmap containing the required subsystems by specific commands
+    //hashmap containing the required subsystems by specific commands
     private val requirements: HashMap<DeltaSubsystem, DeltaCommand> = HashMap()
 
     //user events

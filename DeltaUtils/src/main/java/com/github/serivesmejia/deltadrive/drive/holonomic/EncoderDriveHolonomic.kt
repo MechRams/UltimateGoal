@@ -147,7 +147,7 @@ class EncoderDriveHolonomic
                 !blBusy ||
                 !brBusy)
             ) { //when it's finished
-                println("helo ending $fl $fr $bl $br")
+                // println("helo ending $fl $fr $bl $br") //lol
                 telemetry?.update() //clear telemetry
 
                 // Stop all motion

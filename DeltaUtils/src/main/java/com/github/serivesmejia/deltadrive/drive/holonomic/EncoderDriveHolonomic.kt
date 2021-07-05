@@ -22,11 +22,12 @@
 
 package com.github.serivesmejia.deltadrive.drive.holonomic
 
+import com.github.serivesmejia.deltacontrol.MotorPIDFController
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.parameters.EncoderDriveParameters
 import com.github.serivesmejia.deltadrive.utils.DistanceUnit
-import com.github.serivesmejia.deltadrive.utils.gear.GearRatio
 import com.github.serivesmejia.deltadrive.utils.task.Task
+import com.github.serivesmejia.deltamath.geometry.Rot2d
 import com.github.serivesmejia.deltasimple.sensor.SimpleBNO055IMU
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.util.ElapsedTime
@@ -59,8 +60,7 @@ class EncoderDriveHolonomic
             frontleft: Double, frontright: Double,  backleft: Double, backright: Double,
             timeoutS: Double,
             rightTurbo: Double, leftTurbo: Double,
-            movementDescription: String,
-            correctMovement: Boolean = false) : Task<Unit> {
+            movementDescription: String) : Task<Unit> {
 
         var fl = frontleft
         var fr = frontright
@@ -88,6 +88,16 @@ class EncoderDriveHolonomic
         val leftPower = abs(speed) * leftTurbo
         val rightPower = abs(speed) * rightTurbo
 
+        var initialAngle = Rot2d.zero
+
+        var flPow = if(fl != 0.0) leftPower else 0.0
+        var frPow = if(fr != 0.0) rightPower else 0.0
+        var blPow = if(bl != 0.0) leftPower else 0.0
+        var brPow = if(br != 0.0) rightPower else 0.0
+
+        val controllerLeft = MotorPIDFController(parameters.DRIVE_STRAIGHT_COEFFICIENTS)
+        val controllerRight = MotorPIDFController(parameters.DRIVE_STRAIGHT_COEFFICIENTS)
+
         return Task(parameters.TASK_COMMAND_REQUIREMENTS) {
             first {
                 hdw.setTargetPositions(newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget)
@@ -95,13 +105,23 @@ class EncoderDriveHolonomic
                 // Turn On RUN_TO_POSITION
                 hdw.runMode = DcMotor.RunMode.RUN_TO_POSITION
 
-                hdw.setMotorPowers(
-                    if(fl != 0.0) leftPower else 0.0, if(fr != 0.0) rightPower else 0.0,
-                    if(bl != 0.0) leftPower else 0.0, if(br != 0.0) rightPower else 0.0
-                )
+                hdw.setMotorPowers(flPow, frPow, blPow, brPow)
 
                 // reset the timeout time and start motion.
                 runtime.reset()
+
+                if(imu != null) {
+                    initialAngle = imu!!.cumulativeAngle
+
+                    controllerLeft.setSetpoint(initialAngle.degrees)
+                              .setInitialPower(leftPower)
+                              .setDeadzone(parameters.DRIVE_STRAIGHT_DEADZONE)
+                              .setErrorInverted()
+
+                    controllerRight.setSetpoint(initialAngle.degrees)
+                                   .setInitialPower(rightPower)
+                                   .setDeadzone(parameters.DRIVE_STRAIGHT_DEADZONE)
+                }
             }
 
             var (dFl, dFr, dBl, dBr) = Distances(0, 0, 0, 0)
@@ -128,6 +148,16 @@ class EncoderDriveHolonomic
                     newFrontRightTarget,
                     newBackLeftTarget,
                     newBackRightTarget)
+            }
+
+            if(imu != null) {
+                val powerFLeft = controllerLeft.calculate(imu.cumulativeAngle.degrees)
+                val powerFRight = controllerRight.calculate(imu.cumulativeAngle.degrees)
+
+                flPow = if(fl != 0.0) powerFLeft * leftTurbo else 0.0
+                frPow = if(fr != 0.0) powerFRight * rightTurbo else 0.0
+                blPow = if(bl != 0.0) powerFLeft * leftTurbo else 0.0
+                brPow = if(br != 0.0) powerFRight * rightTurbo else 0.0
             }
 
             telemetry?.update()

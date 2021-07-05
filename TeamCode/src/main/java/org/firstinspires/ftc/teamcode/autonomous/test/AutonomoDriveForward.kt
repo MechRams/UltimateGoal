@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous
+package org.firstinspires.ftc.teamcode.autonomous.test
 
 import com.github.serivesmejia.deltacommander.command.DeltaSequentialCmd
 import com.github.serivesmejia.deltacommander.command.DeltaWaitCmd

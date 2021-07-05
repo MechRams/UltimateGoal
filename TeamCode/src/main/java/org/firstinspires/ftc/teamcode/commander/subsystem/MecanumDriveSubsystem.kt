@@ -25,6 +25,9 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
             TICKS_PER_REV = NeveRest_Orbital_20.TICKS_PER_REVOLUTION
             WHEEL_DIAMETER_INCHES = 4.0
             SHOW_CURRENT_DISTANCE = true
+
+            DRIVE_STRAIGHT_COEFFICIENTS = Constants.drivePIDFCoefficients
+            DRIVE_STRAIGHT_DEADZONE = 0.1
         })
 
         if(usingIMU) {

@@ -23,6 +23,7 @@
 package com.github.serivesmejia.deltadrive.parameters
 
 import com.github.serivesmejia.deltacommander.DeltaSubsystem
+import com.github.serivesmejia.deltacontrol.PIDFCoefficients
 import com.github.serivesmejia.deltadrive.utils.DistanceUnit
 import com.github.serivesmejia.deltadrive.utils.gear.GearRatio
 import com.github.serivesmejia.deltadrive.utils.gear.TwoGearRatio
@@ -89,6 +90,10 @@ class EncoderDriveParameters {
      * of the Task returned by the rotate() method.
      */
     var TASK_COMMAND_REQUIREMENTS = arrayOf<DeltaSubsystem>()
+
+    var DRIVE_STRAIGHT_COEFFICIENTS = PIDFCoefficients(0.0, 0.0, 0.0, 0.0)
+
+    var DRIVE_STRAIGHT_DEADZONE = 0.0
 
     /**
      * Make sure the values are in the correct range (0 to 1 or positive).

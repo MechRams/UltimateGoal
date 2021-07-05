@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous
+package org.firstinspires.ftc.teamcode.autonomous.test
 
 import com.github.serivesmejia.deltacommander.command.DeltaRunCmd
 import com.github.serivesmejia.deltacommander.deltaScheduler
@@ -20,15 +20,13 @@ class AutonomoRotateTest : MechOpMode(OpModeType.AUTO) {
 
         while(opModeIsActive()) {
             deltaScheduler.update()
-            if(deltaScheduler.commandsAmount <= 0) {
-                + rotateInfinitely()
-            }
         }
     }
 
     fun rotateInfinitely() = deltaSequence {
-        - drive.rotate(Rot2d.degrees(90.0), 0.4, 10.0)
-        - drive.rotate(Rot2d.degrees(-90.0), 0.4, 10.0)
+        - drive.rotate(Rot2d.degrees(90.0), 0.4)
+        - drive.encoderForward(35.0, 0.8)
+        - drive.rotate(Rot2d.degrees(0.0), 0.4)
     }
 
 }

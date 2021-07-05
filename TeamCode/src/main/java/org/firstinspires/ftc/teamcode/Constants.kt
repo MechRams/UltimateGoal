@@ -8,14 +8,24 @@ import kotlin.math.roundToInt
 @Config
 object Constants {
 
-    @JvmField var rotateP = 0.039;
-    @JvmField var rotateI = 0.0005;
-    @JvmField var rotateD = 0.005;
-    @JvmField var rotateF = 0.0028;
+    @JvmField var rotateP = 0.028
+    @JvmField var rotateI = 0.002
+    @JvmField var rotateD = 0.1
+    @JvmField var rotateF = 0.0
 
     val rotatePIDFCoefficients get() = PIDFCoefficients(
         rotateP, rotateI,
         rotateD, rotateF
+    )
+
+    @JvmField var driveP = 0.028
+    @JvmField var driveI = 0.002
+    @JvmField var driveD = 0.1
+    @JvmField var driveF = 0.0
+
+    val drivePIDFCoefficients get() = PIDFCoefficients(
+            driveP, driveI,
+            driveD, driveF
     )
 
     @JvmField var armP = 0.008

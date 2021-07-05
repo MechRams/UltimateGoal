@@ -11,13 +11,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 
 @Suppress("UNUSED")
-class SimpleBNO055IMU(private val imu: BNO055IMU, var axis: Axis = Axis.Z) {
+class SimpleBNO055IMU(private val imu: BNO055IMU) {
 
     var initialized = false
         private set
 
     private var lastAngles = Orientation()
     private var globalAngle = 0.0
+
+    var axis = Axis.Z
 
     fun initIMU() {
         if(initialized) return
@@ -48,9 +50,7 @@ class SimpleBNO055IMU(private val imu: BNO055IMU, var axis: Axis = Axis.Z) {
      * Enter in a while loop until the IMU reports it is calibrated or until the opmode stops
      */
     fun waitForIMUCalibration() {
-        while (!imu.isGyroCalibrated && !Thread.interrupted()) {
-            Thread.yield()
-        }
+        while (!imu.isGyroCalibrated && !Thread.interrupted()) { }
     }
 
     /**
@@ -60,16 +60,16 @@ class SimpleBNO055IMU(private val imu: BNO055IMU, var axis: Axis = Axis.Z) {
 
     val isImuCalibrated get() = imu.isGyroCalibrated
 
-    private var lastAng = Orientation()
-
     val cumulativeAngle: Rot2d get() {
         // We have to process the angle because the imu works in euler angles so the axis is
         // returned as 0 to +180 or 0 to -180 rolling back to -179 or +179 when rotation passes
         // 180 degrees. We detect this transition and track the total cumulative angle of rotation.
-        var deltaAngle = angle.degrees - when (axis) {
-            Axis.X -> lastAngles.thirdAngle
-            Axis.Y -> lastAngles.secondAngle
-            else -> lastAngles.firstAngle
+        val angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
+
+        var deltaAngle = when (axis) {
+            Axis.X -> angles.thirdAngle - lastAngles.thirdAngle
+            Axis.Y -> angles.secondAngle - lastAngles.secondAngle
+            else -> angles.firstAngle - lastAngles.firstAngle
         }
 
         if (deltaAngle < -180)
@@ -78,7 +78,7 @@ class SimpleBNO055IMU(private val imu: BNO055IMU, var axis: Axis = Axis.Z) {
             deltaAngle -= 360
 
         globalAngle += deltaAngle
-        lastAngles = lastAng
+        lastAngles = angles
 
         lastCumulativeAngle = Rot2d.degrees(globalAngle)
 
@@ -86,25 +86,9 @@ class SimpleBNO055IMU(private val imu: BNO055IMU, var axis: Axis = Axis.Z) {
     }
 
     var lastCumulativeAngle = Rot2d()
-        private set
-
-    val angle: Rot2d get() {
-        lastAng = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
-
-        lastAngle = Rot2d.degrees(when (axis) {
-            Axis.X -> lastAng.thirdAngle
-            Axis.Y -> lastAng.secondAngle
-            else -> lastAng.firstAngle
-        }.toDouble())
-
-        return lastAngle
-    }
-
-    var lastAngle = Rot2d.zero
-        private set
 
     fun resetAngle() {
-        lastAngles =  imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
+        lastAngles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES)
         globalAngle = 0.0
     }
 

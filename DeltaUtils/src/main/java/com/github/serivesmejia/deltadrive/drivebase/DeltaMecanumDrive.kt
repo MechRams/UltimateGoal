@@ -64,11 +64,11 @@ class DeltaMecanumDrive(
     }
 
     override fun joystickFieldCentric(forwardSpeed: Double, strafeSpeed: Double, turnSpeed: Double, turbo: Double) =
-        joystickDrive.update(forwardSpeed, strafeSpeed, turnSpeed, turbo, turbo, imuDrive.imu.angle)
+        joystickDrive.update(forwardSpeed, strafeSpeed, turnSpeed, turbo, turbo, Rot2d.zero)
 
     override fun joystickFieldCentric(gamepad: Gamepad, turbo: Double) {
         joystickDrive.gamepad = gamepad
-        joystickDrive.update(turbo, turbo, imuDrive.imu.angle)
+        joystickDrive.update(turbo, turbo, Rot2d.zero)
     }
 
     override fun joystickFieldCentric(gamepad: Gamepad, controlSpeedWithTriggers: Boolean, maxMinusTurbo: Double) {
@@ -84,10 +84,10 @@ class DeltaMecanumDrive(
 
             joystickDrive.update(
                     DeltaMathUtil.clamp(1 - minusTurbo, 0.0, 1.0),
-                    imuDrive.imu.angle
+                    Rot2d.zero
             )
         } else {
-            joystickDrive.update(1.0, imuDrive.imu.angle)
+            joystickDrive.update(1.0, Rot2d.zero)
         }
     }
 

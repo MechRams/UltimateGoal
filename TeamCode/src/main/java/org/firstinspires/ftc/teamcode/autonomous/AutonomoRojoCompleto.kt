@@ -29,9 +29,6 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         deltaScheduler.updateUntilNoCommands {
             deltaHdw.clearBulkCache()
-
-            telemetry.addData("shooter avg velocity", shooterSub.avgVelocity)
-            telemetry.update()
         }
     }
 
@@ -39,37 +36,34 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         /* DROPPING THE FIRST WOBBLE GOAL */
 
-        - drive.encoderTiltForwardRight(47.0, 1.0, 4.0)
+        - drive.encoderTiltForwardRight(50.0, 0.75)
         - ArmPositionMiddleCmd().dontBlock()
 
-        - drive.encoderForward(25.0, 1.0, 4.0)
+        - drive.encoderForward(25.0, 0.8)
         - dropWobble()
 
         /* SHOOTING RINGS */
+        - drive.encoderStrafeLeft(1.0, 1.0)
+        - drive.encoderBackwards(15.0, 0.85)
 
         // rotate torwards the high goal
-        - drive.rotate(Rot2d.degrees(200.0), 0.7)
+        - drive.rotate(Rot2d.degrees(190.0), 0.45)
 
         // shoot the 3 rings
-        - shootRings()
+        - shootRings(0.39)
 
         /* GRABBING THE SECOND WOBBLE GOAL */
 
         // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-40.0), 0.7)
+        - drive.rotate(Rot2d.degrees(-40.0), 0.45)
 
-        val forwardWobbleCmd = drive.encoderForward(30.0, 0.5, 4.0).command
-        val grabWobbleCmd = grabWobble(forwardWobbleCmd)
-
-        // start moving the arm to the out position
-        - grabWobbleCmd.dontBlock()
+        - wobbleMiddleOpen().dontBlock()
         // drive torwards the 2nd wobble goal hopefully
-        - forwardWobbleCmd
+        - drive.encoderForward(30.0, 0.5, 4.0)
         // wait for the wobble goal to be grabbed
-        - grabWobbleCmd.waitFor()
+        - grabWobble()
 
         /* DROPPING THE SECOND WOBBLE GOAL */
-
         // rotate torwards the A square
         - drive.rotate(Rot2d.degrees(90.0), 0.6)
 
@@ -104,7 +98,7 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         - drive.rotate(Rot2d.degrees(-20.0), 0.7)
 
         val forwardWobbleCmd = drive.encoderForward(20.0, 0.5, 4.0).command
-        val grabWobbleCmd = grabWobble(forwardWobbleCmd)
+        val grabWobbleCmd = grabWobble()
 
         // start moving the arm to the out position
         - grabWobbleCmd.dontBlock()

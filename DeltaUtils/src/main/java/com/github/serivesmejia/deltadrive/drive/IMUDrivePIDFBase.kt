@@ -101,11 +101,7 @@ abstract class IMUDrivePIDFBase
      * @return Twist2d containing how much the robot rotated
      */
     fun rotate(rotation: Rot2d, power: Double, timeoutS: Double): Task<Twist2d> {
-        val setpoint = if (imuParameters.INVERT_ROTATION)
-            imu.cumulativeAngle.degrees - rotation.degrees
-        else
-            imu.cumulativeAngle.degrees + rotation.degrees
-
+        val rotationSetpoint = rotation.degrees
         val deadZone = imuParameters.DEAD_ZONE
 
         imuParameters.secureParameters()
@@ -131,14 +127,15 @@ abstract class IMUDrivePIDFBase
             Twist2d.empty
         }
 
-        val pidControllerRotate = MotorPIDFController(imuParameters.COEFFICIENTS)
-
         imu.axis = imuParameters.IMU_AXIS
+        imu.resetAngle()
+
+        val pidControllerRotate = MotorPIDFController(imuParameters.COEFFICIENTS)
 
         val timeout = if (timeoutS <= 0.0) Double.MAX_VALUE else timeoutS
 
         pidControllerRotate
-                .setSetpoint(setpoint)
+                .setSetpoint(rotationSetpoint)
                 .setDeadzone(deadZone)
                 .setInitialPower(abs(power))
                 .setErrorTolerance(imuParameters.ERROR_TOLERANCE)
@@ -167,19 +164,21 @@ abstract class IMUDrivePIDFBase
                 imu.lastCumulativeAngle - initialAngle
             )
 
-            if(setpoint < 0) { //rotating right
+            if(rotationSetpoint < 0.0) { //rotating right
                 backleftpower   = powerF
                 backrightpower  = -powerF
                 frontleftpower  = powerF
                 frontrightpower = -powerF
+                telemetry?.addData("[Direction]", "Right")
             } else { //rotating left
                 backleftpower   = -powerF
                 backrightpower  = powerF
                 frontleftpower  = -powerF
                 frontrightpower = powerF
+                telemetry?.addData("[Direction]", "Left")
             }
 
-            if(pidControllerRotate.onSetpoint() || timer.seconds() >= timeoutS) {
+            if(pidControllerRotate.onSetpoint() || timer.seconds() >= timeout) {
                 // stop the movement
                 backleftpower   = 0.0
                 backrightpower  = 0.0
@@ -196,7 +195,7 @@ abstract class IMUDrivePIDFBase
             setAllMotorPower(frontleftpower, frontrightpower, backleftpower, backrightpower)
 
             telemetry?.addData("[IMU Angle]", imu.lastCumulativeAngle.degrees)
-            telemetry?.addData("[Setpoint]", setpoint)
+            telemetry?.addData("[Setpoint]", rotationSetpoint)
             telemetry?.addData("[Error]", pidControllerRotate.getCurrentError())
             telemetry?.addData("[Power]", powerF)
             telemetry?.update()

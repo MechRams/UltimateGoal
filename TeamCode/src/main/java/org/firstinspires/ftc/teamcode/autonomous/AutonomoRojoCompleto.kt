@@ -81,7 +81,7 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         - dropWobble()
     }
 
-    fun stackB() = deltaSequence{
+    fun stackB() = deltaSequence {
         /* DROPPING THE FIRST WOBBLE GOAL */
         - drive.encoderForward(25.0, 1.0)
 

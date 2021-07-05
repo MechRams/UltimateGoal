@@ -119,6 +119,7 @@ class SuperGamepad (var gamepad: Gamepad) : Super {
             override fun buttonsPressed(buttons: Buttons) {
                 if(buttons(btt)) {
                     toggleState = !toggleState
+
                     if(toggleState) {
                         + toggleOnCmd
                         toggleOffCmd.requestFinish()

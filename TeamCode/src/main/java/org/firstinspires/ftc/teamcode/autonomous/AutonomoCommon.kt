@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
 import com.github.serivesmejia.deltacommander.DeltaCommand
-import com.github.serivesmejia.deltacommander.command.DeltaWaitConditionCmd
 import com.github.serivesmejia.deltacommander.dsl.deltaSequence
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.MechOpMode
@@ -28,7 +27,7 @@ fun dropWobble() = deltaSequence {
 
 fun MechOpMode.shootRings() = deltaSequence {
     // start running the shooter (non-blocking)
-    - ShooterRunCmd(Constants.shooterPower).dontBlock()
+    - ShooterRunCmd(Constants.shooterHighGoalPower).dontBlock()
 
     // wait until the shooter reaches a certain velocity
     // TODO test avg velocity to put correct thing here and use this instead of waitForSeconds

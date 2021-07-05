@@ -47,7 +47,14 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
 
         superGamepad1.toggleScheduleOn(Button.X,
             // encender el shooter cuando se presiona X
-            ShooterRunCmd { Constants.shooterPower },
+            ShooterRunCmd {
+                if(gamepad1.left_trigger >= 0.3 || gamepad1.right_trigger >= 0.3)
+                    // aplicar menos velocidad al shooter cuando se presionan los trigers
+                    Constants.shooterPowerShotPower
+                else
+                    // aplicar velocidad normal cuando no son presionados
+                    Constants.shooterHighGoalPower
+            },
             //comando para cuando se vuelva a presionar X
             ShooterStopCmd()
         )
@@ -76,8 +83,8 @@ class MechTeleOp : MechOpMode(OpModeType.TELEOP, usingIMU = false) {
 
         // garra toggle con dpad
         superGamepad1.toggleScheduleOn(Button.DPAD_DOWN,
-            ArmClawOpenCmd(),
-            ArmClawCloseCmd()
+            ArmClawOpenCmd(), // abrir el servo cuando se presiona una vez el dpad
+            ArmClawCloseCmd() // cerrar el servo cuando se presiona otra vez el dpad
         )
 
         superGamepad1.attachToScheduler()

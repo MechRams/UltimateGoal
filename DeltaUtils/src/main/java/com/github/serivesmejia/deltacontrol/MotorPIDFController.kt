@@ -78,6 +78,8 @@ class MotorPIDFController(private var coeffs: PIDFCoefficients) {
 
     fun getCurrentError() = errorDelta
 
+    fun getSetpoint() = setpoint
+
     fun onSetpoint(): Boolean {
         return if(invertError) {
             (prevErrorDelta > -errorTolerance) && prevErrorDelta < 0

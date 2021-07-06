@@ -101,18 +101,9 @@ abstract class IMUDrivePIDFBase
      * @return Twist2d containing how much the robot rotated
      */
     fun rotate(rotation: Rot2d, power: Double, timeoutS: Double): Task<Twist2d> {
-
-        imuParameters.secureParameters()
-
-        imu.axis = imuParameters.IMU_AXIS
-
         var rotationSetpoint = rotation.degrees
         if(imuParameters.INVERT_ROTATION)
             rotationSetpoint = -rotationSetpoint
-
-        val setpoint = imu.cumulativeAngle.degrees + rotationSetpoint
-
-        val deadZone = imuParameters.DEAD_ZONE
 
         if (!::imu.isInitialized || !imu.initialized) {
 
@@ -139,13 +130,6 @@ abstract class IMUDrivePIDFBase
 
         val timeout = if (timeoutS <= 0.0) Double.MAX_VALUE else timeoutS
 
-        pidControllerRotate
-                .setSetpoint(setpoint)
-                .setDeadzone(deadZone)
-                .setInitialPower(abs(power))
-                .setErrorTolerance(imuParameters.ERROR_TOLERANCE)
-                .setCoefficients(imuParameters.COEFFICIENTS)
-
         var backleftpower = 0.0
         var backrightpower = 0.0
         var frontrightpower = 0.0
@@ -158,8 +142,22 @@ abstract class IMUDrivePIDFBase
 
         var initialAngle = Rot2d.zero
 
+        val deadZone = imuParameters.DEAD_ZONE
+
         return Task(imuParameters.TASK_COMMAND_REQUIREMENTS) {
             first {
+                imuParameters.secureParameters()
+                imu.axis = imuParameters.IMU_AXIS
+
+                val setpoint = imu.cumulativeAngle.degrees + rotationSetpoint
+
+                pidControllerRotate
+                    .setSetpoint(setpoint)
+                    .setDeadzone(imuParameters.DEAD_ZONE)
+                    .setInitialPower(abs(power))
+                    .setErrorTolerance(imuParameters.ERROR_TOLERANCE)
+                    .setCoefficients(imuParameters.COEFFICIENTS)
+
                 timer.reset()
                 initialAngle = imu.lastCumulativeAngle
             }
@@ -198,7 +196,7 @@ abstract class IMUDrivePIDFBase
             setAllMotorPower(frontleftpower, frontrightpower, backleftpower, backrightpower)
 
             telemetry?.addData("[IMU Angle]", imu.lastCumulativeAngle.degrees)
-            telemetry?.addData("[Setpoint]", setpoint)
+            telemetry?.addData("[Setpoint]", pidControllerRotate.getSetpoint())
             telemetry?.addData("[Error]", pidControllerRotate.getCurrentError())
             telemetry?.addData("[Power]", powerF)
             telemetry?.update()

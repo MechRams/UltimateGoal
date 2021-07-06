@@ -36,18 +36,16 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         /* DROPPING THE FIRST WOBBLE GOAL */
 
-        - drive.encoderTiltForwardRight(50.0, 0.75)
+        - drive.encoderTiltForwardRight(50.0, 0.9)
         - ArmPositionMiddleCmd().dontBlock()
 
         - drive.encoderForward(25.0, 0.8)
         - dropWobble()
 
         /* SHOOTING RINGS */
-        - drive.encoderStrafeLeft(1.0, 1.0)
-        - drive.encoderBackwards(15.0, 0.85)
-
         // rotate torwards the high goal
-        - drive.rotate(Rot2d.degrees(190.0), 0.45)
+        - drive.encoderBackwards(15.0, 0.8)
+        - drive.rotate(Rot2d.degrees(183.0), 0.6)
 
         // shoot the 3 rings
         - shootRings(0.39)
@@ -55,17 +53,18 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         /* GRABBING THE SECOND WOBBLE GOAL */
 
         // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-200.0), 0.45)
+        - drive.rotate(Rot2d.degrees(-65.0), 0.45)
 
         - wobbleMiddleOpen().dontBlock()
+
         // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(30.0, 0.5)
+        - drive.encoderForward(63.0, 0.3)
         // wait for the wobble goal to be grabbed
         - grabWobble()
 
         /* DROPPING THE SECOND WOBBLE GOAL */
         // rotate torwards the A square
-        - drive.rotate(Rot2d.degrees(-100.0), 0.6)
+        - drive.rotate(Rot2d.degrees(200.0), 0.6)
 
         // start moving the arm to middle
         - ArmPositionMiddleCmd().dontBlock()

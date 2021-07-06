@@ -18,9 +18,9 @@ object Constants {
         rotateD, rotateF
     )
 
-    @JvmField var driveP = 0.028
-    @JvmField var driveI = 0.002
-    @JvmField var driveD = 0.1
+    @JvmField var driveP = 0.09
+    @JvmField var driveI = 0.0002
+    @JvmField var driveD = 0.05
     @JvmField var driveF = 0.0
 
     val drivePIDFCoefficients get() = PIDFCoefficients(
@@ -40,7 +40,7 @@ object Constants {
     @JvmField var shooterI = 0.0
     @JvmField var shooterD = 0.0
     @JvmField var shooterF = 0.0
-    @JvmField var shooterHighGoalPower = 0.38
+    @JvmField var shooterHighGoalPower = 0.387
     @JvmField var shooterPowerShotPower = 0.28
 
     @JvmField var flickerInPos = 0.86

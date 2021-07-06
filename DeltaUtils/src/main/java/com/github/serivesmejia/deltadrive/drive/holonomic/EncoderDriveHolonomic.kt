@@ -151,7 +151,7 @@ class EncoderDriveHolonomic
                     newBackLeftTarget,
                     newBackRightTarget)
             }
-
+/*
             if(imu != null && correctWithIMU) {
                 val powerFLeft = controllerLeft.calculate(imu!!.cumulativeAngle.degrees)
                 val powerFRight = controllerRight.calculate(imu!!.lastCumulativeAngle.degrees)
@@ -166,7 +166,7 @@ class EncoderDriveHolonomic
 
                 hdw.setMotorPowers(flPow, frPow, blPow, brPow)
             }
-
+*/
             telemetry?.update()
 
             val flBusy = if(fl != 0.0) hdw.wheelFrontLeft.isBusy else true

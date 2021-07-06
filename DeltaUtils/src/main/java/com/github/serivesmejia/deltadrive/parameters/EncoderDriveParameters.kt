@@ -95,6 +95,8 @@ class EncoderDriveParameters {
 
     var DRIVE_STRAIGHT_DEADZONE = 0.0
 
+    var DRIVE_STRAIGHT_DEGREE_TOLERANCE = 3.0
+
     /**
      * Make sure the values are in the correct range (0 to 1 or positive).
      */

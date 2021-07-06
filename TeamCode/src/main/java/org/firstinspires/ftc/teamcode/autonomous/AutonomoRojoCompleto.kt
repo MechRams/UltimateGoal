@@ -55,17 +55,17 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         /* GRABBING THE SECOND WOBBLE GOAL */
 
         // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-40.0), 0.45)
+        - drive.rotate(Rot2d.degrees(-200.0), 0.45)
 
         - wobbleMiddleOpen().dontBlock()
         // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(30.0, 0.5, 4.0)
+        - drive.encoderForward(30.0, 0.5)
         // wait for the wobble goal to be grabbed
         - grabWobble()
 
         /* DROPPING THE SECOND WOBBLE GOAL */
         // rotate torwards the A square
-        - drive.rotate(Rot2d.degrees(90.0), 0.6)
+        - drive.rotate(Rot2d.degrees(-100.0), 0.6)
 
         // start moving the arm to middle
         - ArmPositionMiddleCmd().dontBlock()

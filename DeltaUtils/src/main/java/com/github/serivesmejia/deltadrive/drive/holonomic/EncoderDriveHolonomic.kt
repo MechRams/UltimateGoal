@@ -60,7 +60,7 @@ class EncoderDriveHolonomic
             frontleft: Double, frontright: Double,  backleft: Double, backright: Double,
             timeoutS: Double,
             rightTurbo: Double, leftTurbo: Double,
-            movementDescription: String) : Task<Unit> {
+            movementDescription: String, correctWithIMU: Boolean = true) : Task<Unit> {
 
         var fl = frontleft
         var fr = frontright
@@ -110,17 +110,19 @@ class EncoderDriveHolonomic
                 // reset the timeout time and start motion.
                 runtime.reset()
 
-                if(imu != null) {
+                if(imu != null && correctWithIMU) {
                     initialAngle = imu!!.cumulativeAngle
 
                     controllerLeft.setSetpoint(initialAngle.degrees)
-                              .setInitialPower(leftPower)
+                              .setInitialPower(leftPower).setInverse()
+                              .setErrorTolerance(parameters.DRIVE_STRAIGHT_DEGREE_TOLERANCE)
                               .setDeadzone(parameters.DRIVE_STRAIGHT_DEADZONE)
-                              .setErrorInverted()
 
                     controllerRight.setSetpoint(initialAngle.degrees)
-                                   .setInitialPower(rightPower)
+                                   .setInitialPower(rightPower).setInverse()
+                                   .setErrorTolerance(parameters.DRIVE_STRAIGHT_DEGREE_TOLERANCE)
                                    .setDeadzone(parameters.DRIVE_STRAIGHT_DEADZONE)
+                                   .setErrorInverted()
                 }
             }
 
@@ -150,14 +152,19 @@ class EncoderDriveHolonomic
                     newBackRightTarget)
             }
 
-            if(imu != null) {
-                val powerFLeft = controllerLeft.calculate(imu.cumulativeAngle.degrees)
-                val powerFRight = controllerRight.calculate(imu.cumulativeAngle.degrees)
+            if(imu != null && correctWithIMU) {
+                val powerFLeft = controllerLeft.calculate(imu!!.cumulativeAngle.degrees)
+                val powerFRight = controllerRight.calculate(imu!!.lastCumulativeAngle.degrees)
 
                 flPow = if(fl != 0.0) powerFLeft * leftTurbo else 0.0
                 frPow = if(fr != 0.0) powerFRight * rightTurbo else 0.0
                 blPow = if(bl != 0.0) powerFLeft * leftTurbo else 0.0
                 brPow = if(br != 0.0) powerFRight * rightTurbo else 0.0
+
+                telemetry?.addData("[Angle Error]", "${controllerLeft.getCurrentError()}, ${controllerRight.getCurrentError()}")
+                telemetry?.addData("[Power]", "$powerFLeft, $powerFRight")
+
+                hdw.setMotorPowers(flPow, frPow, blPow, brPow)
             }
 
             telemetry?.update()
@@ -239,7 +246,7 @@ class EncoderDriveHolonomic
             speed, d, -d, d, -d,
             timeoutS,
             parameters.RIGHT_WHEELS_TURBO, parameters.LEFT_WHEELS_TURBO,
-            "turnRight")
+            "turnRight", false)
     }
 
     fun turnLeft(distance: Double, speed: Double, timeoutS: Double): Task<Unit> {
@@ -248,7 +255,7 @@ class EncoderDriveHolonomic
             speed, -d, d, -d, d,
             timeoutS,
             parameters.RIGHT_WHEELS_TURBO, parameters.LEFT_WHEELS_TURBO,
-            "turnLeft"
+            "turnLeft", false
         )
     }
 

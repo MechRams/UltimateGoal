@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.util.ElapsedTime
 
 class MotorPIDFController(private var coeffs: PIDFCoefficients) {
 
+    private var inverse = false
+
     //temp values params
 
     private var errorTolerance = 0.0
@@ -59,6 +61,11 @@ class MotorPIDFController(private var coeffs: PIDFCoefficients) {
 
     fun setErrorInverted(inverted: Boolean) : MotorPIDFController {
         invertError = inverted
+        return this
+    }
+
+    fun setInverse() : MotorPIDFController {
+        inverse = !inverse
         return this
     }
 
@@ -120,7 +127,11 @@ class MotorPIDFController(private var coeffs: PIDFCoefficients) {
         prevInput = input
         prevMillis = currentMillis
 
-        return powerF
+        return if(inverse) {
+            if(onSetpoint())
+                powerF
+            else initialPower - powerF
+        } else powerF
     }
 
     /**

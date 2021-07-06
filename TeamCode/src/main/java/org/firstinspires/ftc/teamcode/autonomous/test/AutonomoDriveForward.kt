@@ -21,36 +21,11 @@ class AutonomoDriveForward : MechOpMode(OpModeType.AUTO) {
 
         while(opModeIsActive()) {
             deltaScheduler.update()
-
-            telemetry.addData("fl", hdw.wheelFrontLeft.power)
-            telemetry.addData("fr", hdw.wheelFrontRight.power)
-            telemetry.addData("bl", hdw.wheelBackLeft.power)
-            telemetry.addData("br", hdw.wheelBackRight.power)
-
-            telemetry.addData("fl pos", hdw.wheelFrontLeft.targetPosition)
-            telemetry.addData("fr pos", hdw.wheelFrontRight.targetPosition)
-            telemetry.addData("bl pos", hdw.wheelBackLeft.targetPosition)
-            telemetry.addData("br pos", hdw.wheelBackRight.targetPosition)
-            telemetry.update()
         }
     }
 
     fun autoA() = deltaSequence {
-        - drive.encoderForward(50.0, 0.2).markers {
-            distanceMarker(20.0) {
-                + IntakeConveyInCmd()
-            }
-        }
-
-        - drive.rotate(Rot2d.degrees(90.0), 0.5).markers {
-            rotationMarker(Rot2d.degrees(30.0)) {
-                + IntakeConveyStopCmd()
-            }
-        }
-
-        - drive.encoderStrafeLeft(20.0, 0.3)
-
-        - drive.rotate(Rot2d.degrees(-180.0), 0.5)
+        - drive.encoderForward(9999.0, 0.2, 9999.0)
     }
 
 }

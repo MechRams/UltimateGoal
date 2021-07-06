@@ -19,17 +19,6 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
     init {
         defaultCommand = DriveStopCmd()
 
-        drive.initEncoders(EncoderDriveParameters().apply {
-            TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
-
-            TICKS_PER_REV = NeveRest_Orbital_20.TICKS_PER_REVOLUTION
-            WHEEL_DIAMETER_INCHES = 4.0
-            SHOW_CURRENT_DISTANCE = true
-
-            DRIVE_STRAIGHT_COEFFICIENTS = Constants.drivePIDFCoefficients
-            DRIVE_STRAIGHT_DEADZONE = 0.1
-        })
-
         if(usingIMU) {
             drive.initIMU(IMUDriveParameters().apply {
                 TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
@@ -44,6 +33,18 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
             telemetry.clearAll()
             telemetry.update()
         }
+
+        drive.initEncoders(EncoderDriveParameters().apply {
+            TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
+
+            TICKS_PER_REV = NeveRest_Orbital_20.TICKS_PER_REVOLUTION
+            WHEEL_DIAMETER_INCHES = 4.0
+            SHOW_CURRENT_DISTANCE = true
+
+            DRIVE_STRAIGHT_COEFFICIENTS = Constants.drivePIDFCoefficients
+            DRIVE_STRAIGHT_DEADZONE = 0.1
+            DRIVE_STRAIGHT_DEGREE_TOLERANCE = 3.0
+        })
     }
 
     override fun loop() { }

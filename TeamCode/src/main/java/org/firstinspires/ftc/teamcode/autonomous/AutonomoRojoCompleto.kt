@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.OpModeType
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionMiddleCmd
+import org.firstinspires.ftc.teamcode.vision.RingHeight
 import org.firstinspires.ftc.teamcode.vision.RingPipeline2
 
 @Autonomous(name = "Rojo Completo", group = "final", preselectTeleOp = "TeleOp")
@@ -16,15 +17,18 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     override fun run() {
         deltaHdw.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
 
-        //vision.initCamVision()
-        //vision.initRingVision2()
+        vision.initCamVision()
+        vision.initRectRingVision()
 
-        waitForStart()
+        while(!isStopRequested && !isStarted) {
+            telemetry.addData("[Stack Height]", vision.rectRingPipeline?.detectedHeight ?: RingHeight.ZERO)
+            telemetry.update()
+        }
 
-        when(vision.ringPipeline2?.getLatestMostLikelyHeight() ?: RingPipeline2.RingHeight.ZERO) {
-            RingPipeline2.RingHeight.ZERO -> stackA()
-            RingPipeline2.RingHeight.ONE  -> stackB()
-            RingPipeline2.RingHeight.FOUR -> stackC()
+        when(vision.rectRingPipeline?.detectedHeight ?: RingHeight.ZERO) {
+            RingHeight.ZERO -> stackA()
+            RingHeight.ONE  -> stackB()
+            RingHeight.FOUR -> stackC()
         }.schedule()
 
         deltaScheduler.updateUntilNoCommands {
@@ -33,7 +37,6 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     }
 
     fun stackA() = deltaSequence {
-
         /* DROPPING THE FIRST WOBBLE GOAL */
 
         - drive.encoderTiltForwardRight(50.0, 0.9)
@@ -44,33 +47,37 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         /* SHOOTING RINGS */
         // rotate torwards the high goal
-        - drive.encoderBackwards(15.0, 0.8)
-        - drive.rotate(Rot2d.degrees(183.0), 0.6)
+        - drive.encoderBackwards(10.0, 0.8)
+        //- drive.rotate(Rot2d.degrees(183.0), 0.6) // high goal
+        - drive.rotate(Rot2d.degrees(207.0), 0.6)
 
         // shoot the 3 rings
-        - shootRings(0.39)
+        //- shootRings(0.39) // high goal
+        - shootRingsPowershot(0.374)
 
         /* GRABBING THE SECOND WOBBLE GOAL */
 
         // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-65.0), 0.45)
+        - drive.rotate(Rot2d.degrees(-110.0), 0.45)
 
         - wobbleMiddleOpen().dontBlock()
 
         // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(63.0, 0.3)
+        - drive.encoderForward(25.0, 0.3)
         // wait for the wobble goal to be grabbed
         - grabWobble()
 
         /* DROPPING THE SECOND WOBBLE GOAL */
         // rotate torwards the A square
-        - drive.rotate(Rot2d.degrees(200.0), 0.6)
+        - drive.rotate(Rot2d.degrees(223.0), 0.6)
 
         // start moving the arm to middle
         - ArmPositionMiddleCmd().dontBlock()
 
         // move to the A square
-        - drive.encoderForward(30.0, 1.0)
+        - drive.encoderBackwards(10.0, 1.0)
+        - drive.encoderTiltBackwardsLeft(16.0, 1.0)
+        - drive.encoderTiltForwardLeft(23.0, 1.0)
         - dropWobble()
     }
 
@@ -86,25 +93,25 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         /* SHOOTING RINGS */
 
-        // rotate torwards the high goal
-        - drive.rotate(Rot2d.degrees(-180.0), 0.7)
+        // rotate torwards the high goal/power shots
+        //- drive.rotate(Rot2d.degrees(-180.0), 0.6)
+        - drive.rotate(Rot2d.degrees(-190.0), 0.6)
 
         // shoot the 3 rings
-        - shootRings()
+        //- shootRings() // high goal
+        - shootRingsPowershot(0.33)
 
         /* GRABBING THE SECOND WOBBLE GOAL */
 
-        - drive.rotate(Rot2d.degrees(-20.0), 0.7)
+        - drive.rotate(Rot2d.degrees(-90.0), 0.7)
 
-        val forwardWobbleCmd = drive.encoderForward(20.0, 0.5, 4.0).command
-        val grabWobbleCmd = grabWobble()
+        - wobbleMiddleOpen().dontBlock()
 
-        // start moving the arm to the out position
-        - grabWobbleCmd.dontBlock()
         // drive torwards the 2nd wobble goal hopefully
-        - forwardWobbleCmd
+        - drive.encoderForward(40.0, 0.3)
         // wait for the wobble goal to be grabbed
-        - grabWobbleCmd.waitFor()
+        - grabWobble()
+
 
         // move torwards the B square
         - drive.rotate(Rot2d.degrees(200.0), 0.7)

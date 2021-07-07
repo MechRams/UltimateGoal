@@ -12,11 +12,6 @@ import kotlin.math.round
 
 class RingPipeline2 : OpenCvPipeline() {
 
-    /** enum class for Height of the ring **/
-    enum class RingHeight {
-        ZERO, ONE, FOUR
-    }
-
     /** enum class for Height of the stone **/
     enum class MostLikelyMode {
         CENTER_ML, LEFT_ML, RIGHT_ML

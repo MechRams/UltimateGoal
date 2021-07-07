@@ -19,19 +19,19 @@ class ShooterAutoFlick(val flickTimes: Int = 3) : DeltaCommand() {
     override fun init() {
         stateMachine = StateMachineBuilder<State>()
                 .state(State.IN)
-                .transitionTimed(0.6)
+                .transitionTimed(0.5)
                 .loop {
                     shooterSub.flickerServo.position = Constants.flickerInPos
                 }
 
                 .state(State.OUT)
-                .transitionTimed(0.6)
+                .transitionTimed(0.5)
                 .loop {
                     shooterSub.flickerServo.position = Constants.flickerOutPos
                 }
 
                 .state(State.FINISHED)
-                .transitionTimed(0.3)
+                .transitionTimed(0.2)
                 .onEnter { flickCount++ }
 
                 .exit(State.IN)

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous
 
 import com.github.serivesmejia.deltacommander.DeltaCommand
 import com.github.serivesmejia.deltacommander.dsl.deltaSequence
+import com.github.serivesmejia.deltamath.geometry.Rot2d
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.commander.command.shooter.ShooterAutoFlick
@@ -35,6 +36,28 @@ fun MechOpMode.shootRings(shooterPower: Double = Constants.shooterHighGoalPower)
 
     // shoot the rings! the servo will move in and out 3 times
     - ShooterAutoFlick(3)
+    // stop the shooter after the servo finishes flicking (zero velocity)
+    - ShooterStopCmd().dontBlock()
+}
+
+fun MechOpMode.shootRingsPowershot(shooterPower: Double = Constants.shooterHighGoalPower) = deltaSequence {
+    // start running the shooter (non-blocking)
+    - ShooterRunCmd(shooterPower).dontBlock()
+
+    // wait until the shooter reaches a certain velocity
+    - waitFor { shooterSub.avgVelocity >= 900.0 }
+    - waitForSeconds(1.0)
+
+    // shoot the rings! the servo will move in and out 3 times
+    - ShooterAutoFlick(1)
+    - drive.rotate(Rot2d.degrees(5.0), 0.3)
+
+    - ShooterAutoFlick(1)
+    - drive.rotate(Rot2d.degrees(5.0), 0.3)
+
+    - ShooterAutoFlick(1)
+    - drive.rotate(Rot2d.degrees(5.0), 0.3)
+
     // stop the shooter after the servo finishes flicking (zero velocity)
     - ShooterStopCmd().dontBlock()
 }

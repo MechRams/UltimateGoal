@@ -61,7 +61,7 @@ open class Vision(private val hardwareMap: HardwareMap) {
 
     fun initRectRingVision() {
         rectRingPipeline = RectRingPipeline()
-        phoneCam?.setPipeline(ringPipeline2)
+        phoneCam?.setPipeline(rectRingPipeline)
     }
 
     fun close() {

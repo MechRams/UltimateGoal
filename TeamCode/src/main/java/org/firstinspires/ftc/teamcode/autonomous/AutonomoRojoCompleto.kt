@@ -25,6 +25,8 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
             telemetry.update()
         }
 
+        vision.close()
+
         when(vision.rectRingPipeline?.detectedHeight ?: RingHeight.ZERO) {
             RingHeight.ZERO -> stackA()
             RingHeight.ONE  -> stackB()
@@ -39,7 +41,7 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     fun stackA() = deltaSequence {
         /* DROPPING THE FIRST WOBBLE GOAL */
 
-        - drive.encoderTiltForwardRight(50.0, 0.9)
+        - drive.encoderTiltForwardRight(55.0, 0.9)
         - ArmPositionMiddleCmd().dontBlock()
 
         - drive.encoderForward(25.0, 0.8)
@@ -47,37 +49,31 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         /* SHOOTING RINGS */
         // rotate torwards the high goal
-        - drive.encoderBackwards(10.0, 0.8)
+        - drive.encoderTiltBackwardsLeft(20.0, 0.4)
         //- drive.rotate(Rot2d.degrees(183.0), 0.6) // high goal
-        - drive.rotate(Rot2d.degrees(207.0), 0.6)
+        - drive.rotate(Rot2d.degrees(195.0), 0.6)
 
         // shoot the 3 rings
         //- shootRings(0.39) // high goal
-        - shootRingsPowershot(0.374)
+        - shootRingsPowershot(0.37)
 
         /* GRABBING THE SECOND WOBBLE GOAL */
 
         // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-110.0), 0.45)
+        - drive.rotate(Rot2d.degrees(-94.0), 0.45)
 
         - wobbleMiddleOpen().dontBlock()
 
         // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(25.0, 0.3)
+        - drive.encoderForward(55.0, 0.3)
         // wait for the wobble goal to be grabbed
         - grabWobble()
 
-        /* DROPPING THE SECOND WOBBLE GOAL */
-        // rotate torwards the A square
-        - drive.rotate(Rot2d.degrees(223.0), 0.6)
+        - drive.rotate(Rot2d.degrees(200.0), 0.6)
 
-        // start moving the arm to middle
         - ArmPositionMiddleCmd().dontBlock()
+        - drive.encoderForward(60.0, 0.7)
 
-        // move to the A square
-        - drive.encoderBackwards(10.0, 1.0)
-        - drive.encoderTiltBackwardsLeft(16.0, 1.0)
-        - drive.encoderTiltForwardLeft(23.0, 1.0)
         - dropWobble()
     }
 
@@ -95,7 +91,7 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         // rotate torwards the high goal/power shots
         //- drive.rotate(Rot2d.degrees(-180.0), 0.6)
-        - drive.rotate(Rot2d.degrees(-190.0), 0.6)
+        - drive.rotate(Rot2d.degrees(-194.0), 0.6)
 
         // shoot the 3 rings
         //- shootRings() // high goal
@@ -111,7 +107,6 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         - drive.encoderForward(40.0, 0.3)
         // wait for the wobble goal to be grabbed
         - grabWobble()
-
 
         // move torwards the B square
         - drive.rotate(Rot2d.degrees(200.0), 0.7)

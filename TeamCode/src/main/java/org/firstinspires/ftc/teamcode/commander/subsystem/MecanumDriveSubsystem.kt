@@ -25,7 +25,7 @@ class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
                 COEFFICIENTS = Constants.rotatePIDFCoefficients
 
                 DEAD_ZONE = 0.1
-                ERROR_TOLERANCE = 4.0
+                ERROR_TOLERANCE = 2.0
             })
 
             drive.waitForIMUCalibration()

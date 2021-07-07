@@ -50,13 +50,13 @@ fun MechOpMode.shootRingsPowershot(shooterPower: Double = Constants.shooterHighG
 
     // shoot the rings! the servo will move in and out 3 times
     - ShooterAutoFlick(1)
-    - drive.rotate(Rot2d.degrees(5.0), 0.3)
+    - drive.rotate(Rot2d.degrees(6.0), 0.3)
 
     - ShooterAutoFlick(1)
-    - drive.rotate(Rot2d.degrees(5.0), 0.3)
+    - drive.rotate(Rot2d.degrees(6.0), 0.3)
 
     - ShooterAutoFlick(1)
-    - drive.rotate(Rot2d.degrees(5.0), 0.3)
+    - drive.rotate(Rot2d.degrees(6.0), 0.3)
 
     // stop the shooter after the servo finishes flicking (zero velocity)
     - ShooterStopCmd().dontBlock()
@@ -68,7 +68,7 @@ fun grabWobble() = deltaSequence {
     // wait a little for the claw to close
     - waitForSeconds(0.8)
     // move the arm up
-    - ArmPositionUpCmd().dontBlock()
+    - ArmPositionSaveCmd().dontBlock()
 }
 
 fun wobbleMiddleOpen() = deltaSequence {

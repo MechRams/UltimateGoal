@@ -43,8 +43,8 @@ class RectRingPipeline : OpenCvPipeline() {
                 rectHeight
         )
 
-        Imgproc.rectangle(input, topRect, Scalar(255.0, 0.0, 0.0), 1)
-        Imgproc.rectangle(input, bottomRect, Scalar(0.0, 255.0, 0.0), 1)
+        Imgproc.rectangle(input, topRect, Scalar(255.0, 255.0, 0.0), 2)
+        Imgproc.rectangle(input, bottomRect, Scalar(255.0, 255.0, 0.0), 2)
 
         //We crop the image so it is only everything inside the rectangles and find the cb value inside of them
         top = yCrCb.submat(topRect)
@@ -77,13 +77,13 @@ class RectRingPipeline : OpenCvPipeline() {
 
 @Config
 object RectPipelineConfig {
-    @JvmStatic var topRectWidthPercentage = 0.25
-    @JvmStatic var topRectHeightPercentage = 0.25
-    @JvmStatic var bottomRectWidthPercentage = 0.25
-    @JvmStatic var bottomRectHeightPercentage = 0.35
+    @JvmField var topRectWidthPercentage = 0.1
+    @JvmField var topRectHeightPercentage = 0.56
+    @JvmField var bottomRectWidthPercentage = 0.10
+    @JvmField var bottomRectHeightPercentage = 0.67
 
-    @JvmStatic var rectWidth = 10
-    @JvmStatic var rectHeight = 10
+    @JvmField var rectWidth = 10
+    @JvmField var rectHeight = 10
 
-    @JvmStatic var threshold = 15
+    @JvmField var threshold = 15
 }

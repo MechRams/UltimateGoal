@@ -43,7 +43,7 @@ object Constants {
     @JvmField var shooterHighGoalPower = 0.387
     @JvmField var shooterPowerShotPower = 0.28
 
-    @JvmField var flickerInPos = 0.86
+    @JvmField var flickerInPos = 0.82
     @JvmField var flickerOutPos = 0.98
 
     var lastOpMode = OpModeType.TELEOP

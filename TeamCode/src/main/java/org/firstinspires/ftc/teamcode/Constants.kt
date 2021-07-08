@@ -32,8 +32,8 @@ object Constants {
     @JvmField var armPositionStep = 5.5
     @JvmField var armPower = 0.20
 
-    @JvmField var armSavePosition = 0
-    @JvmField var armMiddlePosition = -633
+    @JvmField var armSavePosition = -60
+    @JvmField var armMiddlePosition = -620
     @JvmField var armUpPosition = -297
 
     @JvmField var shooterP = 0.05
@@ -43,7 +43,7 @@ object Constants {
     @JvmField var shooterHighGoalPower = 0.387
     @JvmField var shooterPowerShotPower = 0.28
 
-    @JvmField var flickerInPos = 0.82
+    @JvmField var flickerInPos = 0.83
     @JvmField var flickerOutPos = 0.98
 
     var lastOpMode = OpModeType.TELEOP

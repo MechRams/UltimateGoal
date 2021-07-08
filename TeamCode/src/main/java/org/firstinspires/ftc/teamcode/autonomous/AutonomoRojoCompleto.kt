@@ -41,15 +41,15 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     fun stackA() = deltaSequence {
         /* DROPPING THE FIRST WOBBLE GOAL */
 
-        - drive.encoderTiltForwardRight(55.0, 0.9)
+        - drive.encoderTiltForwardRight(55.0, 0.6)
         - ArmPositionMiddleCmd().dontBlock()
 
-        - drive.encoderForward(25.0, 0.8)
+        - drive.encoderForward(30.0, 0.8)
         - dropWobble()
 
         /* SHOOTING RINGS */
         // rotate torwards the high goal
-        - drive.encoderTiltBackwardsLeft(20.0, 0.4)
+        - drive.encoderTiltBackwardsLeft(24.0, 0.3)
         //- drive.rotate(Rot2d.degrees(183.0), 0.6) // high goal
         - drive.rotate(Rot2d.degrees(195.0), 0.6)
 
@@ -60,21 +60,25 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         /* GRABBING THE SECOND WOBBLE GOAL */
 
         // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-94.0), 0.45)
+        - drive.rotate(Rot2d.degrees(-85.0), 0.3)
 
         - wobbleMiddleOpen().dontBlock()
 
         // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(55.0, 0.3)
+        - drive.encoderForward(61.0, 0.3)
         // wait for the wobble goal to be grabbed
         - grabWobble()
 
-        - drive.rotate(Rot2d.degrees(200.0), 0.6)
+        - drive.rotate(Rot2d.degrees(180.0), 0.6)
 
         - ArmPositionMiddleCmd().dontBlock()
-        - drive.encoderForward(60.0, 0.7)
+        - drive.encoderForward(86.0, 0.45)
 
         - dropWobble()
+
+        - drive.encoderBackwards(15.0, 0.6)
+        - drive.rotate(Rot2d.degrees(55.0), 0.6)
+        - drive.encoderForward(35.0, 0.7)
     }
 
     fun stackB() = deltaSequence {

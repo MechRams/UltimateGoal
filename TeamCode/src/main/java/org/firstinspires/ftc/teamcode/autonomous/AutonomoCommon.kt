@@ -66,7 +66,7 @@ fun grabWobble() = deltaSequence {
     // close the claw once the wobble goal is in
     - ArmClawCloseCmd().dontBlock()
     // wait a little for the claw to close
-    - waitForSeconds(0.8)
+    - waitForSeconds(1.2)
     // move the arm up
     - ArmPositionSaveCmd().dontBlock()
 }

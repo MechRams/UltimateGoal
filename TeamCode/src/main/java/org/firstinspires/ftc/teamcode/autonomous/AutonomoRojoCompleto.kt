@@ -56,7 +56,7 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO, usingIMU = false, using
             //.waitSeconds(1.0)
 
             // go torwards 2nd wobble
-            .lineToSplineHeading(Pose2d(-48.0, -40.0, Math.toRadians(105.0)))
+            .lineToSplineHeading(Pose2d(-36.0, -36.0, Math.toRadians(130.0)))
             //.addDisplacementMarker { + grabWobble() }
             //.waitSeconds(2.0)
             //.UNSTABLE_addTemporalMarkerOffset(0.0) { + ArmPositionMiddleCmd() }

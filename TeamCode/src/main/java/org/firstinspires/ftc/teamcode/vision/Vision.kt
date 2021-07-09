@@ -23,6 +23,7 @@ open class Vision(private val hardwareMap: HardwareMap) {
                 cameraMonitorViewId
         )
         phoneCam?.openCameraDeviceAsync {
+            phoneCam?.openCameraDevice()
             phoneCam?.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
         }
 
@@ -34,6 +35,7 @@ open class Vision(private val hardwareMap: HardwareMap) {
                 OpenCvInternalCamera2.CameraDirection.BACK, cameraMonitorViewId
         )
         phoneCam?.openCameraDeviceAsync {
+            phoneCam?.openCameraDevice()
             phoneCam?.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT)
         }
 

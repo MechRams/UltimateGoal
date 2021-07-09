@@ -14,19 +14,36 @@ import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionUpC
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawCloseCmd
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.claw.ArmClawOpenCmd
 
-fun dropWobble() = deltaSequence {
+fun dropWobble(saveArm: Boolean = true) = deltaSequence {
     // open the claw
     - ArmClawOpenCmd().dontBlock()
     // wait a little for the wobble goal to fall
     - waitForSeconds(0.4)
-    // close the claw
-    - ArmClawCloseCmd().dontBlock()
 
     // move the arm back to save (in) position
-    - ArmPositionSaveCmd().dontBlock()
+    if(saveArm)
+        - ArmPositionSaveCmd().dontBlock()
 }
 
-fun MechOpMode.shootRings(shooterPower: Double = Constants.shooterHighGoalPower) = deltaSequence {
+fun MechOpMode.shootRings(shooterPower: Double = Constants.shooterHighGoalPower, turnOffShooter: Boolean = true, waitShooter: Boolean = true) = deltaSequence {
+
+    if(waitShooter) {
+        // start running the shooter (non-blocking)
+        -ShooterRunCmd(shooterPower).dontBlock()
+
+        // wait until the shooter reaches a certain velocity
+        -waitFor { shooterSub.avgVelocity >= 1000.0 }
+        -waitForSeconds(1.0)
+    }
+
+    // shoot the rings! the servo will move in and out 3 times
+    - ShooterAutoFlick(3)
+    // stop the shooter after the servo finishes flicking (zero velocity)
+    if(turnOffShooter)
+        - ShooterStopCmd().dontBlock()
+}
+
+fun MechOpMode.shootRing(shooterPower: Double = Constants.shooterHighGoalPower, turnOffShooter: Boolean = true) = deltaSequence {
     // start running the shooter (non-blocking)
     - ShooterRunCmd(shooterPower).dontBlock()
 
@@ -35,9 +52,10 @@ fun MechOpMode.shootRings(shooterPower: Double = Constants.shooterHighGoalPower)
     - waitForSeconds(1.0)
 
     // shoot the rings! the servo will move in and out 3 times
-    - ShooterAutoFlick(3)
+    - ShooterAutoFlick(1)
     // stop the shooter after the servo finishes flicking (zero velocity)
-    - ShooterStopCmd().dontBlock()
+    if(turnOffShooter)
+        - ShooterStopCmd().dontBlock()
 }
 
 fun MechOpMode.shootRingsPowershot(shooterPower: Double = Constants.shooterHighGoalPower) = deltaSequence {
@@ -62,13 +80,14 @@ fun MechOpMode.shootRingsPowershot(shooterPower: Double = Constants.shooterHighG
     - ShooterStopCmd().dontBlock()
 }
 
-fun grabWobble() = deltaSequence {
+fun grabWobble(saveWobble: Boolean = true) = deltaSequence {
     // close the claw once the wobble goal is in
     - ArmClawCloseCmd().dontBlock()
     // wait a little for the claw to close
     - waitForSeconds(1.2)
     // move the arm up
-    - ArmPositionSaveCmd().dontBlock()
+    if(saveWobble)
+        - ArmPositionSaveCmd().dontBlock()
 }
 
 fun wobbleMiddleOpen() = deltaSequence {

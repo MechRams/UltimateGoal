@@ -12,7 +12,7 @@ open class ArmPositionRunCmd(private val positionSupplier: () -> Int) : DeltaCom
 
     override fun init() {
         armSubsystem.wobbleArmMotor.setRunMode(Motor.RunMode.PositionControl)
-        armSubsystem.wobbleArmMotor.setPositionTolerance(20.0)
+        armSubsystem.wobbleArmMotor.setPositionTolerance(10.0)
 
         armSubsystem.armMoving = true
     }

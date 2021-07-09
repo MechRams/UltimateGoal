@@ -44,6 +44,7 @@ class Hardware(val onlyDrive: Boolean) : SimpleHardware() {
         }
 
         //se define la posicion por default de estos servos
+        servoWobbleClaw.position = 0.1
 
         //definimos los motores que correran con y sin encoders
         wheelFrontRight.mode = DcMotor.RunMode.RUN_USING_ENCODER

@@ -30,7 +30,7 @@ object Constants {
 
     @JvmField var armP = 0.008
     @JvmField var armPositionStep = 5.5
-    @JvmField var armPower = 0.15
+    @JvmField var armPower = 0.19
 
     @JvmField var armSavePosition = -30
     @JvmField var armMiddlePosition = -620

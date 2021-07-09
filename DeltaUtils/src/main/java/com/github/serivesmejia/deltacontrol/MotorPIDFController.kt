@@ -131,8 +131,8 @@ class MotorPIDFController(private var coeffs: PIDFCoefficients) {
 
         return if(inverse) {
             if(onSetpoint())
-                powerF
-            else initialPower - turbo//- powerF
+                initialPower
+            else initialPower - powerF
         } else powerF
     }
 

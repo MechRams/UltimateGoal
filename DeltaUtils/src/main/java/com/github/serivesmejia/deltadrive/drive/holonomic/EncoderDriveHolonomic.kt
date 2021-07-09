@@ -22,6 +22,7 @@
 
 package com.github.serivesmejia.deltadrive.drive.holonomic
 
+import com.arcrobotics.ftclib.hardware.motors.Motor
 import com.github.serivesmejia.deltacontrol.MotorPIDFController
 import com.github.serivesmejia.deltadrive.hardware.DeltaHardwareHolonomic
 import com.github.serivesmejia.deltadrive.parameters.EncoderDriveParameters
@@ -76,13 +77,6 @@ class EncoderDriveHolonomic
             br *= 0.393701
         }
 
-        // Determine new target position, and pass to motor controller
-        val ticksPerInch = calcTicksPerInch()
-        val newFrontLeftTarget = (hdw.wheelFrontLeft.currentPosition + (fl * ticksPerInch)).roundToInt()
-        val newFrontRightTarget = (hdw.wheelFrontRight.currentPosition + (fr * ticksPerInch)).roundToInt()
-        val newBackLeftTarget = (hdw.wheelBackLeft.currentPosition + (bl * ticksPerInch)).roundToInt()
-        val newBackRightTarget = (hdw.wheelBackRight.currentPosition + (br * ticksPerInch)).roundToInt()
-
         val beforeRunMode = hdw.runMode
 
         val leftPower = abs(speed) * leftTurbo
@@ -98,14 +92,30 @@ class EncoderDriveHolonomic
         val controllerLeft = MotorPIDFController(parameters.DRIVE_STRAIGHT_COEFFICIENTS)
         val controllerRight = MotorPIDFController(parameters.DRIVE_STRAIGHT_COEFFICIENTS)
 
+        var newFrontLeftTarget = 0
+        var newFrontRightTarget = 0
+        var newBackLeftTarget = 0
+        var newBackRightTarget = 0
+
         return Task(parameters.TASK_COMMAND_REQUIREMENTS) {
             first {
-                hdw.setTargetPositions(newFrontLeftTarget, newFrontRightTarget, newBackLeftTarget, newBackRightTarget)
+                // Determine new target position, and pass to motor controller
+                val ticksPerInch = calcTicksPerInch()
+                newFrontLeftTarget = (hdw.wheelFrontLeft.currentPosition + (fl * ticksPerInch)).roundToInt()
+                newFrontRightTarget = (hdw.wheelFrontRight.currentPosition + (fr * ticksPerInch)).roundToInt()
+                newBackLeftTarget = (hdw.wheelBackLeft.currentPosition + (bl * ticksPerInch)).roundToInt()
+                newBackRightTarget = (hdw.wheelBackRight.currentPosition + (br * ticksPerInch)).roundToInt()
+
+                hdw.ftclibFL.setTargetPosition(newFrontLeftTarget)
+                hdw.ftclibFR.setTargetPosition(newFrontRightTarget)
+                hdw.ftclibBL.setTargetPosition(newBackLeftTarget)
+                hdw.ftclibBR.setTargetPosition(newBackRightTarget)
 
                 // Turn On RUN_TO_POSITION
-                hdw.runMode = DcMotor.RunMode.RUN_TO_POSITION
-
-                hdw.setMotorPowers(flPow, frPow, blPow, brPow)
+                hdw.ftclibFL.setRunMode(Motor.RunMode.PositionControl)
+                hdw.ftclibFR.setRunMode(Motor.RunMode.PositionControl)
+                hdw.ftclibBL.setRunMode(Motor.RunMode.PositionControl)
+                hdw.ftclibBR.setRunMode(Motor.RunMode.PositionControl)
 
                 // reset the timeout time and start motion.
                 runtime.reset()
@@ -114,12 +124,12 @@ class EncoderDriveHolonomic
                     initialAngle = imu!!.cumulativeAngle
 
                     controllerLeft.setSetpoint(initialAngle.degrees)
-                              .setInitialPower(leftPower).setInverse()
+                              .setInitialPower(speed).setInverse()
                               .setErrorTolerance(parameters.DRIVE_STRAIGHT_DEGREE_TOLERANCE)
                               .setDeadzone(parameters.DRIVE_STRAIGHT_DEADZONE)
 
                     controllerRight.setSetpoint(initialAngle.degrees)
-                                   .setInitialPower(rightPower).setInverse()
+                                   .setInitialPower(speed).setInverse()
                                    .setErrorTolerance(parameters.DRIVE_STRAIGHT_DEGREE_TOLERANCE)
                                    .setDeadzone(parameters.DRIVE_STRAIGHT_DEADZONE)
                                    .setErrorInverted()
@@ -151,7 +161,7 @@ class EncoderDriveHolonomic
                     newBackLeftTarget,
                     newBackRightTarget)
             }
-/*
+
             if(imu != null && correctWithIMU) {
                 val powerFLeft = controllerLeft.calculate(imu!!.cumulativeAngle.degrees)
                 val powerFRight = controllerRight.calculate(imu!!.lastCumulativeAngle.degrees)
@@ -161,18 +171,22 @@ class EncoderDriveHolonomic
                 blPow = if(bl != 0.0) powerFLeft * leftTurbo else 0.0
                 brPow = if(br != 0.0) powerFRight * rightTurbo else 0.0
 
+                telemetry?.addData("[On Setpoint]", "${controllerLeft.onSetpoint()}, ${controllerRight.onSetpoint()}")
                 telemetry?.addData("[Angle Error]", "${controllerLeft.getCurrentError()}, ${controllerRight.getCurrentError()}")
                 telemetry?.addData("[Power]", "$powerFLeft, $powerFRight")
-
-                hdw.setMotorPowers(flPow, frPow, blPow, brPow)
             }
-*/
+
+            hdw.ftclibFL.set(flPow)
+            hdw.ftclibFR.set(frPow)
+            hdw.ftclibBL.set(blPow)
+            hdw.ftclibBR.set(brPow)
+
             telemetry?.update()
 
-            val flBusy = if(fl != 0.0) hdw.wheelFrontLeft.isBusy else true
-            val frBusy = if(fr != 0.0) hdw.wheelFrontRight.isBusy else true
-            val blBusy = if(bl != 0.0) hdw.wheelBackLeft.isBusy else true
-            val brBusy = if(br != 0.0) hdw.wheelBackRight.isBusy else true
+            val flBusy = if(fl != 0.0) !hdw.ftclibFL.atTargetPosition() else true
+            val frBusy = if(fr != 0.0) !hdw.ftclibFR.atTargetPosition() else true
+            val blBusy = if(bl != 0.0) !hdw.ftclibBL.atTargetPosition() else true
+            val brBusy = if(br != 0.0) !hdw.ftclibBR.atTargetPosition() else true
 
             // finish task until there's is no time left or no motors are running.
             // Note: We use (isBusy() && isBusy()) in the repeat test, which means that when EITHER motor hits

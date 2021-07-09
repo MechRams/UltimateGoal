@@ -18,7 +18,7 @@ abstract class MechOpMode(
 ) : LinearOpMode() {
 
     val hdw = Hardware(onlyChassis)
-    val deltaHdw by lazy { DeltaHardwareHolonomic(hardwareMap) }
+    val deltaHdw by lazy { DeltaHardwareHolonomic(hardwareMap, Constants.positionP) }
 
     val drive get() = driveSub.drive
 

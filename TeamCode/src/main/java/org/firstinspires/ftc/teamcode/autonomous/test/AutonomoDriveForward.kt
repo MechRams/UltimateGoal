@@ -25,7 +25,7 @@ class AutonomoDriveForward : MechOpMode(OpModeType.AUTO) {
     }
 
     fun autoA() = deltaSequence {
-        - drive.encoderForward(9999.0, 0.2, 9999.0)
+        - drive.encoderForward(9999.0, 0.5, 9999.0)
     }
 
 }

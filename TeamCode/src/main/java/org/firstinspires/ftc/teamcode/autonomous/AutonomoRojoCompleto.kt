@@ -41,7 +41,7 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
     fun stackA() = deltaSequence {
         /* DROPPING THE FIRST WOBBLE GOAL */
 
-        - drive.encoderTiltForwardRight(55.0, 0.6)
+        - drive.encoderTiltForwardRight(50.0, 0.6)
         - ArmPositionMiddleCmd().dontBlock()
 
         - drive.encoderForward(30.0, 0.8)
@@ -60,35 +60,38 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
         /* GRABBING THE SECOND WOBBLE GOAL */
 
         // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-85.0), 0.3)
+        - drive.rotate(Rot2d.degrees(-90.0), 0.3)
 
         - wobbleMiddleOpen().dontBlock()
 
         // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(61.0, 0.3)
+        - drive.encoderForward(64.0, 0.3)
         // wait for the wobble goal to be grabbed
         - grabWobble()
 
-        - drive.rotate(Rot2d.degrees(180.0), 0.6)
+        - drive.rotate(Rot2d.degrees(175.0), 0.6)
 
         - ArmPositionMiddleCmd().dontBlock()
-        - drive.encoderForward(86.0, 0.45)
+
+        - drive.encoderForward(88.0, 0.45)
 
         - dropWobble()
 
         - drive.encoderBackwards(15.0, 0.6)
-        - drive.rotate(Rot2d.degrees(55.0), 0.6)
+        - drive.rotate(Rot2d.degrees(50.0), 0.6)
         - drive.encoderForward(35.0, 0.7)
     }
 
     fun stackB() = deltaSequence {
         /* DROPPING THE FIRST WOBBLE GOAL */
+        - drive.encoderTiltForwardRight(10.0, 0.3)
+
         - drive.encoderForward(25.0, 1.0)
 
         - ArmPositionMiddleCmd().dontBlock()
 
         // move to the B square
-        - drive.encoderTiltForwardLeft(47.0, 1.0, 4.0)
+        - drive.encoderTiltForwardLeft(47.0, 0.45)
         - dropWobble()
 
         /* SHOOTING RINGS */

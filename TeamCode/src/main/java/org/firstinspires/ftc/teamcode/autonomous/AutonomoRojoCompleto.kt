@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
+import com.acmerobotics.roadrunner.geometry.Pose2d
+import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.github.serivesmejia.deltacommander.deltaScheduler
 import com.github.serivesmejia.deltacommander.dsl.deltaSequence
 import com.github.serivesmejia.deltamath.geometry.Rot2d
@@ -8,15 +10,19 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import org.firstinspires.ftc.teamcode.MechOpMode
 import org.firstinspires.ftc.teamcode.OpModeType
 import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionMiddleCmd
+import org.firstinspires.ftc.teamcode.commander.command.wobblearm.ArmPositionSaveCmd
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive
 import org.firstinspires.ftc.teamcode.vision.RingHeight
 import org.firstinspires.ftc.teamcode.vision.RingPipeline2
 
 @Autonomous(name = "Rojo Completo", group = "final", preselectTeleOp = "TeleOp")
-class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
+class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO, usingIMU = false, usingRR = true) {
+
+    val d by lazy { SampleMecanumDrive(hardwareMap) }
+
+    val startPose = Pose2d(-64.0,-50.0, Math.toRadians(0.0))
 
     override fun run() {
-        deltaHdw.bulkCachingMode = LynxModule.BulkCachingMode.MANUAL
-
         vision.initCamVision()
         vision.initRectRingVision()
 
@@ -27,112 +33,83 @@ class AutonomoRojoCompleto : MechOpMode(OpModeType.AUTO) {
 
         vision.close()
 
-        when(vision.rectRingPipeline?.detectedHeight ?: RingHeight.ZERO) {
+        d.followTrajectorySequenceAsync(when(vision.rectRingPipeline?.detectedHeight ?: RingHeight.ZERO) {
             RingHeight.ZERO -> stackA()
             RingHeight.ONE  -> stackB()
             RingHeight.FOUR -> stackC()
-        }.schedule()
+        })
 
-        deltaScheduler.updateUntilNoCommands {
-            deltaHdw.clearBulkCache()
+        d.poseEstimate = startPose
+
+        while(opModeIsActive()) {
+            deltaScheduler.update()
+            d.update()
         }
     }
 
-    fun stackA() = deltaSequence {
-        /* DROPPING THE FIRST WOBBLE GOAL */
+    fun stackA() = d.trajectorySequenceBuilder(startPose)
+            // drop first wobble
+            //.addTemporalMarker { + ArmPositionMiddleCmd() }
+            .lineTo(Vector2d(-10.0, -70.0))
 
-        - drive.encoderTiltForwardRight(50.0, 0.6)
-        - ArmPositionMiddleCmd().dontBlock()
+            //.addDisplacementMarker { + dropWobble() }
+            //.waitSeconds(1.0)
 
-        - drive.encoderForward(30.0, 0.8)
-        - dropWobble()
+            // go torwards 2nd wobble
+            .lineToSplineHeading(Pose2d(-48.0, -40.0, Math.toRadians(105.0)))
+            //.addDisplacementMarker { + grabWobble() }
+            //.waitSeconds(2.0)
+            //.UNSTABLE_addTemporalMarkerOffset(0.0) { + ArmPositionMiddleCmd() }
 
-        /* SHOOTING RINGS */
-        // rotate torwards the high goal
-        - drive.encoderTiltBackwardsLeft(24.0, 0.3)
-        //- drive.rotate(Rot2d.degrees(183.0), 0.6) // high goal
-        - drive.rotate(Rot2d.degrees(195.0), 0.6)
+            // place 2nd wobble
+            .lineToSplineHeading(Pose2d(-10.0, -68.0, Math.toRadians(5.0)))
+            //.addDisplacementMarker { + dropWobble() }
+            //.waitSeconds(1.0)
+            //.UNSTABLE_addTemporalMarkerOffset(0.0) { + ArmPositionSaveCmd() }
 
-        // shoot the 3 rings
-        //- shootRings(0.39) // high goal
-        - shootRingsPowershot(0.37)
+            // shoot rings to high goal
+            .lineToSplineHeading(Pose2d(-15.0, -38.0, Math.toRadians(180.0)))
 
-        /* GRABBING THE SECOND WOBBLE GOAL */
+            // park
+            .lineTo(Vector2d(8.0, -38.0))
 
-        // rotate torwards the 2nd wobble goal
-        - drive.rotate(Rot2d.degrees(-90.0), 0.3)
+            .build()
 
-        - wobbleMiddleOpen().dontBlock()
+    fun stackB() = d.trajectorySequenceBuilder(startPose)
+            // drop first wobble
+            .lineTo(Vector2d(-10.0, -70.0))
+            .lineTo(Vector2d(24.0, -35.0))
 
-        // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(64.0, 0.3)
-        // wait for the wobble goal to be grabbed
-        - grabWobble()
+            // shoot rings to high goal
+            .lineToSplineHeading(Pose2d(-15.0, -38.0, Math.toRadians(180.0)))
 
-        - drive.rotate(Rot2d.degrees(175.0), 0.6)
+            // go torwards 2nd wobble
+            .lineToSplineHeading(Pose2d(-48.0, -40.0, Math.toRadians(105.0)))
 
-        - ArmPositionMiddleCmd().dontBlock()
+            // place 2nd wobble
+            .lineToSplineHeading(Pose2d(28.0, -36.0, Math.toRadians(5.0)))
 
-        - drive.encoderForward(88.0, 0.45)
+            // park
+            .lineTo(Vector2d(8.0, -38.0))
 
-        - dropWobble()
+            .build()
 
-        - drive.encoderBackwards(15.0, 0.6)
-        - drive.rotate(Rot2d.degrees(50.0), 0.6)
-        - drive.encoderForward(35.0, 0.7)
-    }
+    fun stackC() = d.trajectorySequenceBuilder(startPose)
+            // drop first wobble
+            .lineTo(Vector2d(49.0, -70.0))
 
-    fun stackB() = deltaSequence {
-        /* DROPPING THE FIRST WOBBLE GOAL */
-        - drive.encoderTiltForwardRight(10.0, 0.3)
+            // shoot rings to high goal
+            .lineToSplineHeading(Pose2d(-15.0, -38.0, Math.toRadians(180.0)))
 
-        - drive.encoderForward(25.0, 1.0)
+            // go torwards 2nd wobble
+            .lineToSplineHeading(Pose2d(-48.0, -40.0, Math.toRadians(105.0)))
 
-        - ArmPositionMiddleCmd().dontBlock()
+            // drop 2nd wobble
+            .lineTo(Vector2d(49.0, -70.0))
 
-        // move to the B square
-        - drive.encoderTiltForwardLeft(47.0, 0.45)
-        - dropWobble()
+            // park
+            .lineTo(Vector2d(5.0, -38.0))
 
-        /* SHOOTING RINGS */
-
-        // rotate torwards the high goal/power shots
-        //- drive.rotate(Rot2d.degrees(-180.0), 0.6)
-        - drive.rotate(Rot2d.degrees(-194.0), 0.6)
-
-        // shoot the 3 rings
-        //- shootRings() // high goal
-        - shootRingsPowershot(0.33)
-
-        /* GRABBING THE SECOND WOBBLE GOAL */
-
-        - drive.rotate(Rot2d.degrees(-90.0), 0.7)
-
-        - wobbleMiddleOpen().dontBlock()
-
-        // drive torwards the 2nd wobble goal hopefully
-        - drive.encoderForward(40.0, 0.3)
-        // wait for the wobble goal to be grabbed
-        - grabWobble()
-
-        // move torwards the B square
-        - drive.rotate(Rot2d.degrees(200.0), 0.7)
-        - drive.encoderTiltForwardRight(10.0, 1.0, 4.0)
-        - drive.encoderForward(15.0, 1.0)
-
-        - dropWobble()
-    }
-
-    fun stackC() = deltaSequence {
-        /* DROPPING THE FIRST WOBBLE GOAL */
-
-        - drive.encoderTiltForwardRight(47.0, 1.0, 4.0)
-        - ArmPositionMiddleCmd().dontBlock()
-
-        - drive.encoderForward(45.0, 1.0, 4.0)
-        - dropWobble()
-
-        - shootRings()
-    }
+            .build()
 
 }

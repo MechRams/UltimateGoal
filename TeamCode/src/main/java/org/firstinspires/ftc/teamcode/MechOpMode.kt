@@ -14,7 +14,8 @@ import org.firstinspires.ftc.teamcode.vision.Vision
 abstract class MechOpMode(
     val opModeType: OpModeType,
     private val onlyChassis: Boolean = false,
-    private val usingIMU: Boolean = true
+    private val usingIMU: Boolean = true,
+    private val usingRR: Boolean = false
 ) : LinearOpMode() {
 
     val hdw = Hardware(onlyChassis)
@@ -55,7 +56,7 @@ abstract class MechOpMode(
         )
 
         // crear subsistemas
-        driveSub = MecanumDriveSubsystem(deltaHdw, telemetry, usingIMU)
+        driveSub = MecanumDriveSubsystem(deltaHdw, telemetry, usingIMU, usingRR)
 
         // si queremos utilizar tambien los demas que no sean el drive...
         if(!onlyChassis) {

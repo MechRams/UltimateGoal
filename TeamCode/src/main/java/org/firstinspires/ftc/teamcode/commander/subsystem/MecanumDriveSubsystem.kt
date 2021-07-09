@@ -12,14 +12,15 @@ import org.firstinspires.ftc.teamcode.commander.command.drive.DriveStopCmd
 
 class MecanumDriveSubsystem(deltaHdw: DeltaHardwareHolonomic,
                             telemetry: Telemetry,
-                            usingIMU: Boolean = true) : DeltaSubsystem() {
+                            usingIMU: Boolean = true,
+                            usingRR: Boolean = false) : DeltaSubsystem() {
 
     val drive = DeltaMecanumDrive(deltaHdw, telemetry)
 
     init {
-        defaultCommand = DriveStopCmd()
+        if(!usingRR) defaultCommand = DriveStopCmd()
 
-        if(usingIMU) {
+        if(usingIMU && !usingRR) {
             drive.initIMU(IMUDriveParameters().apply {
                 TASK_COMMAND_REQUIREMENTS = arrayOf(this@MecanumDriveSubsystem)
                 COEFFICIENTS = Constants.rotatePIDFCoefficients

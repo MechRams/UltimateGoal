@@ -78,9 +78,9 @@ class RectRingPipeline : OpenCvPipeline() {
 @Config
 object RectPipelineConfig {
     @JvmField var topRectWidthPercentage = 0.1
-    @JvmField var topRectHeightPercentage = 0.56
+    @JvmField var topRectHeightPercentage = 0.6
     @JvmField var bottomRectWidthPercentage = 0.10
-    @JvmField var bottomRectHeightPercentage = 0.67
+    @JvmField var bottomRectHeightPercentage = 0.68
 
     @JvmField var rectWidth = 10
     @JvmField var rectHeight = 10
